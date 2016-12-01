@@ -1,6 +1,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var babel = require("gulp-babel");
 var less = require('gulp-less');
 var watch = require('gulp-watch');
 var batch = require('gulp-batch');
@@ -16,16 +17,23 @@ var destDir = jetpack.cwd('./app');
 gulp.task('bundle', function () {
     return Promise.all([
         bundle(srcDir.path('background.js'), destDir.path('background.js')),
-        bundle(srcDir.path('app.js'), destDir.path('app.js')),
+        bundle(srcDir.path('app.js'), destDir.path('app.js'))
     ]);
 });
 
 gulp.task('less', function () {
-    return gulp.src(srcDir.path('stylesheets/main.less'))
+    return gulp.src(["./src/**/*.less","!./src/*.less"])
         .pipe(plumber())
         .pipe(less())
-        .pipe(gulp.dest(destDir.path('stylesheets')));
+        .pipe(gulp.dest(destDir.path('.')));
 });
+
+var jsxTrans = function(){
+    return gulp.src(["./src/**/*.js","!./src/*.js"])
+        .pipe(babel())
+        .pipe(gulp.dest(destDir.path('.'), {overwrite: false}));
+}
+gulp.task('jsxTrans', jsxTrans)
 
 gulp.task('environment', function () {
     var configFile = 'config/env_' + utils.getEnvName() + '.json';
@@ -50,4 +58,4 @@ gulp.task('watch', function () {
     }));
 });
 
-gulp.task('build', ['bundle', 'less', 'environment']);
+gulp.task('build', ['bundle', 'less', 'jsxTrans', 'environment']);
