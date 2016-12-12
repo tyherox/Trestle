@@ -21,13 +21,6 @@ gulp.task('bundle', function () {
     ]);
 });
 
-gulp.task('less', function () {
-    return gulp.src(["./src/**/*.less","!./src/*.less"])
-        .pipe(plumber())
-        .pipe(less())
-        .pipe(gulp.dest(destDir.path('.')));
-});
-
 var jsxTrans = function(){
     return gulp.src(["./src/**/*.js","!./src/*.js"])
         .pipe(babel())
@@ -58,4 +51,4 @@ gulp.task('watch', function () {
     }));
 });
 
-gulp.task('build', ['bundle', 'less', 'jsxTrans', 'environment']);
+gulp.task('build', ['bundle', 'jsxTrans', 'environment']);

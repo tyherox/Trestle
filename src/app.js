@@ -2,8 +2,12 @@
  * Created by JohnBae on 12/1/16.
  */
 
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { remote } from 'electron';
 import jetpack from 'fs-jetpack';
+import layout from './core/LayoutProto.js';
+import decor from './core/decor.js';
 
 //Path to user's data based on Electron's Method
 var usrPath = remote.app.getPath('userData');
@@ -50,7 +54,6 @@ function searchLayouts(){
 
 function searchThemes(){
     if(!jetpack.dir(themeDir)) return;
-
 
     jetpack.list(__dirname+"/themes").forEach(function(file){
         var filePath = __dirname + "/themes/" + file;
@@ -118,17 +121,6 @@ searchLayouts();
 searchThemes();
 //searchPlugins();
 
-console.log("Widgets: " + widgets.length);
-console.log("Layouts: " + layouts.length);
-console.log("Themes: " + themes.length);
-console.log("Plugins: " + 0);
+ReactDOM.render(layout(), document.getElementById('parent'));
 
-export default {
-    search:{
-        searchWidgets,
-        searchLayouts,
-        searchThemes,
-        //searchPlugins
-    },
-    themes
-};
+decor.setTheme(themes[0]);

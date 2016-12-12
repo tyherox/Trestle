@@ -83,10 +83,6 @@ export default class Note extends React.Component {
 
         var xTarget,
             yTarget,
-            ix,
-            iy,
-            dx,
-            dy,
             note = this.refs.note,
             offs = note.offsetTop,
             refX = 0,

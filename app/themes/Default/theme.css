@@ -5,7 +5,7 @@
 
 .themeBackground{
     -webkit-transition: all .5s ease;
-    background: #e0e0e0;
+    background: #f8f8f8;
 }
 
 .widgetBackground{
@@ -31,7 +31,6 @@
 
 .themeSecondaryColor{
     background: #f2f2f2;
-
 }
 
 .tertiaryColor{

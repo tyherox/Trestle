@@ -188,13 +188,13 @@
     this.toolbar = new Toolbar();
 
     /**
-     * Widget.interact
+     * Widget.Interact
      *
-     * Using the MIT licensed library interact.js (http://interactjs.io) this functions allows the widgets to be dragged.
-     * The logic from widget intersections is handled by the Layout module. Different interact functions can be used
-     * by applying a custom interact function to the widget.
+     * Using the MIT licensed library Interact.js (http://interactjs.io) this functions allows the widgets to be dragged.
+     * The logic from widget intersections is handled by the Layout module. Different Interact functions can be used
+     * by applying a custom Interact function to the widget.
      *
-     * @returns {*|{x, y}}: Returns the interact.js object interactable.
+     * @returns {*|{x, y}}: Returns the Interact.js object interactable.
      */
     this.interact  = function(){
         var widget_interact = interact(this.element,{preventDefault: 'never'})

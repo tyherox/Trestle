@@ -89,7 +89,7 @@ export default class Note extends React.Component {
         Decor.setIcon(this.refs.deleteButton, 'exitButton.png');
         Decor.setIcon(this.refs.sizeButton, 'upButton.png');
 
-        var xTarget, yTarget, ix, iy, dx, dy, note = this.refs.note, offs = note.offsetTop, refX = 0, refY = 0 ;
+        var xTarget, yTarget, note = this.refs.note, offs = note.offsetTop, refX = 0, refY = 0 ;
 
         note.style.height = this.props.height + 'px';
         note.style.transform = 'translate(' + this.props.left + 'px, ' + this.props.top + 'px)';

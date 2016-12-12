@@ -2,21 +2,19 @@
  * Created by JohnBae on 8/10/16.
  */
 
-var path = require('path'),
-    jetpack = require('fs-jetpack'),
-    currentTheme = null,
+import path from 'path';
+import jetpack from 'fs-jetpack';
+
+var currentTheme = null,
     currentCache = null,
-    app = {},
     themeElements = [];
 
-var setTheme = function(theme){
+var setTheme = function (theme) {
     document.getElementById('themeCss').href = theme.css;
     currentTheme = theme;
-    currentCache = path.join(currentTheme.css, "../" , "/assets/");
+    currentCache = path.join(currentTheme.css, "../", "/assets/");
 
-    console.debug("Set theme:", currentTheme, currentCache)
-
-    themeElements.forEach(function(item){
+    themeElements.forEach(function (item) {
         var element = item.element,
             asset = currentCache + item.name,
             size = item.size,
@@ -26,47 +24,26 @@ var setTheme = function(theme){
         element.style.backgroundRepeat = "no-repeat";
         element.style.backgroundSize = size;
         element.style.backgroundPosition = pos;
-    })
+    });
+};
 
-    console.log("ELEMENTS:",themeElements);
+var setIcon = function (element, name, options) {
 
-    Layout.toggle(false);
-}
+    if (!options) options = {};
+    var size = options.size || "80% 80%",
+        pos = options.pos || 'center',
+        asset = currentCache + name;
 
-var setIcon = function(element, name, options){
-
-    //console.log("Setting Icon for",element,"with the name",name,"with options",options);
-
-    if(!options) options = {};
-    var size = (options.size||"80% 80%"),
-        pos = (options.pos||'center'),
-        asset = (currentCache + name);
-
-    if(currentCache){
-
-        //console.log("Cache:", currentCache);
-        //console.log("Asset:",asset);
-
-        element.style.backgroundImage = "url(" + asset+ ")";
+    if (currentCache) {
+        element.style.backgroundImage = "url(" + asset + ")";
         element.style.backgroundRepeat = "no-repeat";
         element.style.backgroundSize = size;
         element.style.backgroundPosition = pos;
     }
-    themeElements.push({element: element, name: name, size: size, position: pos});
-}
+    themeElements.push({ element: element, name: name, size: size, position: pos });
+};
 
-var commit = function(data){
-    app = data;
-}
-
-var returnValue = {
+export default {
     setTheme: setTheme,
-    setIcon: setIcon,
-    commit: commit,
-    themes: function(){
-        return app.themes
-    }
-}
-
-module.exports = returnValue;
-export default returnValue;
+    setIcon: setIcon
+};
