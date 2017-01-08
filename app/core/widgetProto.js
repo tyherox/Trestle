@@ -1,34 +1,19 @@
 /**
- * Created by JohnBae on 11/21/16.
+ * Tyherox
+ *
+ * Widget
+ *
+ * The widget class is the template for all widgets of Scribe. It includes the container to place custom content and
+ * means to be arranged upon the Layout module.
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Interact from 'interact.js';
 
 export default class Widget extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            gridHeight: this.props.gridHeight,
-            gridWidth: this.props.gridWidth,
-            width: this.props.width,
-            height: this.props.height,
-            maxWidth: this.props.maxWidth,
-            maxHeight: this.props.maxHeight,
-            minWidth: this.props.minWidth,
-            minHeight: this.props.minHeight,
-            xCord: this.props.xCord,
-            yCord: this.props.yCord,
-            tempXCord: this.props.tempXCord,
-            tempYCord: this.props.tempYCord,
-            pushing: this.props.pushing,
-            resetting: this.props.resetting,
-            id: this.props.id,
-            dragging: false
-        };
     }
 
     componentDidMount() {
@@ -36,16 +21,14 @@ export default class Widget extends React.Component {
         var self = this,
             widget = self.refs.widgetRef;
 
-        self.setSize(this.state.width, this.state.height);
-        self.setLocation(this.state.xCord, this.state.yCord);
-        self.setState({ xCord: self.state.xCord + 2, yCord: self.state.yCord + 2 });
-        widget.style.transform = 'translate(' + (self.state.xCord + 2) + 'px, ' + (self.state.yCord + 2) + 'px)';
-
+        //Initialize Drag Module for Widget
         Interact(widget).draggable({
-            inertia: true,
+            inertia: {
+                minSpeed: Infinity
+            },
             snap: {
-                targets: [Interact.createSnapGrid({ x: this.state.width + 4, y: this.state.height + 4 })],
-                offset: { x: 2, y: 2 },
+                targets: [Interact.createSnapGrid({ x: self.props.gridWidth, y: self.props.gridHeight })],
+                offset: { x: self.props.cellOffset, y: self.props.cellOffset },
                 range: Infinity,
                 endOnly: true,
                 relativePoints: [{ x: 0, y: 0 }]
@@ -54,22 +37,65 @@ export default class Widget extends React.Component {
                 restriction: 'parent',
                 elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
                 endOnly: true
+            },
+            onstart: function (event) {
+                startDrag();
+            },
+            onmove: function (event) {
+                self.props.update(self.props.id, {
+                    tmpLeft: self.props.tmpLeft + event.dx,
+                    tmpTop: self.props.tmpTop + event.dy,
+                    refTop: Math.round(self.props.actTop / self.props.gridHeight),
+                    refLeft: Math.round(self.props.actLeft / self.props.gridWidth)
+                });
+                //self.props.collisionDetect(self.props.id);
+            },
+            onend: function () {
+                endDrag();
+            },
+            oninertiastart: function (event) {
+                self.props.toggleGrid(false);
             }
-        }).on('dragstart', function (e) {
-            widget.style.transition = 'transform 0s, width .5s, height .5s, box-shadow .5s';
-            self.props.toggleGrid(true);
-            self.setState({ dragging: true });
-        }).on('dragmove', function (e) {
-            self.setState({ xCord: self.state.xCord + e.dx, yCord: self.state.yCord + e.dy });
-            widget.style.transform = 'translate(' + self.state.xCord + 'px, ' + self.state.yCord + 'px)';
-        }).on('draginertiastart', function (e) {
-            self.props.toggleGrid(false);
-        }).on('dragend', function (e) {
-            widget.style.transition = 'all .5s ease';
-            e.target.style.zIndex = 10;
-            self.setState({ dragging: false });
+        }).resizable({
+            invert: 'none',
+            inertia: {
+                minSpeed: Infinity
+            },
+            square: false,
+            preserveAspectRatio: false,
+            edges: { left: false, right: true, bottom: true, top: false },
+            snap: {
+                targets: [Interact.createSnapGrid({ x: self.props.gridWidth, y: self.props.gridHeight })],
+                offset: { x: self.props.cellOffset, y: self.props.cellOffset },
+                range: Infinity,
+                relativePoints: [{ x: 0, y: 0 }],
+                endOnly: true
+            },
+            restrict: {
+                restriction: 'parent',
+                endOnly: true
+            },
+            onstart: function (event) {
+                startDrag();
+            },
+            onmove: function (event) {
+                self.props.update(self.props.id, {
+                    tmpWidth: event.rect.width,
+                    tmpHeight: event.rect.height,
+                    refWidth: self.props.tmpWidth <= 0 ? 1 : Math.ceil(self.props.tmpWidth / self.props.gridWidth),
+                    refHeight: self.props.tmpHeight <= 0 ? 1 : Math.ceil(self.props.tmpHeight / self.props.gridHeight)
+                });
+                //self.props.collisionDetect(self.props.id);
+            },
+            onend: function (event) {
+                endDrag();
+            },
+            oninertiastart: function (event) {
+                self.props.toggleGrid(false);
+            }
         }).actionChecker(function (pointer, event, action, interactable, element, interaction) {
             if (action.name == 'drag') {
+                //Invalidate actions for widget content drag (users can only drag by using the toolbar)
                 if (event.target.className == 'widgetToolbar themeSecondaryColor') {
                     action.name = 'drag';
                 } else {
@@ -78,36 +104,145 @@ export default class Widget extends React.Component {
             }
             return action;
         }).origin('parent');
+
+        //Initialize widget props for Layout
+        this.setSize();
+        this.setMinSize();
+        this.setMaxSize();
+        this.setLocation();
+        this.setTransition();
+        this.setIndex();
+
+        self.props.update(self.props.id, {
+            actLeft: self.props.actLeft + self.props.cellOffset,
+            actTop: self.props.actTop + self.props.cellOffset,
+            tmpLeft: 0,
+            tmpTop: 0,
+            actWidth: self.props.actWidth,
+            actHeight: self.props.actHeight,
+            tmpWidth: 0,
+            tmpHeight: 0
+        });
+
+        //Prep Layout/Widget for drag
+        var startDrag = function () {
+            self.props.toggleGrid(true);
+            self.props.update(self.props.id, {
+                dragging: true,
+                index: 100,
+                transition: 'transform 0s, width .0s, height .0s, box-shadow .5s'
+            });
+        };
+
+        //Clean up temp variables for drag
+        var endDrag = function () {
+            if (self.props.validateHome(self.props)) {
+                self.props.update(self.props.id, {
+                    index: 1,
+                    transition: 'all .5s ease',
+                    dragging: false
+                });
+            } else {
+                self.props.update(self.props.id, {
+                    index: 1,
+                    transition: 'all .5s ease',
+                    dragging: false,
+                    tmpLeft: 0,
+                    tmpTop: 0,
+                    tmpWidth: 0,
+                    tmpHeight: 0
+                });
+            }
+            self.props.solidifyWidgets();
+        };
     }
 
-    componentDidUpdate() {
-        if (!this.state.dragging) {
-            //this.setSize(this.state.width, this.state.height);
-            //this.setLocation(this.state.xCord, this.state.yCord);
+    //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
+    componentDidUpdate(prevProps, prevState) {
+
+        if (prevProps.actWidth != this.props.actWidth || prevProps.actHeight != this.props.actHeight || prevProps.tmpWidth != this.props.tmpWidth || prevProps.tmpHeight != this.props.tmpHeight) this.setSize();
+        if (prevProps.minWidth != this.props.minWidth || prevProps.minHeight != this.props.minHeight) this.setMinSize();
+        if (prevProps.maxWidth != this.props.maxWidth || prevProps.maxWidth != this.props.maxWidth) this.setMaxSize();
+        if (prevProps.actLeft != this.props.actLeft || prevProps.actTop != this.props.actTop || prevProps.tmpLeft != this.props.tmpLeft || prevProps.tmpTop != this.props.tmpTop) this.setLocation();
+        if (prevProps.transition != this.props.transition) this.setTransition();
+        if (prevProps.index != this.props.index) this.setIndex();
+    }
+
+    setSize() {
+
+        var widget = this.refs.widgetRef,
+            width = this.props.actWidth,
+            height = this.props.actHeight;
+
+        if (this.props.tmpWidth != 0 || this.props.tmpHeight != 0) {
+            width = this.props.tmpWidth;
+            height = this.props.tmpHeight;
         }
-    }
 
-    setSize(width, height) {
-        var widget = this.refs.widgetRef;
         widget.style.width = width + "px";
         widget.style.height = height + "px";
     }
 
-    setLocation(x, y) {
+    setMinSize() {
         var widget = this.refs.widgetRef;
-        widget.style.top = y + "px";
-        widget.style.left = x + "px";
+        widget.style.minWidth = this.props.minWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
+        widget.style.minHeight = this.props.minHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+    }
+
+    setMaxSize() {
+        var widget = this.refs.widgetRef;
+        widget.style.maxWidth = this.props.maxWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
+        widget.style.maxHeight = this.props.maxHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+    }
+
+    setLocation() {
+        var widget = this.refs.widgetRef,
+            width = this.props.actLeft + this.props.tmpLeft,
+            height = this.props.actTop + this.props.tmpTop;
+        widget.style.transform = 'translate(' + width + 'px, ' + height + 'px)';
+    }
+
+    setTransition() {
+        var widget = this.refs.widgetRef;
+        widget.style.transition = this.props.transition;
+    }
+
+    setIndex() {
+        var widget = this.refs.widgetRef;
+        widget.style.zIndex = this.props.index;
+    }
+
+    debugWidget() {
+        //console.log(this.props);
     }
 
     render() {
-        if (this.props.id) return React.createElement(
-            'div',
-            { className: 'widget widgetBackground',
-                ref: 'widgetRef' },
-            React.createElement('div', { className: 'widgetToolbar themeSecondaryColor',
-                ref: 'widgetToolbarRef' }),
-            React.createElement('div', { className: 'widgetContent',
-                ref: 'widgetContentREf' })
-        );
+        var Content = this.props.content;
+        if (this.props.id) {
+            if (Content) {
+                return React.createElement(
+                    'div',
+                    { className: 'widget widgetBackground',
+                        ref: 'widgetRef' },
+                    React.createElement('div', { className: 'widgetToolbar themeSecondaryColor',
+                        ref: 'widgetToolbarRef' }),
+                    React.createElement(
+                        'div',
+                        { className: 'widgetContent' },
+                        React.createElement(Content, { refWidth: this.props.refWidth,
+                            refHeight: this.props.refHeight })
+                    )
+                );
+            } else {
+                return React.createElement(
+                    'div',
+                    { className: 'widget widgetBackground',
+                        ref: 'widgetRef' },
+                    React.createElement('div', { className: 'widgetToolbar themeSecondaryColor',
+                        ref: 'widgetToolbarRef' }),
+                    React.createElement('div', { className: 'widgetContent' })
+                );
+            }
+        }
     }
 }

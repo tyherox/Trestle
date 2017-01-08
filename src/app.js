@@ -2,12 +2,13 @@
  * Created by JohnBae on 12/1/16.
  */
 
-import React from 'react';
 import ReactDOM from 'react-dom';
 import { remote } from 'electron';
 import jetpack from 'fs-jetpack';
+import React from 'react';
 import layout from './core/LayoutProto.js';
 import decor from './core/decor.js';
+import dev from './core/dev.js';
 
 //Path to user's data based on Electron's Method
 var usrPath = remote.app.getPath('userData');
@@ -121,6 +122,9 @@ searchLayouts();
 searchThemes();
 //searchPlugins();
 
-ReactDOM.render(layout(), document.getElementById('parent'));
+
+//ReactDOM.render(dev(), document.getElementById('parent'));
+
+dev();
 
 decor.setTheme(themes[0]);

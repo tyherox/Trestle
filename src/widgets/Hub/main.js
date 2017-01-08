@@ -1,34 +1,35 @@
 /**
- * Created by JohnBae on 4/7/16.
+ * Tyherox
+ *
+ * TimeWidget
+ *
+ * The TimeWidget is a simple widget used to tell time. Expanding adds the functionality of showing seconds
  */
 
+import React from 'react';
 import ReactDOM from 'react-dom';
+import {Editor, EditorState} from 'draft-js';
 
-function Hub() {
-
-    var Widget = require('../../core/widget');
-
-    //Build widget
-    var widget = new Widget("Hub",0);
-    this.widget = widget;
-    this.pinned = true;
-
-    widget.toolbar.fixedButtons();
-
-    //Initialize Toolbar Components
-    var toolbarComponents = require("./toolbar");
-    toolbarComponents.forEach(function(button){
-        widget.toolbar.addButton(button)
-    })
-
-    //Initialize widget
-    widget.initialize();
-    widget.setMinSize(3,3);
-    widget.setMaxSize(10,10);
-
-    var editor = require('./editor.js');
-
-    ReactDOM.render(editor, widget.container);
+class Hub extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {editorState: EditorState.createEmpty()};
+        this.onChange = (editorState) => this.setState({editorState});
+    }
+    render() {
+        return <Editor editorState={this.state.editorState} onChange={this.onChange}/>
+    }
 }
 
-module.exports = new Hub();
+export default {
+    id:1,
+    refWidth: 1,
+    refHeight: 1,
+    refLeft: 0,
+    refTop: 0,
+    minWidth: 1,
+    minHeight: 1,
+    maxWidth: 2,
+    maxHeight: 2,
+    content: Hub
+};

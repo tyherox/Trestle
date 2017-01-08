@@ -1,24 +1,20 @@
 {
+  "name": "electron-boilerplate",
+  "productName": "Electron Boilerplate",
+  "description": "The Craftable Writing Program",
+  "version": "0.0.0",
+  "author": "Ryestory",
+  "homepage": "http://scribe.ryestory.com",
+  "license": "MIT",
+  "main": "app/background.js",
   "build": {
-    "appId": "com.example.electron-boilerplate",
-    "app-category-type": "your.app.category.type",
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "resources/windows/icon.ico"
-    },
-    "nsis": {
-      "oneClick": true,
-      "installerHeaderIcon": "resources/windows/setup-icon.ico"
-    },
-    "mac": {
-      "icon": "resources/osx/icon.icns"
-    },
-    "dmg": {
-      "icon": "resources/osx/dmg-icon.icns",
-      "background": "resources/osx/dmg-background.png"
-    }
+    "appId": "Scribe",
+    "asar": false,
+    "files": [
+      "app/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ]
   },
   "directories": {
     "buildResources": "resources"
@@ -41,7 +37,6 @@
     "electron": "^1.4.7",
     "electron-builder": "^8.6.0",
     "electron-mocha": "^3.0.0",
-    "fs-jetpack": "^0.9.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.2",
     "gulp-batch": "^1.0.5",
@@ -61,10 +56,10 @@
   "dependencies": {
     "babel-preset-react": "^6.11.1",
     "babelify": "^7.3.0",
-    "immutable": "^3.8.1",
-    "react": "^15.4.0",
-    "react-dom": "^15.4.0",
-    "react-redux": "^4.4.6",
-    "redux": "^3.6.0"
+    "draft-js": "^0.9.1",
+    "fs-jetpack": "^0.9.0",
+    "interact.js": "^1.2.6",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
   }
 }
