@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff8fe4dc-d3dd-46e2-b455-1ce4015171c5" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/widgetProto.js" afterPath="$PROJECT_DIR$/src/core/widgetProto.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/LayoutProto.js" afterPath="$PROJECT_DIR$/src/core/LayoutProto.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/widgets/Time/main.js" afterPath="$PROJECT_DIR$/app/widgets/Time/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tasks/build_app.js" afterPath="$PROJECT_DIR$/tasks/build_app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/core/LayoutProto.js" afterPath="$PROJECT_DIR$/app/core/LayoutProto.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/widgets/Time/main.js" afterPath="$PROJECT_DIR$/src/widgets/Time/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/themes/main.css" afterPath="$PROJECT_DIR$/app/themes/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/core/widgetProto.js" afterPath="$PROJECT_DIR$/app/core/widgetProto.js" />
     </list>
     <ignored path="Scribe.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -78,8 +70,8 @@
       <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/widgets/Time/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1189">
-              <caret line="60" column="15" lean-forward="false" selection-start-line="60" selection-start-column="15" selection-end-line="60" selection-end-column="15" />
+            <state relative-caret-position="959">
+              <caret line="55" column="17" lean-forward="true" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="e#675#840#0" expanded="false" />
@@ -412,12 +404,12 @@
       <workItem from="1483255511348" duration="17000" />
       <workItem from="1483537406896" duration="22513000" />
       <workItem from="1483693585229" duration="15836000" />
-      <workItem from="1484296390181" duration="6000" />
+      <workItem from="1484296390181" duration="99000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="193758000" />
+    <option name="totallyTimeSpent" value="193851000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="3200" height="1800" extended-state="0" />
@@ -714,6 +706,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="161">
           <caret line="27" column="28" lean-forward="false" selection-start-line="27" selection-start-column="28" selection-end-line="27" selection-end-column="28" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -785,13 +778,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
           <caret line="40" column="16" lean-forward="false" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/widgets/Time/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1189">
-          <caret line="60" column="15" lean-forward="false" selection-start-line="60" selection-start-column="15" selection-end-line="60" selection-end-column="15" />
+        <state relative-caret-position="959">
+          <caret line="55" column="17" lean-forward="true" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#675#840#0" expanded="false" />
