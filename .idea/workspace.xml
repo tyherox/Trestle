@@ -2,31 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff8fe4dc-d3dd-46e2-b455-1ce4015171c5" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/widgets/Dummy/icon.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/widgets/Dummy/portrait.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/core/dev.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/widgets/Dummy/main.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/widgets/Dummy/package.json" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/widgets/Dummy/style.css" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/package.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/widgets/Hub/main.js" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/core/LayoutProto.js" afterPath="$PROJECT_DIR$/app/core/LayoutProto.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/core/widgetProto.js" afterPath="$PROJECT_DIR$/app/core/widgetProto.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/themes/main.css" afterPath="$PROJECT_DIR$/app/themes/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/widgets/Notes/note.js" afterPath="$PROJECT_DIR$/app/widgets/Notes/note.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/widgets/Time/main.js" afterPath="$PROJECT_DIR$/app/widgets/Time/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/e2e/utils.js" afterPath="$PROJECT_DIR$/e2e/utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/app.js" afterPath="$PROJECT_DIR$/src/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/LayoutProto.js" afterPath="$PROJECT_DIR$/src/core/LayoutProto.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/core/widgetProto.js" afterPath="$PROJECT_DIR$/src/core/widgetProto.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/widgets/Hub/main.js" afterPath="$PROJECT_DIR$/src/widgets/Hub/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/widgets/Notes/note.js" afterPath="$PROJECT_DIR$/src/widgets/Notes/note.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/widgets/Time/main.js" afterPath="$PROJECT_DIR$/src/widgets/Time/main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tasks/build_app.js" afterPath="$PROJECT_DIR$/tasks/build_app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tasks/bundle.js" afterPath="$PROJECT_DIR$/tasks/bundle.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tasks/start.js" afterPath="$PROJECT_DIR$/tasks/start.js" />
     </list>
     <ignored path="Scribe.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -64,14 +48,14 @@
       <file leaf-file-name="build_app.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tasks/build_app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="21" column="17" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="17" />
+            <state relative-caret-position="443">
+              <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bundle.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="bundle.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tasks/bundle.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="180">
@@ -84,11 +68,23 @@
       <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/widgets/Hub/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="33" column="16" selection-start-line="33" selection-start-column="16" selection-end-line="33" selection-end-column="16" />
+            <state relative-caret-position="45">
+              <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
+              <folding>
+                <element signature="e#148#174#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/widgets/Time/main.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="44" column="14" selection-start-line="44" selection-start-column="14" selection-end-line="44" selection-end-column="14" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
-                <element signature="e#148#174#0" expanded="true" />
+                <element signature="e#675#840#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -97,8 +93,8 @@
       <file leaf-file-name="widgetProto.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/core/widgetProto.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="242" column="56" selection-start-line="242" selection-start-column="56" selection-end-line="242" selection-end-column="56" />
+            <state relative-caret-position="465">
+              <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
               <folding>
                 <element signature="e#202#228#0" expanded="true" />
                 <element signature="e#3851#4304#0" expanded="false" />
@@ -107,39 +103,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/widgets/Time/main.js">
+      <file leaf-file-name="LayoutProto.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/core/LayoutProto.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="2" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
+            <state relative-caret-position="150">
+              <caret line="153" column="77" selection-start-line="153" selection-start-column="77" selection-end-line="153" selection-end-column="77" />
               <folding>
-                <element signature="e#675#840#0" expanded="false" />
+                <element signature="n#!!doc" expanded="true" />
+                <element signature="e#267#293#0" expanded="true" />
+                <element signature="e#5940#11818#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/widgets/Time/main.js">
+      <file leaf-file-name="main.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/themes/main.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="31" column="44" selection-start-line="31" selection-start-column="44" selection-end-line="31" selection-end-column="44" />
+            <state relative-caret-position="305">
+              <caret line="80" column="29" selection-start-line="80" selection-start-column="29" selection-end-line="80" selection-end-column="29" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/app.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="590">
-              <caret line="127" column="2" selection-start-line="127" selection-start-column="2" selection-end-line="127" selection-end-column="2" />
-              <folding>
-                <element signature="n#!!block;n#searchWidgets#0" expanded="false" />
-                <element signature="n#!!block;n#searchLayouts#0" expanded="false" />
-                <element signature="n#!!block;n#searchThemes#0" expanded="false" />
-                <element signature="e#2132#2428#0" expanded="false" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -186,22 +169,22 @@
         <option value="$PROJECT_DIR$/src/app.js" />
         <option value="$PROJECT_DIR$/src/widgets/Dummy/package.json" />
         <option value="$PROJECT_DIR$/src/widgets/Dummy/main.js" />
-        <option value="$PROJECT_DIR$/app/themes/main.css" />
         <option value="$PROJECT_DIR$/app/package.json" />
         <option value="$PROJECT_DIR$/tasks/bundle.js" />
         <option value="$PROJECT_DIR$/tasks/start.js" />
         <option value="$PROJECT_DIR$/e2e/utils.js" />
-        <option value="$PROJECT_DIR$/src/widgets/Time/main.js" />
         <option value="$PROJECT_DIR$/app/app.html" />
-        <option value="$PROJECT_DIR$/src/core/LayoutProto.js" />
         <option value="$PROJECT_DIR$/src/core/dev.js" />
         <option value="$PROJECT_DIR$/node_modules/draft-js/package.json" />
-        <option value="$PROJECT_DIR$/src/core/widgetProto.js" />
-        <option value="$PROJECT_DIR$/tasks/build_app.js" />
         <option value="$PROJECT_DIR$/app/widgets/Hub/main.js" />
-        <option value="$PROJECT_DIR$/app/widgets/Time/main.js" />
         <option value="$PROJECT_DIR$/src/widgets/Hub/main.js" />
         <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/tasks/build_app.js" />
+        <option value="$PROJECT_DIR$/src/core/LayoutProto.js" />
+        <option value="$PROJECT_DIR$/src/core/widgetProto.js" />
+        <option value="$PROJECT_DIR$/app/themes/main.css" />
+        <option value="$PROJECT_DIR$/app/widgets/Time/main.js" />
+        <option value="$PROJECT_DIR$/src/widgets/Time/main.js" />
       </list>
     </option>
   </component>
@@ -266,7 +249,78 @@
     <panes>
       <pane id="Scratches" />
       <pane id="ProjectPane">
-        <subPane />
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="widgets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Time" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Scribe" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="widgets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
       </pane>
       <pane id="Scope" />
     </panes>
@@ -369,16 +423,16 @@
       <workItem from="1481280980050" duration="76518000" />
       <workItem from="1483255511348" duration="17000" />
       <workItem from="1483537406896" duration="22513000" />
-      <workItem from="1483693585229" duration="13264000" />
+      <workItem from="1483693585229" duration="15836000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="191180000" />
+    <option name="totallyTimeSpent" value="193752000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -558,14 +612,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/themes/main.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -692,31 +738,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/LayoutProto.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="1" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#267#293#0" expanded="true" />
-            <element signature="e#5970#11848#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="590">
-          <caret line="127" column="2" selection-start-line="127" selection-start-column="2" selection-end-line="127" selection-end-column="2" />
-          <folding>
-            <element signature="n#!!block;n#searchWidgets#0" expanded="false" />
-            <element signature="n#!!block;n#searchLayouts#0" expanded="false" />
-            <element signature="n#!!block;n#searchThemes#0" expanded="false" />
-            <element signature="e#2132#2428#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/app.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
@@ -787,54 +808,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/core/widgetProto.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="242" column="56" selection-start-line="242" selection-start-column="56" selection-end-line="242" selection-end-column="56" />
-          <folding>
-            <element signature="e#202#228#0" expanded="true" />
-            <element signature="e#3851#4304#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/widgets/Time/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="2" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
-          <folding>
-            <element signature="e#675#840#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/widgets/Time/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="31" column="44" selection-start-line="31" selection-start-column="44" selection-end-line="31" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/widgets/Hub/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="16" selection-start-line="33" selection-start-column="16" selection-end-line="33" selection-end-column="16" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#148#174#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tasks/build_app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="21" column="17" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.babelrc">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -856,6 +829,90 @@
         <state relative-caret-position="180">
           <caret line="28" column="22" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="22" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tasks/build_app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="443">
+          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/widgets/Hub/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
+          <folding>
+            <element signature="e#148#174#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="6" column="33" selection-start-line="6" selection-start-column="33" selection-end-line="6" selection-end-column="33" />
+          <folding>
+            <element signature="n#!!block;n#searchWidgets#0" expanded="false" />
+            <element signature="n#!!block;n#searchLayouts#0" expanded="false" />
+            <element signature="n#!!block;n#searchThemes#0" expanded="false" />
+            <element signature="e#2132#2428#0" expanded="false" />
+            <element signature="n#!!block;n#loadScript#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/themes/main.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="80" column="29" selection-start-line="80" selection-start-column="29" selection-end-line="80" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/widgetProto.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
+          <folding>
+            <element signature="e#202#228#0" expanded="true" />
+            <element signature="e#3851#4304#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/core/LayoutProto.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="153" column="77" selection-start-line="153" selection-start-column="77" selection-end-line="153" selection-end-column="77" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#267#293#0" expanded="true" />
+            <element signature="e#5940#11818#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/widgets/Time/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="40" column="16" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/widgets/Time/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="44" column="14" selection-start-line="44" selection-start-column="14" selection-end-line="44" selection-end-column="14" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#675#840#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

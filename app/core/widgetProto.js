@@ -228,7 +228,7 @@ export default class Widget extends React.Component {
                         ref: 'widgetToolbarRef' }),
                     React.createElement(
                         'div',
-                        { className: 'widgetContent' },
+                        { className: 'widgetContainer' },
                         React.createElement(Content, { refWidth: this.props.refWidth,
                             refHeight: this.props.refHeight })
                     )
@@ -240,7 +240,7 @@ export default class Widget extends React.Component {
                         ref: 'widgetRef' },
                     React.createElement('div', { className: 'widgetToolbar themeSecondaryColor',
                         ref: 'widgetToolbarRef' }),
-                    React.createElement('div', { className: 'widgetContent' })
+                    React.createElement('div', { className: 'widgetContainer' })
                 );
             }
         }

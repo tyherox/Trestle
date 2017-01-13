@@ -17,8 +17,6 @@ var destDir = jetpack.cwd('./app');
 gulp.task('bundle', function () {
     return Promise.all([
         bundle(srcDir.path('background.js'), destDir.path('background.js')),
-        bundle(srcDir.path('widgets/Hub/main.js'), destDir.path('widgets/Hub/main.js')),
-        bundle(srcDir.path('widgets/Time/main.js'), destDir.path('widgets/Time/main.js')),
         bundle(srcDir.path('app.js'), destDir.path('app.js'))
     ]);
 });
@@ -54,4 +52,4 @@ gulp.task('watch', function () {
     }));
 });
 
-gulp.task('build', [ 'bundle', 'environment']);
+gulp.task('build', [ 'jsxTrans','bundle', 'environment']);

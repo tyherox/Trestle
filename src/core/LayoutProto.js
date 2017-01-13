@@ -156,7 +156,6 @@ export default class Layout extends React.Component{
                 }
             }
         }
-        console.log("VALID");
         return true;
     }
 

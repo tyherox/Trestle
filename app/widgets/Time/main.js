@@ -1,9 +1,3 @@
-(function () {'use strict';
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var React = _interopDefault(require('react'));
-
 /**
  * Tyherox
  *
@@ -11,6 +5,8 @@ var React = _interopDefault(require('react'));
  *
  * The TimeWidget is a simple widget used to tell time. Expanding adds the functionality of showing seconds
  */
+
+import React from 'react';
 
 class Time extends React.Component {
 
@@ -44,6 +40,7 @@ class Time extends React.Component {
             self.tick();
         }, 500);
     }
+
     render() {
         return React.createElement(
             "div",
@@ -53,7 +50,7 @@ class Time extends React.Component {
     }
 }
 
-var main = {
+export default {
     id: 2,
     refWidth: 1,
     refHeight: 1,
@@ -65,7 +62,3 @@ var main = {
     maxHeight: 2,
     content: Time
 };
-
-module.exports = main;
-}());
-//# sourceMappingURL=main.js.map

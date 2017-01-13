@@ -86,12 +86,13 @@ body{
 
 .widgetContainer {
     width:calc(100% - 2px);
-    height: calc(100% - 27px);
+    height: calc(100% - 26px);
     margin-right: 1px;
     margin-left: 1px;
     margin-bot: 1px;
-    overflow: auto;
     overflow-x:hidden;
+    overflow-y: scroll;
+    background-color: red;
 }
 
 .widgetToolbar {

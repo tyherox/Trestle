@@ -240,7 +240,7 @@ export default class Widget extends React.Component{
                         <div className = 'widgetToolbar themeSecondaryColor'
                              ref="widgetToolbarRef">
                         </div>
-                        <div className = 'widgetContent'>
+                        <div className = 'widgetContainer'>
                             {<Content refWidth = {this.props.refWidth}
                                       refHeight = {this.props.refHeight}/>}
                         </div>
@@ -254,7 +254,7 @@ export default class Widget extends React.Component{
                         <div className = 'widgetToolbar themeSecondaryColor'
                              ref="widgetToolbarRef">
                         </div>
-                        <div className = 'widgetContent'>
+                        <div className = 'widgetContainer'>
                         </div>
                     </div>
                 )

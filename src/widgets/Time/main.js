@@ -41,6 +41,7 @@ class Time extends React.Component{
             self.tick();
         }, 500);
     }
+
     render() {
         return (
             <div id= "time" ref = 'time'>{this.state.time}</div>
