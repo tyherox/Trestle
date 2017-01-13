@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff8fe4dc-d3dd-46e2-b455-1ce4015171c5" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/widgets/Time/main.js" afterPath="$PROJECT_DIR$/src/widgets/Time/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Scribe.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -67,7 +68,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/widgets/Time/main.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1235">
@@ -75,6 +76,16 @@
               <folding>
                 <element signature="e#675#840#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="782">
+              <caret line="17" column="9" lean-forward="true" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -174,6 +185,7 @@
         <option value="$PROJECT_DIR$/app/themes/main.css" />
         <option value="$PROJECT_DIR$/app/widgets/Time/main.js" />
         <option value="$PROJECT_DIR$/src/widgets/Time/main.js" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -422,12 +434,12 @@
       <workItem from="1483693585229" duration="15836000" />
       <workItem from="1484296390181" duration="178000" />
       <workItem from="1484296805479" duration="34000" />
-      <workItem from="1484296993949" duration="7000" />
+      <workItem from="1484296993949" duration="225000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="193979000" />
+    <option name="totallyTimeSpent" value="194197000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-16" y="-16" width="3077" height="1832" extended-state="6" />
@@ -492,7 +504,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/core/style/coreStyle.css" />
     <entry file="file://$PROJECT_DIR$/src/core/core.less" />
     <entry file="file://$PROJECT_DIR$/src/widgets/Hub/editor.js">
       <provider selected="true" editor-type-id="text-editor">
@@ -795,6 +806,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
           <caret line="40" column="16" lean-forward="false" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -805,6 +819,14 @@
           <folding>
             <element signature="e#675#840#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="782">
+          <caret line="17" column="9" lean-forward="true" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
+          <folding />
         </state>
       </provider>
     </entry>
