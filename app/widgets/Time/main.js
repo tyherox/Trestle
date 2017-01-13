@@ -58,7 +58,7 @@ export default {
     refTop: 0,
     minWidth: 1,
     minHeight: 1,
-    maxWidth: 2,
+    maxWidth: 5,
     maxHeight: 2,
     content: Time
 };
