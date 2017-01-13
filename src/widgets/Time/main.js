@@ -59,6 +59,6 @@ export default {
     minWidth: 1,
     minHeight: 1,
     maxWidth: 2,
-    maxHeight: 2,
+    maxHeight: 5,
     content: Time
 };
