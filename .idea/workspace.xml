@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff8fe4dc-d3dd-46e2-b455-1ce4015171c5" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/widgets/Time/main.js" afterPath="$PROJECT_DIR$/src/widgets/Time/main.js" />
     </list>
     <ignored path="Scribe.iws" />
@@ -230,7 +229,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -321,6 +319,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -423,11 +422,12 @@
       <workItem from="1483693585229" duration="15836000" />
       <workItem from="1484296390181" duration="178000" />
       <workItem from="1484296805479" duration="34000" />
+      <workItem from="1484296993949" duration="7000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="193972000" />
+    <option name="totallyTimeSpent" value="193979000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-16" y="-16" width="3077" height="1832" extended-state="6" />
@@ -795,9 +795,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="290">
           <caret line="40" column="16" lean-forward="false" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
