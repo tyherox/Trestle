@@ -1,14 +1,12 @@
 'use strict';
 
 var gulp = require('gulp');
-var babel = require("gulp-babel");
-var less = require('gulp-less');
 var watch = require('gulp-watch');
 var batch = require('gulp-batch');
-var plumber = require('gulp-plumber');
 var jetpack = require('fs-jetpack');
 var bundle = require('./bundle');
 var utils = require('./utils');
+var concat = require('gulp-concat')
 
 var projectDir = jetpack;
 var srcDir = jetpack.cwd('./src');
@@ -21,18 +19,18 @@ gulp.task('bundle', function () {
     ]);
 });
 
-var jsxTrans = function(){
-    return gulp.src(["./src/**/*.js","!./src/*.js"])
-        .pipe(babel())
-        .pipe(gulp.dest(destDir.path('.'), {overwrite: false}));
-}
-gulp.task('jsxTrans', jsxTrans)
+gulp.task('css', function
+    () {
+    return gulp.src('src/**/*.css')
+        .pipe(concat('style.css'))
+        .pipe(gulp.dest(destDir.path('themes'), {overwrite: true}))
+})
 
 gulp.task('environment', function () {
     var configFile = 'config/env_' + utils.getEnvName() + '.json';
     projectDir.copy(configFile, destDir.path('env.json'), { overwrite: true });
 });
-;
+
 gulp.task('watch', function () {
     var beepOnError = function (done) {
         return function (err) {
@@ -44,12 +42,11 @@ gulp.task('watch', function () {
     };
 
     watch('src/**/*.js', batch(function (events, done) {
-        gulp.start('jsxTrans', beepOnError(done));
         gulp.start('bundle', beepOnError(done));
     }));
-    watch('src/**/*.less', batch(function (events, done) {
-        gulp.start('less', beepOnError(done));
+    watch('src/**/*.css', batch(function (events, done) {
+        gulp.start('css', beepOnError(done));
     }));
 });
 
-gulp.task('build', [ 'jsxTrans','bundle', 'environment']);
+gulp.task('build', ['css','bundle', 'environment']);

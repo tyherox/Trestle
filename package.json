@@ -35,31 +35,33 @@
     "babel-plugin-transform-react-jsx": "^6.8.0",
     "chai": "^3.5.0",
     "electron": "^1.4.7",
-    "electron-builder": "^8.6.0",
+    "electron-builder": "^11.7.0",
     "electron-mocha": "^3.0.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^6.1.2",
     "gulp-batch": "^1.0.5",
+    "gulp-concat": "^2.6.1",
     "gulp-less": "^3.0.3",
     "gulp-plumber": "^1.1.0",
     "gulp-util": "^3.0.6",
     "gulp-watch": "^4.3.5",
     "istanbul": "^0.4.3",
     "mocha": "^3.0.2",
-    "rollup": "^0.34.7",
+    "rollup": "^0.41.4",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-istanbul": "^1.1.0",
     "source-map-support": "^0.4.2",
     "spectron": "^3.3.0",
-    "yargs": "^4.2.0"
+    "yargs": "^6.6.0"
   },
   "dependencies": {
     "babel-preset-react": "^6.11.1",
     "babelify": "^7.3.0",
-    "draft-js": "^0.9.1",
-    "fs-jetpack": "^0.9.0",
+    "draft-js": "^0.10.0",
+    "fs-jetpack": "^0.10.5",
     "interact.js": "^1.2.6",
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "react-draft-wysiwyg": "^1.5.8"
   }
 }

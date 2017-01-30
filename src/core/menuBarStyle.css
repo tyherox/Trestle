@@ -1,0 +1,158 @@
+#menuBar{
+    z-index: 10;
+
+    display: block;
+    position:absolute;
+
+    top: 0;
+    left: 0px;
+    width: 40px;
+    height: 100%;
+    background-color: gray;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+#menuBar-overlay{
+    position: absolute;
+    top:0;
+    left:0;
+    background-color: transparent;
+    overflow: visible;
+}
+
+#menuBar-top{
+    position: absolute;
+    top: 0;
+}
+
+#menuBar-bot{
+    position: absolute;
+    bottom: 0;
+}
+
+#menuBar-subMenu{
+    position:absolute;
+    top:0;
+    left:40px;
+    height: 100%;
+    background-color: darkgray;
+}
+
+.subMenu{
+    height: calc(100% - 20px);
+    margin: 10px;;
+}
+
+.subMenu h1{
+    font-size: 175%;
+    height:38px;
+    margin: 0;
+    line-height: 38px;
+}
+
+.subMenu-settings{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:15px;
+    width: calc(100% - 30px);
+    height: calc(100% - 45px);
+}
+
+.subMenu-list{
+    margin-bottom: 10px;
+}
+
+.subMenu-listLabel{
+}
+
+.subMenu-listInput{
+    margin-right: 10px;
+}
+
+input[type="checkbox"].subMenu-listInput{
+    width: 1em; /*Desired width*/
+    height: 1em; /*Desired height*/
+}
+
+input[type="number"].subMenu-listInput{
+    width: 2em; /*Desired width*/
+    margin-left: 10px;
+}
+
+.subMenu-defaultButton.rye-button{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.subMenu-display{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:0px;
+    width:100%;
+    height: calc(100% - 45px);
+    overflow: scroll;
+}
+
+.subMenu-displayScroll{
+}
+
+.subMenu-collapsiblePane-item{
+    position: relative;
+    display: block;
+
+    width: 100%;
+    height: 200px;
+}
+
+.subMenu-files-toolbar{
+    margin-bottom: 15px;
+}
+
+.subMenu-files{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:0px;
+    width:100%;
+    height: calc(100% - 100px);
+    overflow: scroll;
+}
+
+.subMenu-filesScroll{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:0px;
+    width:100%;
+    height: calc(100% - 50px);
+    overflow: scroll;
+}
+
+.exampleFile{
+    width:100%;
+    height:25px;
+    background: snow;
+    margin-bottom: 5px;
+}
+
+.subMenu-files-botTools{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+}
+
+.botTool{
+    position: relative;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    margin-left: 5px;
+}

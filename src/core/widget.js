@@ -3,211 +3,38 @@
  *
  * Widget
  *
- * The widget class is the template for all widgets of Scribe. It includes the container to place custom content
- * as well as a means to be arranged upon the Layout module.
- *
- * @param name: Name of widget that will appear on the toolbar.
- * @param id: Id of widget that will be used as a unique identifier.
- * @param content: The custom content to be placed in the widget.
- * @constructor
+ * The widget class is the template for all widgets of Scribe. It includes the container to place custom content and
+ * means to be arranged upon the Layout module.
  */
 
-(function Widget(name, id, content){
 
-    var decor = require('./decor');
-    var interact = require("interact.js/dist/interact.js");
+import React from 'react';
+import Interact from 'interact.js';
 
-    //Reference to self
-    var self =  this;
-    var config = null;
+export default class Widget extends React.Component{
 
-    //Widget State Variables
-    this.name = name;
-    this.id = id;
-    this.content = content;
-
-    this.column = 0;
-    this.row = 0;
-
-    this.width = 0;
-    this.height =0;
-    this.maxWidth =  2;
-    this.maxHeight =  2;
-    this.minWidth =  1;
-    this.minHeight =  1;
-
-    this.homeRect = null;
-    this.pushing = false;
-    this.resetting = false;
-    this.pushedCol = 0;
-    this.pushedRow = 0;
-    this.resizeListener = null;
-    this.endFunctions = [];
-
-    this.pinned = false;
-
-    this.setLocation = function(c,r){
-
-        this.column = c;
-        this.row = r;
-
-        self.element.style.left =  self.element.getBoundingClientRect().left + "px";
-        self.element.style.top = self.element.getBoundingClientRect().top + "px";
-
-        var x = Layout.findX(c) - self.element.getBoundingClientRect().left;
-        var y = Layout.findY(r) - self.element.getBoundingClientRect().top;
-
-        self.element.setAttribute('data-x', x);
-        self.element.setAttribute('data-y', y);
-
-        self.element.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
-    };
-
-    this.setSize = function(w,h){
-        this.width = w;
-        this.height = h;
-
-        self.element.style.width =  (Layout.cellWidth + Layout.cellOffset) * this.width - Layout.cellOffset + "px";
-        self.element.style.height = (Layout.cellHeight + Layout.cellOffset) * this.height - Layout.cellOffset + "px";
-    };
-
-    this.setMinSize = function(w,h){
-        this.minWidth = w;
-        this.minHeight = h;
-
-        self.element.style.minWidth =  (Layout.cellWidth + Layout.cellOffset) * this.minWidth - Layout.cellOffset + "px";
-        self.element.style.minHeight = (Layout.cellHeight + Layout.cellOffset) * this.minHeight - Layout.cellOffset + "px";
-    };
-
-    this.setMaxSize = function(w,h){
-        this.maxWidth = w;
-        this.maxHeight = h;
-
-        self.element.style.maxWidth =  (Layout.cellWidth + Layout.cellOffset) * this.maxWidth - Layout.cellOffset + "px";
-        self.element.style.maxHeight = (Layout.cellHeight + Layout.cellOffset) * this.maxHeight - Layout.cellOffset + "px";
-    };
-
-    this.exit = function(){
-        console.debug("END FUNCTIONS",self.endFunctions.length);
-        self.endFunctions.forEach(function(fun){
-            fun();
-        });
-        Layout.removeWidget(self.element);
-    };
-
-    /**
-     * Toolbar
-     *
-     * Constructs the toolbar for widgets. Has pin and exit buttons that can be included by using the function
-     * addButton(toolbar.pin) or addButton(toolbar.exit).
-     *
-     * @constructor
-     */
-
-    function Toolbar(){
-
-        var buttons = [];
-
-        var element = document.createElement("div")
-        this.element = element;
-        this.element.className = "widgetToolbar";
-
-        var expandBtn = document.createElement('button');
-        decor.setIcon(expandBtn,'leftButton.png');
-        expandBtn.className = 'widgetToolbarButtons';
-        expandBtn.addEventListener('click',function(){
-            if(expandBtn.expanded==false||expandBtn.expanded==null){
-                console.debug("EXPANDING");
-                for(var i = 0; i<buttons.length; i++){
-                    buttons[i].style.display = 'inline';
-                }
-                expandBtn.expanded=true;
-            }
-            else{
-                console.debug("COllAPSING");
-                for(var i = 0; i<buttons.length; i++){
-                    buttons[i].style.display = 'none';
-                }
-                expandBtn.expanded=false;
-            }
-        });
-        element.appendChild(expandBtn);
-
-        var title = document.createElement('div');
-        this.title = title;
-        title.className = 'widgetToolbarTitle';
-        //title.textContent = self.name;
-        element.appendChild(title);
-
-        this.pin = function(){
-            var button = document.createElement("button");
-            decor.setIcon(button,"pinButton.png");
-            button.addEventListener("click", function(){
-                if(button.pinned == false || button.pinned == null){
-                    self.pinned = true;
-                    button.pinned = true;
-                    button.style.opacity = '1';
-                }
-                else{
-                    self.pinned = false;
-                    button.pinned = false;
-                    button.style.opacity = '.3';
-                }
-            });
-            button.style.opacity = '.5';
-            button.className = "widgetToolbarButtons";
-            return button;
-        };
-
-        this.exit = function(){
-            var button = document.createElement("button");
-            decor.setIcon(button,'exitButton.png');
-            button.addEventListener("click", self.exit);
-            button.className = "widgetToolbarButtons";
-            return button;
-        };
-
-        this.addButton = function(button){
-            element.appendChild(button);
-            buttons.push(button);
-        };
-
-        this.fixedButtons = function(){
-            element.removeChild(expandBtn);
-            for(var i = 0; i<buttons.length; i++){
-                buttons[i].style.display = 'inline';
-            }
-        }
-
-        this.expandButtons = function(){
-            for(var i = 0; i<buttons.length; i++){
-                buttons[i].style.display = 'none';
-            }
-        }
+    constructor(props){
+        super(props);
     }
-    this.toolbar = new Toolbar();
 
-    /**
-     * Widget.Interact
-     *
-     * Using the MIT licensed library Interact.js (http://interactjs.io) this functions allows the widgets to be dragged.
-     * The logic from widget intersections is handled by the Layout module. Different Interact functions can be used
-     * by applying a custom Interact function to the widget.
-     *
-     * @returns {*|{x, y}}: Returns the Interact.js object interactable.
-     */
-    this.interact  = function(){
-        var widget_interact = interact(this.element,{preventDefault: 'never'})
+    componentDidMount(){
+
+        var self = this, widget = self.refs.widgetRef;
+
+        //Initialize Drag Module for Widget
+        Interact(widget)
             .draggable({
-                inertia:true,
+                inertia: {
+                    minSpeed: Infinity,
+                },
                 snap: {
                     targets: [
-                        interact.createSnapGrid({ x: Layout.cellWidth+Layout.cellOffset, y: Layout.cellHeight+Layout.cellOffset })
+                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight})
                     ],
-                    offset: { x: 2, y: 2 },
+                    offset: { x: self.props.cellOffset, y: self.props.cellOffset },
                     range: Infinity,
-                    relativePoints: [ { x: 0, y: 0 } ],
-                    endOnly: true
+                    endOnly: true,
+                    relativePoints: [ { x: 0, y: 0 } ]
                 },
                 restrict: {
                     restriction: 'parent',
@@ -215,249 +42,231 @@
                     endOnly: true
                 },
                 onstart: function(event){
-
-                    Layout.reset();
-                    Layout.setCollider(event.target);
-
-                    var target = event.target;
-
-                    var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                    var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-                    target.setAttribute("data-start_x", x);
-                    target.setAttribute("data-start_y", y);
-
-                    target.style.transition =  "all 0s ease ";
-                    target.style.zIndex = 10;
-
-                    Layout.toggle(true);
+                    startDrag();
                 },
-                onmove: function(event) {
-                    dragMoveListener(event);
+                onmove: function(event){
+                    self.props.update(self.props.id, {
+                        tmpLeft: (self.props.tmpLeft + event.dx),
+                        tmpTop: (self.props.tmpTop + event.dy),
+                        refTop: Math.round(self.props.actTop/self.props.gridHeight),
+                        refLeft: Math.round(self.props.actLeft/self.props.gridWidth)
+                    });
+                    //self.props.collisionDetect(self.props.id);
                 },
-                onend: function (event) {
-                    var target = event.target;
-
-                    var viewportOffset = target.getBoundingClientRect();
-                    var y = viewportOffset.top || 0;
-                    var x = viewportOffset.left || 0;
-
-                    target.style.transition =  "all .5s ease";
-                    target.style.zIndex = 1;
-
-                    if(!Layout.isValidHome(target)){
-                        var x = target.getAttribute("data-start_x");
-                        var y = target.getAttribute("data-start_y");
-
-                        target.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
-
-                        target.setAttribute('data-x', x);
-                        target.setAttribute('data-y', y);
-                    }
-
-                    Layout.reset();
-
+                onend: function(){
+                    endDrag();
+                },
+                oninertiastart: function(event){
+                    self.props.toggleGrid(false);
                 }
-            })
-            .on("draginertiastart", function(event){
-                Layout.toggle(false);
             })
             .resizable({
                 invert: 'none',
-                inertia:true,
+                inertia: {
+                    minSpeed: Infinity
+                },
                 square: false,
                 preserveAspectRatio: false,
                 edges: { left: false, right: true, bottom: true, top: false },
                 snap: {
                     targets: [
-                        interact.createSnapGrid({ x: Layout.cellWidth+Layout.cellOffset, y: Layout.cellHeight+Layout.cellOffset })
+                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight})
                     ],
-                    offset: { x: 2, y: 2 },
+                    offset: { x: self.props.cellOffset, y: self.props.cellOffset},
                     range: Infinity,
                     relativePoints: [ { x: 0, y: 0 } ],
                     endOnly: true
                 },
                 restrict: {
-                    restriction: document.getElementById("grid"),
+                    restriction: 'parent',
                     endOnly: true
                 },
                 onstart: function(event){
-
-                    var target = event.target;
-
-                    Layout.reset();
-                    Layout.setCollider(target);
-
-                    target.setAttribute("data-start_width", event.rect.width);
-                    target.setAttribute("data-start_height", event.rect.height);
-
-                    target.style.webkitTransition =  "all 0s ease";
-
-                    Layout.toggle(true);
+                    startDrag();
                 },
                 onmove: function(event){
-                    dragResizeListener(event);
+                    var width = event.rect.width,
+                        height = event.rect.height,
+                        gWidth = self.props.gridWidth,
+                        gHeight = self.props.gridHeight,
+                        offset = self.props.cellOffset * 2;
+
+                    if(width<=0) width = gWidth - offset;
+                    else if(width>self.props.maxWidth * gWidth - offset) width = self.props.maxWidth * gWidth - offset;
+
+                    if(height<=0) height = gHeight - offset;
+                    else if(height>self.props.maxHeight * gHeight - offset) height = self.props.maxHeight * gHeight - offset;
+
+                    self.props.update(self.props.id,{
+                        tmpWidth: width,
+                        tmpHeight: height,
+                        refWidth: Math.ceil(width/self.props.gridWidth),
+                        refHeight: Math.ceil(height/self.props.gridHeight)
+                    });
+                    //self.props.collisionDetect(self.props.id);
                 },
                 onend: function(event){
-                    var target = event.target;
-
-                    target.style.webkitTransition =  "all 0.5s ease";
-
-                    if(!Layout.isValidHome(target)){
-                        var width = target.getAttribute("data-start_width");
-                        var height = target.getAttribute("data-start_height");
-
-                        target.style.width  = width + 'px';
-                        target.style.height = height + 'px';
-                    }
-
-                    Layout.reset();
+                    endDrag();
+                },
+                oninertiastart: function(event){
+                    self.props.toggleGrid(false);
                 }
             })
-            .on("resizeinertiastart", function(event){
-                Layout.toggle(false);
-            })
-            .actionChecker(function (pointer, event, action, interactable, element, interaction) {
+            .actionChecker(function (pointer, event, action) {
                 if(action.name=='drag'){
-                    if(event.target.className == 'widgetToolbar' || event.target.className == 'widgetToolbarTitle'){
+                    //Invalidate actions for widget content drag (users can only drag by using the toolbar)
+                    if(event.target.className == 'widgetToolbar themeSecondaryColor'){
                         action.name = 'drag';
                     }
                     else{
                         return null;
                     }
                 }
-                else if(action.name=='resize'){
-                }
                 return action;
             })
             .origin('parent');
 
-        var dragResizeListener = function(event){
-            var target = event.target,
-                x = (parseFloat(target.getAttribute('data-x')) || 0),
-                y = (parseFloat(target.getAttribute('data-y')) || 0);
+        //Initialize widget props for Layout
+        this.setSize();
+        this.setMinSize();
+        this.setMaxSize();
+        this.setLocation();
+        this.setTransition();
+        this.setIndex();
 
-            target.style.width  = event.rect.width + 'px';
-            target.style.height = event.rect.height + 'px';
+        self.props.update(self.props.id,{
+            actLeft: (self.props.actLeft + self.props.cellOffset),
+            actTop: (self.props.actTop + self.props.cellOffset),
+            tmpLeft: 0,
+            tmpTop: 0,
+            actWidth: self.props.actWidth,
+            actHeight: self.props.actHeight,
+            tmpWidth: 0,
+            tmpHeight: 0
+        });
 
-            if(event.rect.width>Layout.cellWidth-Layout.cellOffset){
-                x += event.deltaRect.left;
-            }
-            if(event.rect.height>Layout.cellHeight-Layout.cellOffset){
-                y += event.deltaRect.top;
-            }
-            target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-
-            Layout.dragWidget(target);
-            Layout.freePushed();
-
-            target.setAttribute('data-x', x);
-            target.setAttribute('data-y', y);
-
-            if(Layout.findWidget(target.id).resizeListener!=null) Layout.findWidget(target.id).resizeListener();
-        };
-
-        var dragMoveListener = function(event) {
-
-            var target = event.target,
-                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-            target.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
-
-            target.setAttribute('data-x', x);
-            target.setAttribute('data-y', y);
-
-            if(event.velocityX<750&&event.velocityY<750){
-                Layout.dragWidget(target);
-            }
-            Layout.freePushed();
-        };
-
-        return widget_interact;
-    };
-
-    /**
-     *Widget.ScrollTo
-     *
-     * Allows the widget to smooth scroll to a specific area.
-     * @type {boolean}
-     */
-    //var scrolling = false;
-    /*this.scrollTo = function(to, duration, element){
-
-        function scroll(){
-            if(!scrolling && to!=element.scrollTop){
-                scrolling = true;
-                var start = element.scrollTop,
-                    change = to - start,
-                    currentTime = 0,
-                    increment = 20;
-
-                var animateScroll = function(){
-                    currentTime += increment;
-                    var val = Math.easeInOutQuad(currentTime, start, change, duration);
-                    element.scrollTop = val;
-                    if(currentTime < duration) {
-                        setTimeout(animateScroll, increment);
-                    }
-                    else{
-                        scrolling = false;
-                    }
-                };
-                animateScroll();
-            }
+        //Prep Layout/Widget for drag
+        var startDrag = function(){
+            self.props.toggleGrid(true);
+            self.props.update(self.props.id,{
+                dragging: true,
+                index: 100,
+                transition: 'transform 0s, width .0s, height .0s, box-shadow .5s'
+            });
         }
 
-        Math.easeInOutQuad = function (t, b, c, d) {
-            t /= d/2;
-            if (t < 1) return c/2*t*t + b;
-            t--;
-            return -c/2 * (t*(t-2) - 1) + b;
-        };
-        scroll();
+        //Clean up temp variables for drag
+        var endDrag = function(){
+            if(self.props.validateHome(self.props)){
+                self.props.update(self.props.id,{
+                    index: 1,
+                    transition: 'all .5s ease',
+                    dragging: false,
+                });
+            }
+            else{
+                self.props.update(self.props.id,{
+                    index: 1,
+                    transition: 'all .5s ease',
+                    dragging: false,
+                    tmpLeft: 0,
+                    tmpTop: 0,
+                    tmpWidth: 0,
+                    tmpHeight: 0
+                });
+            }
+            self.props.solidifyWidgets();
+        }
+
     }
 
-    /**
-     * Widget.initialize
-     *
-     * Applies the given attributes to the widget and creates the appropriate HTML element which can be accessed
-     * with widget.element.
-     */
+    //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
+    componentDidUpdate(prevProps, prevState){
 
-    this.initialize = function(json){
+        if(prevProps.actWidth != this.props.actWidth || prevProps.actHeight != this.props.actHeight ||
+            prevProps.tmpWidth != this.props.tmpWidth || prevProps.tmpHeight != this.props.tmpHeight ) this.setSize();
+        if(prevProps.minWidth != this.props.minWidth || prevProps.minHeight != this.props.minHeight) this.setMinSize();
+        if(prevProps.maxWidth != this.props.maxWidth || prevProps.maxWidth != this.props.maxWidth) this.setMaxSize();
+        if(prevProps.actLeft != this.props.actLeft || prevProps.actTop != this.props.actTop ||
+            prevProps.tmpLeft != this.props.tmpLeft || prevProps.tmpTop != this.props.tmpTop ) this.setLocation();
+        if(prevProps.transition != this.props.transition) this.setTransition();
+        if(prevProps.index != this.props.index) this.setIndex();
 
-        //if(json!=null) config = require(json);
+    }
 
-        var widgetElement = document.createElement("div");
-        self.element = widgetElement;
-        widgetElement.id = this.id;
-        widgetElement.className = "widget widgetBackground";
+    setSize(){
 
-        widgetElement.style.width =  (Layout.cellWidth + Layout.cellOffset) * this.width - Layout.cellOffset + "px";
-        widgetElement.style.height = (Layout.cellHeight + Layout.cellOffset) * this.height - Layout.cellOffset + "px";
+        var widget = this.refs.widgetRef,
+            width = this.props.actWidth,
+            height = this.props.actHeight;
 
-        widgetElement.style.maxWidth =  (Layout.cellWidth + Layout.cellOffset) * this.maxWidth - Layout.cellOffset + "px";
-        widgetElement.style.maxHeight = (Layout.cellHeight + Layout.cellOffset) * this.maxHeight - Layout.cellOffset + "px";
+        if(this.props.tmpWidth != 0 || this.props.tmpHeight != 0){
+            width = this.props.tmpWidth;
+            height = this.props.tmpHeight;
+        }
 
-        widgetElement.style.minWidth =  (Layout.cellWidth + Layout.cellOffset) * this.minWidth - Layout.cellOffset + "px";
-        widgetElement.style.minHeight = (Layout.cellHeight + Layout.cellOffset) * this.minHeight - Layout.cellOffset + "px";
+        widget.style.width = width + "px";
+        widget.style.height = height + "px";
+    }
 
-        widgetElement.appendChild(this.toolbar.element);
+    setMinSize(){
+        var widget = this.refs.widgetRef;
+        widget.style.minWidth = this.props.minWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
+        widget.style.minHeight = this.props.minHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+    }
 
-        var container = document.createElement('div');
-        container.className = 'widgetContainer';
-        self.container = container;
-        widgetElement.appendChild(container);
+    setMaxSize(){
+        var widget = this.refs.widgetRef;
+        widget.style.maxWidth = this.props.maxWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
+        widget.style.maxHeight = this.props.maxHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+    }
 
-        if(content!=null) container.appendChild(this.content);
+    setLocation(){
+        var widget = this.refs.widgetRef,
+            width = this.props.actLeft + this.props.tmpLeft,
+            height = this.props.actTop  + this.props.tmpTop;
+        widget.style.transform = 'translate(' + width + 'px, ' + height + 'px)';
+    }
 
-        self.interact();
-    };
+    setTransition(){
+        var widget = this.refs.widgetRef;
+        widget.style.transition = this.props.transition;
+    }
 
-    this.removed = null
+    setIndex(){
+        var widget = this.refs.widgetRef;
+        widget.style.zIndex = this.props.index;
+    }
 
-    this.appeded = null;
-
-    module.exports = Widget;
-})()
+    render(){
+        var Content = this.props.content;
+        if(this.props.id){
+            if(Content){
+                return(
+                    <div className = 'widget widgetBackground'
+                         ref = 'widgetRef'>
+                        <div className = 'widgetToolbar themeSecondaryColor'
+                             ref="widgetToolbarRef">
+                        </div>
+                        <div className = 'widgetContainer'>
+                            <Content refWidth = {this.props.refWidth}
+                                      refHeight = {this.props.refHeight}/>
+                        </div>
+                    </div>
+                )
+            }
+            else{
+                return(
+                    <div className = 'widget widgetBackground'
+                         ref = 'widgetRef'>
+                        <div className = 'widgetToolbar themeSecondaryColor'
+                             ref="widgetToolbarRef">
+                        </div>
+                        <div className = 'widgetContainer'>
+                        </div>
+                    </div>
+                )
+            }
+        }
+    }
+}

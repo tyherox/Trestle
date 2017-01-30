@@ -1,0 +1,30 @@
+.rye-input{
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.rye-inputText{
+    display: inline-block;
+    position: relative;
+    width: 150px;
+    left: 0;
+}
+
+.rye-inputText:hover{
+    cursor: default;
+}
+
+.rye-inputArea{
+    position: absolute;
+    top: 0;
+    right:0;
+}
+
+input[type="checkbox"].rye-inputArea{
+    width: 1em; /*Desired width*/
+    height: 1em; /*Desired height*/
+}
+
+input[type="number"].rye-inputArea{
+    width: 3em; /*Desired width*/
+}

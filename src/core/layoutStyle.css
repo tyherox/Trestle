@@ -1,0 +1,29 @@
+#layout{
+    height: 100%;
+    width: 100%;
+}
+
+#gridContainer{
+    display: block;
+    position:absolute;
+
+    top: 0;
+    left: 40px;
+    width: calc(100% - 80px);
+    height: 100%;
+    color: ghostwhite;
+}
+
+#grid{
+    display: block;
+    position:absolute;
+    overflow:hidden;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    color: black;
+    -webkit-transition: all .5s ease;
+}

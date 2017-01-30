@@ -1,0 +1,1199 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica;
+}
+
+body{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#parent{
+    display: block;
+    position:absolute;
+    overflow:scroll;
+
+    height:100%;
+    width:100%;
+
+    border: none;
+    -webkit-user-select: none;
+}
+
+.inputField{
+    padding-left: 5px;
+    padding-right: 5px;
+
+    border: none;
+
+    height: 25px;
+    width: 100%;
+    outline: none;
+
+    color: yellow
+}
+
+.inputField:focus {
+    box-shadow: 0 0 5px #536DFE;
+}
+
+/*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */
+
+/**
+ * 1. Change the default font family in all browsers (opinionated).
+ * 2. Correct the line height in all browsers.
+ * 3. Prevent adjustments of font size after orientation changes in
+ *    IE on Windows Phone and in iOS.
+ */
+
+/* Document
+   ========================================================================== */
+
+html {
+    font-family: sans-serif; /* 1 */
+    line-height: 1.15; /* 2 */
+    -ms-text-size-adjust: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 3 */
+}
+
+/* Sections
+   ========================================================================== */
+
+/**
+ * Remove the margin in all browsers (opinionated).
+ */
+
+body {
+    margin: 0;
+}
+
+/**
+ * Add the correct display in IE 9-.
+ */
+
+article,
+aside,
+footer,
+header,
+nav,
+section {
+    display: block;
+}
+
+/**
+ * Correct the font size and margin on `h1` elements within `section` and
+ * `article` contexts in Chrome, Firefox, and Safari.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+/* Grouping content
+   ========================================================================== */
+
+/**
+ * Add the correct display in IE 9-.
+ * 1. Add the correct display in IE.
+ */
+
+figcaption,
+figure,
+main { /* 1 */
+    display: block;
+}
+
+/**
+ * Add the correct margin in IE 8.
+ */
+
+figure {
+    margin: 1em 40px;
+}
+
+/**
+ * 1. Add the correct box sizing in Firefox.
+ * 2. Show the overflow in Edge and IE.
+ */
+
+hr {
+    box-sizing: content-box; /* 1 */
+    height: 0; /* 1 */
+    overflow: visible; /* 2 */
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+
+pre {
+    font-family: monospace, monospace; /* 1 */
+    font-size: 1em; /* 2 */
+}
+
+/* Text-level semantics
+   ========================================================================== */
+
+/**
+ * 1. Remove the gray background on active links in IE 10.
+ * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.
+ */
+
+a {
+    background-color: transparent; /* 1 */
+    -webkit-text-decoration-skip: objects; /* 2 */
+}
+
+/**
+ * Remove the outline on focused links when they are also active or hovered
+ * in all browsers (opinionated).
+ */
+
+a:active,
+a:hover {
+    outline-width: 0;
+}
+
+/**
+ * 1. Remove the bottom border in Firefox 39-.
+ * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+ */
+
+abbr[title] {
+    border-bottom: none; /* 1 */
+    text-decoration: underline; /* 2 */
+    text-decoration: underline dotted; /* 2 */
+}
+
+/**
+ * Prevent the duplicate application of `bolder` by the next rule in Safari 6.
+ */
+
+b,
+strong {
+    font-weight: inherit;
+}
+
+/**
+ * Add the correct font weight in Chrome, Edge, and Safari.
+ */
+
+b,
+strong {
+    font-weight: bolder;
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+
+code,
+kbd,
+samp {
+    font-family: monospace, monospace; /* 1 */
+    font-size: 1em; /* 2 */
+}
+
+/**
+ * Add the correct font style in Android 4.3-.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Add the correct background and color in IE 9-.
+ */
+
+mark {
+    background-color: #ff0;
+    color: #000;
+}
+
+/**
+ * Add the correct font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` elements from affecting the line height in
+ * all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+sup {
+    top: -0.5em;
+}
+
+/* Embedded content
+   ========================================================================== */
+
+/**
+ * Add the correct display in IE 9-.
+ */
+
+audio,
+video {
+    display: inline-block;
+}
+
+/**
+ * Add the correct display in iOS 4-7.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Remove the border on images inside links in IE 10-.
+ */
+
+img {
+    border-style: none;
+}
+
+/**
+ * Hide the overflow in IE.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* Forms
+   ========================================================================== */
+
+/**
+ * 1. Change the font styles in all browsers (opinionated).
+ * 2. Remove the margin in Firefox and Safari.
+ */
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: sans-serif; /* 1 */
+    font-size: 100%; /* 1 */
+    line-height: 1.15; /* 1 */
+    margin: 0; /* 2 */
+}
+
+/**
+ * Show the overflow in IE.
+ * 1. Show the overflow in Edge.
+ */
+
+button,
+input { /* 1 */
+    overflow: visible;
+}
+
+/**
+ * Remove the inheritance of text transform in Edge, Firefox, and IE.
+ * 1. Remove the inheritance of text transform in Firefox.
+ */
+
+button,
+select { /* 1 */
+    text-transform: none;
+}
+
+/**
+ * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
+ *    controls in Android 4.
+ * 2. Correct the inability to style clickable types in iOS and Safari.
+ */
+
+button,
+html [type="button"], /* 1 */
+[type="reset"],
+[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+}
+
+/**
+ * Remove the inner border and padding in Firefox.
+ */
+
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+
+/**
+ * Restore the focus styles unset by the previous rule.
+ */
+
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+    outline: 1px dotted ButtonText;
+}
+
+/**
+ * Change the border, margin, and padding in all browsers (opinionated).
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct the text wrapping in Edge and IE.
+ * 2. Correct the color inheritance from `fieldset` elements in IE.
+ * 3. Remove the padding so developers are not caught out when they zero out
+ *    `fieldset` elements in all browsers.
+ */
+
+legend {
+    box-sizing: border-box; /* 1 */
+    color: inherit; /* 2 */
+    display: table; /* 1 */
+    max-width: 100%; /* 1 */
+    padding: 0; /* 3 */
+    white-space: normal; /* 1 */
+}
+
+/**
+ * 1. Add the correct display in IE 9-.
+ * 2. Add the correct vertical alignment in Chrome, Firefox, and Opera.
+ */
+
+progress {
+    display: inline-block; /* 1 */
+    vertical-align: baseline; /* 2 */
+}
+
+/**
+ * Remove the default vertical scrollbar in IE.
+ */
+
+textarea {
+    overflow: auto;
+}
+
+/**
+ * 1. Add the correct box sizing in IE 10-.
+ * 2. Remove the padding in IE 10-.
+ */
+
+[type="checkbox"],
+[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+}
+
+/**
+ * Correct the cursor style of increment and decrement buttons in Chrome.
+ */
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+    height: auto;
+}
+
+/**
+ * 1. Correct the odd appearance in Chrome and Safari.
+ * 2. Correct the outline style in Safari.
+ */
+
+[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    outline-offset: -2px; /* 2 */
+}
+
+/**
+ * Remove the inner padding and cancel buttons in Chrome and Safari on macOS.
+ */
+
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * 1. Correct the inability to style clickable types in iOS and Safari.
+ * 2. Change font properties to `inherit` in Safari.
+ */
+
+::-webkit-file-upload-button {
+    -webkit-appearance: button; /* 1 */
+    font: inherit; /* 2 */
+}
+
+/* Interactive
+   ========================================================================== */
+
+/*
+ * Add the correct display in IE 9-.
+ * 1. Add the correct display in Edge, IE, and Firefox.
+ */
+
+details, /* 1 */
+menu {
+    display: block;
+}
+
+/*
+ * Add the correct display in all browsers.
+ */
+
+summary {
+    display: list-item;
+}
+
+/* Scripting
+   ========================================================================== */
+
+/**
+ * Add the correct display in IE 9-.
+ */
+
+canvas {
+    display: inline-block;
+}
+
+/**
+ * Add the correct display in IE.
+ */
+
+template {
+    display: none;
+}
+
+/* Hidden
+   ========================================================================== */
+
+/**
+ * Add the correct display in IE 10-.
+ */
+
+[hidden] {
+    display: none;
+}
+
+#layout{
+    height: 100%;
+    width: 100%;
+}
+
+#gridContainer{
+    display: block;
+    position:absolute;
+
+    top: 0;
+    left: 40px;
+    width: calc(100% - 80px);
+    height: 100%;
+    color: ghostwhite;
+}
+
+#grid{
+    display: block;
+    position:absolute;
+    overflow:hidden;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    color: black;
+    -webkit-transition: all .5s ease;
+}
+
+#menuBar{
+    z-index: 10;
+
+    display: block;
+    position:absolute;
+
+    top: 0;
+    left: 0px;
+    width: 40px;
+    height: 100%;
+    background-color: gray;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+#menuBar-overlay{
+    position: absolute;
+    top:0;
+    left:0;
+    background-color: transparent;
+    overflow: visible;
+}
+
+#menuBar-top{
+    position: absolute;
+    top: 0;
+}
+
+#menuBar-bot{
+    position: absolute;
+    bottom: 0;
+}
+
+#menuBar-subMenu{
+    position:absolute;
+    top:0;
+    left:40px;
+    height: 100%;
+    background-color: darkgray;
+}
+
+.subMenu{
+    height: calc(100% - 20px);
+    margin: 10px;;
+}
+
+.subMenu h1{
+    font-size: 175%;
+    height:38px;
+    margin: 0;
+    line-height: 38px;
+}
+
+.subMenu-settings{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:15px;
+    width: calc(100% - 30px);
+    height: calc(100% - 45px);
+}
+
+.subMenu-list{
+    margin-bottom: 10px;
+}
+
+.subMenu-listLabel{
+}
+
+.subMenu-listInput{
+    margin-right: 10px;
+}
+
+input[type="checkbox"].subMenu-listInput{
+    width: 1em; /*Desired width*/
+    height: 1em; /*Desired height*/
+}
+
+input[type="number"].subMenu-listInput{
+    width: 2em; /*Desired width*/
+    margin-left: 10px;
+}
+
+.subMenu-defaultButton.rye-button{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.subMenu-display{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:0px;
+    width:100%;
+    height: calc(100% - 45px);
+    overflow: scroll;
+}
+
+.subMenu-displayScroll{
+}
+
+.subMenu-collapsiblePane-item{
+    position: relative;
+    display: block;
+
+    width: 100%;
+    height: 200px;
+}
+
+.subMenu-files-toolbar{
+    margin-bottom: 15px;
+}
+
+.subMenu-files{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:0px;
+    width:100%;
+    height: calc(100% - 100px);
+    overflow: scroll;
+}
+
+.subMenu-filesScroll{
+    position: relative;
+    margin-top: 15px;
+    top:0px;
+    left:0px;
+    width:100%;
+    height: calc(100% - 50px);
+    overflow: scroll;
+}
+
+.exampleFile{
+    width:100%;
+    height:25px;
+    background: snow;
+    margin-bottom: 5px;
+}
+
+.subMenu-files-botTools{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+}
+
+.botTool{
+    position: relative;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    margin-left: 5px;
+}
+
+.widget {
+    position: absolute;
+    z-index: 1;
+
+    text-align: center;
+    border: 5px;
+    border-radius: 1px;
+
+    transform: translate(0px, 0px);
+    transition: all .5s ease;
+
+    color: #424242;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.widgetContainer {
+    width:calc(100% - 2px);
+    height: calc(100% - 26px);
+    margin-right: 1px;
+    margin-left: 1px;
+    margin-bot: 1px;
+    overflow: visible;
+}
+
+.widgetToolbar {
+    width:calc(100% - 10px);
+    height:25px;
+    display: block;
+    z-index: 1;
+
+    padding-left: 10px;
+    font-size: 12px;
+    text-align: left;
+
+    overflow: visible;
+}
+
+.widgetToolbarTitle {
+    display: inline-block;
+    line-height: 25px;
+    font-size: 13px;
+    font-weight: bold;
+    -webkit-user-select: none;
+
+    max-width: 60%;
+    color: #424242;
+}
+
+.widgetToolbarButtons {
+    position: relative;
+    display: inline;
+
+    width:21px;
+    height:21px;
+    float: right;
+    border: none;
+    outline: none;
+    margin:2px;
+
+    background-color: rgba(128, 128, 128, 0);
+}
+
+.widgetToolbarButtons:hover{
+    background-color: #c2cdc4;
+}
+
+.widgetToolbarButtons:active{
+    background-color: rgba(39, 49, 138, 0.46);
+}
+
+.rye-button{
+    background-color: white;
+    border: transparent;
+    outline: none;
+    margin: 2px;
+}
+
+.rye-button:hover{
+}
+
+.rye-button:active{
+    border: thin solid #2D98E0;
+}
+
+.rye-collapsiblePane{
+    background-color: honeydew;
+    display: block;
+    margin-bottom: 10px;
+    overflow: scroll;
+    transition: all .5s ease;
+}
+
+.rye-collapsiblePane-topBar{
+    position: relative;
+    background-color: wheat;
+    margin-bottom: 10px;
+    height: 25px;
+    line-height: 25px;
+}
+
+.rye-collapsiblePane-topBarTitle{
+    position: relative;
+    display: inline-block;
+    width: 150px;
+    top: 0;
+    left: 0;
+    cursor: default;
+}
+
+.rye-collapsiblePane-topBarIcon{
+    position: absolute;
+    top:0;
+    right:0;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 30px;
+    height:100%;
+}
+
+.rye-collapsiblePane-item{
+    position: relative;
+    display: block;
+
+    width: 100%;
+    height: 200px;
+}
+
+.rye-input{
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.rye-inputText{
+    display: inline-block;
+    position: relative;
+    width: 150px;
+    left: 0;
+}
+
+.rye-inputText:hover{
+    cursor: default;
+}
+
+.rye-inputArea{
+    position: absolute;
+    top: 0;
+    right:0;
+}
+
+input[type="checkbox"].rye-inputArea{
+    width: 1em; /*Desired width*/
+    height: 1em; /*Desired height*/
+}
+
+input[type="number"].rye-inputArea{
+    width: 3em; /*Desired width*/
+}
+
+#time{
+    text-align: center;
+}
+
+.goalPane{
+    position: absolute;
+    width:100%;
+    height:auto;
+    min-height: 100%!important;
+}
+
+.goalList{
+    position: absolute;
+
+    height:100%;
+    width:100%;
+}
+
+.goalTrack{
+
+}
+
+.goalObject{
+    position: absolute;
+    width: calc(100% - 4px);
+
+    min-height: 50px;
+
+    -webkit-transition: all .5s ease;
+
+    z-index: 1;
+    box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.12), -1px 0px 2px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
+
+    margin-top: 2px;
+    margin-bottom: 53px;
+    margin-left: 2px;
+}
+
+.goalObjectPane{
+
+    text-align:center;
+
+    position: relative;
+
+    top: 15px;
+    height:auto;
+    width: calc(100% - 90px);
+
+    outline: none;
+}
+
+.goalObjectButtons{
+
+    position: absolute;
+
+    width:20px;
+    height:20px;
+
+    top: 15px;
+
+    border: none;
+    outline: none;
+
+    background-color: rgba(205, 127, 55, 0);
+}
+
+.goalObjectButtons:hover{
+    background-color: rgb(205, 127, 55);
+}
+
+#goalAddButton{
+
+    position: fixed;
+    top:calc(100% - 55px);
+    left:calc(100% - 55px);
+
+    font-size: 25px;
+    line-height: 25px;
+    z-index: 5;
+}
+
+.dropDown{
+    position: absolute;
+
+    top: 5px;
+    left: 5px;
+
+    float: left;
+    overflow: visible;
+
+    z-index: 10;
+}
+
+.dropButton{
+
+    position: absolute;
+
+    top: 0px;
+    left: 0px;
+
+    font-variant-caps: all-small-caps;
+
+    height: 28px;
+    line-height: 28px;
+    width: 70px;
+
+    font-size: 12px;
+
+    border: none;
+    outline: none;
+}
+
+.goalObjectTextSetting{
+
+    position: absolute;
+
+    width: 100%;
+    height: 20px;
+
+    resize: none;
+
+    top: 0px;
+    left: 0px;
+
+    border: medium;
+    outline: none;
+
+    font-size: 13px;
+
+    background-color: rgba(255, 247, 253, 0.1);
+
+}
+
+.goalObjectTextGoal{
+    position: relative;
+
+    word-wrap:normal;
+    overflow-wrap: break-word;
+}
+
+.goalObjectTrackSettingDropDown{
+    position: absolute;
+    left: 0;
+    top: 27px;
+
+    width: 75px;
+    height: 25px;
+    line-height: 25px;
+    margin: 0;
+    border-radius: 0;
+    padding: 0;
+    font-size: 12px;
+}
+
+.goalObjectTrackSettingChooser{
+    position: relative;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    line-height: 100%;
+    margin: 0;
+    border-radius: 0;
+    padding: 0;
+    font-size: 12px;
+}
+
+#goalObjectTrackSettingAmount{
+    position : absolute;
+    left : 75px;
+    top : 27px;
+    width : calc(100% - 75px);
+    height : 25px;
+}
+
+#id2 {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+}
+
+#id2-scrollPane {
+
+    position: relative;
+
+    width: 100%;
+    height: calc(100% - 35px);
+
+    overflow: scroll;
+}
+
+#id2-noteList{
+    position: relative;
+
+    padding-bottom: 60px;
+
+    overflow: visible;
+
+    background: transparent;
+
+    transition: all .5s ease;
+
+    z-index: 1;
+}
+
+.id2-note{
+
+    position: absolute;
+
+    top: -100px;
+    left: 5px;
+
+    height: 100px;
+    min-height: 100px;
+    width: calc(100% - 10px);
+
+    overflow: hidden;
+
+    background-color: #efeae8;
+
+    transition: all .5s ease;
+    transform: translate(0px, 0px);
+    z-index: -1;
+
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.id2-toolbar{
+
+    position: relative;
+
+    width:calc(100% - 10px);
+    height:25px;
+    display: block;
+    z-index: 1;
+
+    font-size: 12px;
+    text-align: left;
+
+    overflow: visible;
+}
+
+.id2-editor{
+    position: relative;
+
+    text-align: left;
+
+    padding: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+.id2-handler{
+    float: left;
+
+    background: gray;
+}
+
+.id2-title{
+
+    margin-top: 2px;
+
+    float: left;
+    font-size: 15px;
+    line-height: 21px;
+    background: transparent;
+    border: none;
+    outline: none;
+
+}
+
+.id2-note:hover{
+    cursor: text;
+}
+
+#id2-addButton{
+
+    position: fixed;
+    top: calc(100% - 53px);
+    left: calc(100% - 53px);
+
+    z-index: 5;
+
+    width: 48px;
+    height: 48px;
+
+    font-size: 25px;
+    border: none;
+    outline: none;
+    border-radius: 48px;
+}
+
+#id2-inputField {
+    margin: 5px;
+    z-index: 10;
+    width: calc(100% - 20px);
+}
+
+#time{
+    text-align: center;
+}
+
+/**
+ * Draft v0.10.0
+ *
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+.DraftEditor-editorContainer,.DraftEditor-root,.public-DraftEditor-content{height:inherit;text-align:initial}.public-DraftEditor-content[contenteditable=true]{-webkit-user-modify:read-write-plaintext-only}.DraftEditor-root{position:relative}.DraftEditor-editorContainer{background-color:rgba(255,255,255,0);border-left:.1px solid transparent;position:relative;z-index:1}.public-DraftEditor-block{position:relative}.DraftEditor-alignLeft .public-DraftStyleDefault-block{text-align:left}.DraftEditor-alignLeft .public-DraftEditorPlaceholder-root{left:0;text-align:left}.DraftEditor-alignCenter .public-DraftStyleDefault-block{text-align:center}.DraftEditor-alignCenter .public-DraftEditorPlaceholder-root{margin:0 auto;text-align:center;width:100%}.DraftEditor-alignRight .public-DraftStyleDefault-block{text-align:right}.DraftEditor-alignRight .public-DraftEditorPlaceholder-root{right:0;text-align:right}.public-DraftEditorPlaceholder-root{color:#9197a3;position:absolute;z-index:0}.public-DraftEditorPlaceholder-hasFocus{color:#bdc1c9}.DraftEditorPlaceholder-hidden{display:none}.public-DraftStyleDefault-block{position:relative;white-space:pre-wrap}.public-DraftStyleDefault-ltr{direction:ltr;text-align:left}.public-DraftStyleDefault-rtl{direction:rtl;text-align:right}.public-DraftStyleDefault-listLTR{direction:ltr}.public-DraftStyleDefault-listRTL{direction:rtl}.public-DraftStyleDefault-ol,.public-DraftStyleDefault-ul{margin:16px 0;padding:0}.public-DraftStyleDefault-depth0.public-DraftStyleDefault-listLTR{margin-left:1.5em}.public-DraftStyleDefault-depth0.public-DraftStyleDefault-listRTL{margin-right:1.5em}.public-DraftStyleDefault-depth1.public-DraftStyleDefault-listLTR{margin-left:3em}.public-DraftStyleDefault-depth1.public-DraftStyleDefault-listRTL{margin-right:3em}.public-DraftStyleDefault-depth2.public-DraftStyleDefault-listLTR{margin-left:4.5em}.public-DraftStyleDefault-depth2.public-DraftStyleDefault-listRTL{margin-right:4.5em}.public-DraftStyleDefault-depth3.public-DraftStyleDefault-listLTR{margin-left:6em}.public-DraftStyleDefault-depth3.public-DraftStyleDefault-listRTL{margin-right:6em}.public-DraftStyleDefault-depth4.public-DraftStyleDefault-listLTR{margin-left:7.5em}.public-DraftStyleDefault-depth4.public-DraftStyleDefault-listRTL{margin-right:7.5em}.public-DraftStyleDefault-unorderedListItem{list-style-type:square;position:relative}.public-DraftStyleDefault-unorderedListItem.public-DraftStyleDefault-depth0{list-style-type:disc}.public-DraftStyleDefault-unorderedListItem.public-DraftStyleDefault-depth1{list-style-type:circle}.public-DraftStyleDefault-orderedListItem{list-style-type:none;position:relative}.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-listLTR:before{left:-36px;position:absolute;text-align:right;width:30px}.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-listRTL:before{position:absolute;right:-36px;text-align:left;width:30px}.public-DraftStyleDefault-orderedListItem:before{content:counter(ol0) ". ";counter-increment:ol0}.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth1:before{content:counter(ol1) ". ";counter-increment:ol1}.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth2:before{content:counter(ol2) ". ";counter-increment:ol2}.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth3:before{content:counter(ol3) ". ";counter-increment:ol3}.public-DraftStyleDefault-orderedListItem.public-DraftStyleDefault-depth4:before{content:counter(ol4) ". ";counter-increment:ol4}.public-DraftStyleDefault-depth0.public-DraftStyleDefault-reset{counter-reset:ol0}.public-DraftStyleDefault-depth1.public-DraftStyleDefault-reset{counter-reset:ol1}.public-DraftStyleDefault-depth2.public-DraftStyleDefault-reset{counter-reset:ol2}.public-DraftStyleDefault-depth3.public-DraftStyleDefault-reset{counter-reset:ol3}.public-DraftStyleDefault-depth4.public-DraftStyleDefault-reset{counter-reset:ol4}
+.editorContainer{
+    text-align: left;
+    overflow: scroll;
+    height: 100%;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.editorContent{
+    font-family: 'Helvetica', sans-serif;
+    text-align: left;
+    height: auto;
+    min-height: 100%;
+    max-width: 550px;
+    margin: 15px auto;
+    background-color: transparent;
+}
+
+.editorContent:hover{
+    cursor: text;
+}
+
+.public-DraftEditorPlaceholder-root{
+    color: #d6d6d6;
+    position: absolute;
+}
+
+
+.public-DraftStyleDefault-block{
+    margin-bottom: 10px;
+}

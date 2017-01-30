@@ -1,0 +1,13 @@
+.rye-button{
+    background-color: white;
+    border: transparent;
+    outline: none;
+    margin: 2px;
+}
+
+.rye-button:hover{
+}
+
+.rye-button:active{
+    border: thin solid #2D98E0;
+}

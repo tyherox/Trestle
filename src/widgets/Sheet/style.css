@@ -1,0 +1,31 @@
+.editorContainer{
+    text-align: left;
+    overflow: scroll;
+    height: 100%;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.editorContent{
+    font-family: 'Helvetica', sans-serif;
+    text-align: left;
+    height: auto;
+    min-height: 100%;
+    max-width: 550px;
+    margin: 15px auto;
+    background-color: transparent;
+}
+
+.editorContent:hover{
+    cursor: text;
+}
+
+.public-DraftEditorPlaceholder-root{
+    color: #d6d6d6;
+    position: absolute;
+}
+
+
+.public-DraftStyleDefault-block{
+    margin-bottom: 10px;
+}

@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import Draft from 'draft-js'
 import interact from 'interact.js';
 
-var Decor = require('../../core/decor');
+var Decor = require('../../helpers/decor');
 
 const {
     Editor,

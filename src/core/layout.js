@@ -1,741 +1,455 @@
-/**
- * Created by JohnBae on 8/8/16.
- */
-/**
- *Tyherox
- *
- * Layout
- *
- * The layout module of Scribe handles tasks related to decorating and arranging widgets on the screen.
- * Main components include both the widget and its Element object counterpart. Custom data is stored on the widget
- * with the exception of transition distance, which is stored on the Element through the setAttribute() function.
- *
- */
-var Layout = (function () {
+/*Tyherox
+*
+* Layout
+*
+* The layout module of Scribe handles tasks related to decorating and arranging widgets on the screen.
+* Main components include both the widget and its Element object counterpart. Custom data is stored within Widget props
+* using React.
+*
+*/
 
-    //Local variables that are used by the Layout module.
+import React from 'react';
+import Widget from './widget';
+import MenuBar from './menuBar';
 
-    var addedWidgets = [],
-        collider,
-        mother = document.getElementById('parent'),
-        gridCols = 8, gridRows = 5,
-        screenWidth = document.getElementById('parent').getBoundingClientRect().width,
-        screenHeight = document.getElementById('parent').getBoundingClientRect().height,
-        cellOffset = 5,
-        cellWidth = screenWidth/8-cellOffset,
-        cellHeight = screenHeight/5-cellOffset;
+var key = 1;
 
-    //Inner functions
+//React component in charge of managing graphical layout
+export default class Layout extends React.Component{
 
-    /**
-     * Layout.prepElement
-     *
-     * Used to prepare an element for comparison. It extracts the rect, col, row, width and height of the element.
-     *
-     * @param element: element to be compared.
-     * @returns {{rect: ClientRect, col: *, row: *, width: number, height: number}}: values of comparison.
-     */
-    function prepElement(element){
-        return{
-            rect: element.getBoundingClientRect(),
-            col: Layout.findCol(element.getBoundingClientRect().left),
-            row: Layout.findRow(element.getBoundingClientRect().top),
-            width: Math.round(element.getBoundingClientRect().width/(cellWidth-cellOffset))-1,
-            height: Math.round(element.getBoundingClientRect().height/(cellHeight-cellOffset))-1,
-        }
-    };
+    constructor(props){
+        super(props);
+        var self = this;
 
-    /**
-     * Layout.prepWidget
-     *
-     * Used to prepare a widget for comparison. It extracts the rect, col, row, width and height of the widget.
-     *
-     * @param widget: widget to be compared
-     * @returns {{rect: null, col: *, row: *, width: number, height: number}}: values of comparison.
-     */
-    function prepWidget(widget){
-        return{
-            rect: widget.homeRect,
-            col: Layout.findCol(widget.homeRect.left),
-            row: Layout.findRow(widget.homeRect.top),
-            width: Math.round(widget.homeRect.width/(cellWidth-cellOffset))-1,
-            height: Math.round(widget.homeRect.height/(cellHeight-cellOffset))-1,
-        }
+        this.state = {
+            screenWidth: this.props.screenWidth,
+            screenHeight: this.props.screenHeight,
+            gridCols: this.props.cols,
+            gridRows: this.props.rows,
+            gridHeight: this.props.screenHeight/5,
+            gridWidth: (this.props.screenWidth - 40)/8,
+            cellOffset: 4,
+            widgets: this.props.widgets || [],
+            gridToggled: false
+        };
+
+    }
+
+    //Initialize Widget Locations based on col and row variables for screen size independence
+    componentWillMount(){
+        var widgets = this.props.widgets, self = this;
+        widgets.forEach(function(widget){
+            if(widget.refLeft!=null && widget.refTop!=null){
+                widget.actLeft = self.findX(widget.refLeft);
+                widget.actTop = self.findY(widget.refTop);
+            }
+            if(widget.refWidth!=null && widget.refHeight!=null){
+                widget.actWidth = widget.refWidth * self.state.gridWidth - self.state.cellOffset * 2;
+                widget.actHeight = widget.refHeight * self.state.gridHeight - self.state.cellOffset * 2;
+            }
+        })
     }
 
     /**
-     * Layout.isAvailableArea
+     * Layout.updateWidget
      *
-     * Used to determine if an element's target destination is empty or not.
-     *
-     *
-     * @param element: The element that is moving towards the target.
-     * @param target: The target detination.
-     * @returns {boolean}: returns true for empty and false for occupied.
+     * Update Widgets through props. Allows for stateless widget components
+     * @param id: Id of widget
+     * @param attributes: Attributes that need to be changed
      */
-    function isAvailableArea(element, target){
-
-        //Checks to see if target is out of bounds.
-        //-1 on col and row to offset for 0 being the minimum width of widgets.
-        if(target.col<0||target.row<0||target.col+target.width>gridCols-1||target.row+target.height>gridRows-1){
-            return false;
-        }
-
-        for(var i = 0; i<addedWidgets.length; i++){
-
-            var iComp = prepElement(document.getElementById(addedWidgets[i].id));
-
-            if(addedWidgets[i].id!=collider.id){
-
-                var iterated_widget = addedWidgets[i];
-                iComp.col = iterated_widget.column;
-                iComp.row = iterated_widget.row;
-                iComp.width = iterated_widget.width-1;
-                iComp.height = iterated_widget.height-1;
+    updateWidget(id, attributes){
+        var widgets = this.state.widgets;
+        widgets.forEach(function(widget){
+            if(id==widget.id) {
+                for(var prop in attributes) {
+                    widget[prop] = attributes[prop];
+                }
             }
+        })
+        this.setState({widgets:widgets});
+    }
 
-            if(((target.col>=iComp.col&&target.col<=iComp.col+iComp.width)||
-                (iComp.col>=target.col&&iComp.col<=target.col+target.width))&&
-                ((target.row>=iComp.row&&target.row<=iComp.row+iComp.height)||
-                (iComp.row>=target.row&&iComp.row<=target.row+target.height)) && addedWidgets[i].id!=element.id){
-                return false;
+    //Clean temporary props of Widgets. Used for dragging (Interact.js)
+    solidifyWidgets(){
+        var widgets = this.state.widgets,
+            self = this;
+
+        widgets.forEach(function(widget){
+            widget.actWidth = widget.tmpWidth == 0 ? widget.actWidth : widget.tmpWidth,
+            widget.actHeight = widget.tmpHeight == 0 ? widget.actHeight : widget.tmpHeight,
+            widget.tmpWidth = 0;
+            widget.tmpHeight = 0;
+            widget.refWidth = Math.round(widget.actWidth/self.state.gridWidth);
+            widget.refHeight = Math.round(widget.actHeight/self.state.gridHeight);
+            widget.actLeft += widget.tmpLeft;
+            widget.actTop += widget.tmpTop;
+            widget.tmpLeft = 0;
+            widget.tmpTop = 0;
+            widget.refLeft = self.findCol(widget.actLeft);
+            widget.refTop = self.findRow(widget.actTop);
+        })
+        this.setState({widgets:widgets});
+    }
+
+    addWidget(widget){
+        var widgets = this.state.widgets;
+        var newWidget = {id: key};
+        widgets = widgets.concat([newWidget]);
+        this.setState({widgets: widgets});
+        key++;
+    }
+
+    removeWidget(element) {
+
+    }
+
+    toggleGrid(visibility){
+        this.setState({gridToggled: visibility});
+    }
+
+    findX(column){
+        var test = Math.round(column * this.state.gridWidth);
+        return test;
+    }
+
+    findY(row){
+        return Math.round(row * this.state.gridHeight);
+    }
+
+    findRow(y){
+        return Math.round(y/this.state.gridHeight);
+    }
+
+    findCol(x){
+        return Math.round(x/this.state.gridWidth);
+    }
+
+    findNearestRow(y){
+        return this.findY(this.findRow(y));
+    }
+
+    findNearestCol(x){
+        return this.findX(this.findCol(x));
+    }
+
+    //Extract widget bounds
+    prepRect(widget){
+        return {
+            width: widget.tmpWidth == 0 ? widget.actWidth : widget.tmpWidth,
+            height: widget.tmpHeight == 0 ? widget.actHeight : widget.tmpHeight,
+            top: widget.actTop + widget.tmpTop,
+            left: widget.actLeft + widget.tmpLeft,
+        }
+    }
+
+    //Check to see if widget can be placed at current location
+    isValidHome(widget){
+        var rect = this.prepRect(widget);
+        for(var i = 0; i<this.state.widgets.length; i ++){
+            if(this.state.widgets[i].id != widget.id){
+                var cRect = this.prepRect(this.state.widgets[i]);
+                if(this.intersects(rect, cRect,50)) {
+                    return false;
+                }
+                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > this.props.screenWidth - 40 || rect.top + rect.height > this.props.screenHeight){
+                    return false;
+                }
             }
         }
-
         return true;
     }
 
     /**
-     * layout.detectChainCollisions
+     * Layout.intersects
      *
-     * Detects whether a drag causes several "chain" collisions to occur.
+     * Check to see if two rects/Widgets intersect
      *
-     * @param widget: widget that is being moved.
-     * @param x: the x distance it is moving.
-     * @param y: the y distance it is moving.
-     * @returns {boolean}
+     * @param cRect: Colliding Rect (order doesn't matter)
+     * @param iRect: Iterated Rect (order doesn't matter)
+     * @param offset: Optional offset for intersection calculation
+     * @returns {boolean}: true for intersect, false for non-intersect
      */
-    function detectChainCollisions(widget, x, y){
 
-        var iComp = prepWidget(widget);
-        iComp.col += x;
-        iComp.row += y;
-
-        if(isAvailableArea(widget, iComp)){
-            return true;
-        }
-    }
-
-    /**
-     * Layout.findPushDirection
-     *
-     * Finds the direction a widget should be pushed when a drag event occurs.
-     *
-     * @param pRect: pushed rect.
-     * @param cRect: colliding (collider) rect.
-     * @returns {*}: returns the direction as a string.
-     */
-    function findPushDirection( pRect, cRect){
-
-        var iRect = {
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0
-        }
-
-        if(pRect.top<cRect.top){
-            iRect.top = cRect.top;
-        }
-        else iRect.top = pRect.top;
-
-        if(pRect.bottom<cRect.bottom){
-            iRect.bottom = pRect.bottom;
-        }
-        else iRect.bottom = cRect.bottom;
-
-        if(pRect.left<cRect.left){
-            iRect.left = cRect.left;
-        }
-        else iRect.left = pRect.left;
-
-        if(pRect.right<cRect.right){
-            iRect.right = pRect.right;
-        }
-        else iRect.right = cRect.right;
-
-        var iRect_width = iRect.right - iRect.left;
-        var iRect_height = iRect.bottom - iRect.top;
-
-        var right = 0, left = 0, up = 0, down = 0;
-
-        if(iRect.bottom == cRect.top + iRect_height) down = iRect_width;
-        else if(iRect.top == cRect.bottom - iRect_height) up = iRect_width;
-        if(iRect.left == cRect.right - iRect_width) left = iRect_height;
-        else if(iRect.right == cRect.left + iRect_width) right = iRect_height;
-
-        var max = Math.max(right,left,up,down);
-
-        if(max==right) return "right";
-        if(max==left) return "left";
-        if(max==up) return "up";
-        if(max==down) return "down";
-    }
-
-    /**
-     * Layout.intersectRect
-     *
-     * Finds if two rect objects are intersecting or not.
-     *
-     * @param r1: First rectangle.
-     * @param r2: Second rectangle.
-     * @returns {boolean}: true if intersects, false if not.
-     */
-    function intersectRect(r1, r2) {
-        return !(r2.left > r1.right ||
-        r2.right < r1.left ||
-        r2.top > r1.bottom ||
-        r2.bottom < r1.top);
-    }
-
-    /**
-     * Layout.pointIntersections
-     *
-     * Finds if two sets of custom data points (col,row,width,height) intersect or not.
-     * @param a: First custom data points.
-     * @param b: Second custom dta points.
-     * @returns {boolean} true if intersects, false if not.
-     */
-    function pointIntersections(a,b){
-        if(((a.col>=b.col&&a.col<=b.col+b.width)||
-            (b.col>=a.col&&b.col<=a.col+a.width))&&
-            ((a.row>=b.row&&a.row<=b.row+b.height)||
-            (b.row>=a.row&&b.row<=a.row+a.height))){
+    intersects(cRect, iRect, offset){
+        if(((cRect.left>=iRect.left + offset&&cRect.left<=iRect.left+iRect.width - offset)||
+            (iRect.left + offset>=cRect.left&&iRect.left + offset<=cRect.left+cRect.width))&&
+            ((cRect.top>=iRect.top + offset &&cRect.top<=iRect.top+iRect.height - offset)||
+            (iRect.top + offset>=cRect.top&&iRect.top + offset<=cRect.top+cRect.height))){
             return true;
         }
         return false;
-    }
-
-    /**
-     * Layout.resetWidget
-     *
-     * Resets a single wiget so future drag events can occur normally on it.
-     * @param widgetElement: widget to be reset.
-     */
-    function resetWidget(widgetElement){
-
-        var widget = Layout.findWidget(widgetElement.id);
-
-        var rect = widgetElement.getBoundingClientRect();
-
-        widget.column = rect.left;
-        widget.row = rect.height;
-        widget.width = rect.width;
-        widget.height = rect.height;
-    }
-
-    //Public methods
-    return{
-
-        /**
-         * Layout.drawGrid
-         *
-         * Draws a grid according to the set cell height and width values. Becomes visible during drag events.
-         * @param w: width of grid
-         * @param h: height of grid
-         * @param id: id of canvas
-         */
-        drawGrid: function(w, h) {
-
-            var wOffs = w/gridCols;
-            var hOffs = h/gridRows;
-            var canvas = document.createElement("CANVAS");
-            canvas.id = "grid";
-            canvas.className = 'themeGridColor';
-            var ctx = canvas.getContext('2d');
-
-            ctx.canvas.width  = w;
-            ctx.canvas.height = h;
-            setTimeout(function(){
-                ctx.strokeStyle = getComputedStyle(canvas).getPropertyValue('border-color');
-
-                ctx.stroke();
-
-                for (x=0;x<=w;x+=wOffs) {
-                    for (y=0;y<=h;y+=hOffs) {
-                        ctx.moveTo(x, 0);
-                        ctx.lineTo(x, h);
-                        ctx.stroke();
-                        ctx.moveTo(0, y);
-                        ctx.lineTo(w, y);
-                        ctx.stroke();
-                    }
-                }
-            },500);
-            mother.appendChild(canvas);
-        },
-
-        /**
-         * Layout.makeLayout
-         *
-         * Scribe layout initializer. Sets widgets in correct coordinates in the beginning of the program boot.
-         */
-        makeLayout: function(){
-            for(var i = 0; i<addedWidgets.length; i++){
-                var widget = addedWidgets[i];
-                var widgetElement = document.getElementById(widget.id);
-
-                var x = this.findX(widget.column);
-                var y = this.findY(widget.row);
-
-                widgetElement.style.left = x + "px";
-                widgetElement.style.top = y + "px";
-
-            }
-        },
-
-
-        /**
-         * Layout.addWidget
-         *
-         * Adds the given widget to the layout.
-         * @param widget: Widget/element to be added.
-         */
-        addWidget: function(widget){
-            mother.appendChild(widget.element);
-            widget.element.addEventListener("transitionend", function(){
-                if(widget.resetting) widget.resetting = false;
-                if(collider!=null&&collider.id!=widget.id&&widget.pushing==true){
-                    //resolve_drag(collider);
-                    widget.pushing = false;
-                    //widget.pushed = !widget.pushed;
-                }
-                //resetWidget(widget.element);
-                //Layout.freePushed();
-            }, false);
-            addedWidgets.push(widget);
-
-            if(widget.resizeListener!=null) widget.resizeListener();
-        },
-
-        /**
-         * Layout.removeWidget
-         *
-         * Removes the given widget from the layout.
-         * @param element: Element/widget to be removed
-         */
-        removeWidget: function(element){
-            var widget = this.findWidget(element.id);
-            var index = addedWidgets.indexOf(widget);
-            if (index != -1 && widget.id!=0) {
-                addedWidgets.splice(index, 1);
-                mother.removeChild(widget.element);
-                Layout.reset();
-            }
-        },
-        /**
-         * Layout.toggle
-         *
-         * Toggles the visibility of Scribe's layout grid.
-         * @param visibility: boolean value to set visibility
-         */
-        toggle: function(visibility){
-            var canvas = document.getElementById("grid");
-            if(visibility) {
-                canvas.style.opacity = '1';
-            }
-            else {
-                canvas.style.opacity = '0';
-            }
-        },
-
-        /**
-         * Layout.activatePins
-         *
-         * Switches between the normal and minimalist mode of Scribe.
-         *
-         * @param visibility: boolean value to set mode
-         */
-        activatePins: function(activity){
-
-            this.pinActivated = activity;
-
-            for(var i = 0; i<addedWidgets.length; i++){
-                var widget = addedWidgets[i];
-                var widgetElement = widget.element;
-
-                if(widget.id!= 0 && (widget.pinned == false || widget.pinned == null)){
-                    if(activity){
-                        widgetElement.style.opacity = '0';
-                    }
-                    else{
-                        widgetElement.style.opacity = '1';
-                    }
-                }
-
-            }
-        },
-
-        // Layout Tools (Self Explanatory)
-        findX: function(column){
-            return Math.round(column*(cellWidth+cellOffset) + 2);
-        },
-
-        findY: function(row){
-            return Math.round(row*(cellHeight+cellOffset) + 2);
-        },
-
-        findRow: function(y){
-            return Math.round(y/cellHeight);
-        },
-
-        findCol: function(x){
-            return Math.round(x/cellWidth);
-        },
-
-        findNearestRow: function(y){
-            return this.findY(this.findRow(y));
-        },
-
-        findNearestCol:  function(x){
-            return this.findX(this.findCol(x));
-        },
-
-        findWidget: function(id){
-            for(var i = 0; i<addedWidgets.length; i++){
-                if(addedWidgets[i].id==id) return addedWidgets[i];
-            }
-            return null;
-        },
-
-        /**
-         * Layout.setCollider
-         *
-         * Set the collider, or the dragged element, during a drag.
-         * @param element
-         */
-        setCollider: function(element){
-            collider = element;
-        },
-
-        /**
-         * Layout.dragElement
-         *
-         * The function is called whenever a widget is dragged across the layout.
-         * It resolves drags and collisions of widgets by iterating through the entire addedWidgets array.
-         *
-         * @param dragElement: The dragged widget (collider).
-         */
-        dragWidget: function(dragElement){
-
-            //Set Element as "collider" to avoid comparing itself.
-            this.setCollider(dragElement);
-
-            //The bound where the dragged widget is headed.
-            var target = prepElement(dragElement);
-
-            //Iterate through the addedWidgets to apply the necessary actions.
-            for(var i = 0; i<addedWidgets.length; i++){
-
-                var iWidget = addedWidgets[i];
-                var iElement = iWidget.element;
-
-                if(iElement.id!=collider.id&&!iWidget.pushing){
-
-                    //Current state of iterated widget bounds.
-                    var iCurrent = prepElement(iElement);
-
-                    //Check to see if they are intersecting each other.
-                    if(pointIntersections(target,iCurrent)){
-
-                        if(!iWidget.pinned) iElement.style.opacity = '1';
-
-                        var direction;
-                        var pushed = false;
-
-                        var x = parseFloat(iElement.getAttribute('data-start_x')) || 0;
-                        var y = parseFloat(iElement.getAttribute('data-start_y')) || 0;
-
-
-                        //Original bounds of iterated widget.
-                        var iHome = prepWidget(iWidget);
-
-                        var dBot = target.row + (target.height + 1) - iHome.row;
-                        var dRight = target.col + (target.width + 1) - iHome.col;
-                        var dTop = target.row - (iHome.height + 1) - iHome.row;
-                        var dLeft = target.col - (iHome.width + 1) - iHome.col;
-
-                        var push_direction = findPushDirection(target.rect, iHome.rect);
-
-                        switch(push_direction) {
-                            case 'up':
-                                if(iCurrent.row>0 && detectChainCollisions(iWidget, 0, dTop)
-                                    &&Math.abs(dTop)<=iCurrent.height+target.height+1){
-                                    direction = "up " + dTop ;
-                                    if(iCurrent.row-dTop>=0) y += (cellHeight + 5) * dTop;
-                                    iWidget.pushedRow = dTop;
-                                    pushed = true;
-                                }
-                                if(!pushed&&iCurrent.row+iCurrent.height+1<gridRows && detectChainCollisions(iWidget, 0, dBot)
-                                    &&Math.abs(dBot)<=iCurrent.height+target.height+1){
-                                    direction = "down " + dBot;
-                                    if(iCurrent.row-dBot<gridRows-iCurrent.height+1) y += (cellHeight + cellOffset) * dBot;
-                                    iWidget.pushedRow = dBot;
-                                    pushed = true;
-                                }
-                                break;
-
-                            case 'down':
-                                if(!pushed&&iCurrent.row+iCurrent.height+1<gridRows && detectChainCollisions(iWidget, 0, dBot)
-                                    &&Math.abs(dBot)<=iCurrent.height+target.height+1){
-                                    direction = "down " + dBot;
-                                    if(iCurrent.row-dBot<gridRows-iCurrent.height+1) y += (cellHeight + cellOffset) * dBot;
-                                    iWidget.pushedRow = dBot;
-                                    pushed = true;
-                                }
-                                if(!pushed&&iCurrent.row>0 && detectChainCollisions(iWidget, 0, dTop)
-                                    &&Math.abs(dTop)<=iCurrent.height+target.height+1){
-                                    direction = "up " + dTop ;
-                                    if(iCurrent.row-dTop>=0) y += (cellHeight + 5) * dTop;
-                                    iWidget.pushedRow = dTop;
-                                    pushed = true;
-                                }
-                                break;
-
-                            case 'left':
-                                if(!pushed&&iCurrent.col>0  && detectChainCollisions(iWidget, dLeft, 0)
-                                    &&Math.abs(dLeft)<=iCurrent.width+target.width+1){
-                                    direction = "left " + dLeft;
-                                    if(iCurrent.col-dLeft>=0) x += (cellWidth + 5) * dLeft;
-                                    iWidget.pushedCol = dLeft;
-                                    pushed = true;
-                                }
-                                if(!pushed&&iCurrent.col+iCurrent.width+1<gridCols  && detectChainCollisions(iWidget, dRight, 0)
-                                    &&Math.abs(dRight)<=iCurrent.width+target.width+1){
-                                    direction = "right " + dRight;
-                                    if(iCurrent.col-dRight<gridCols-iCurrent.width+1) x += (cellWidth + cellOffset) * dRight;
-                                    iWidget.pushedCol = dRight;
-                                    pushed = true;
-                                }
-                                break;
-
-                            case 'right':
-                                if(!pushed&&iCurrent.col+iCurrent.width+1<gridCols && detectChainCollisions(iWidget, dRight, 0)
-                                    &&Math.abs(dRight)<=iCurrent.width+target.width+1){
-                                    direction = "right " + dRight;
-                                    if(iCurrent.col-dRight<gridCols-iCurrent.width+1) x += (cellWidth + cellOffset) * dRight;
-                                    iWidget.pushedCol = dRight;
-                                    pushed = true;
-                                }
-                                if(!pushed&&iCurrent.col>0 && detectChainCollisions(iWidget, dLeft, 0)
-                                    && Math.abs(dLeft)<=iCurrent.width+target.width+1) {
-                                    direction = "left " + dLeft;
-                                    if(iCurrent.col-dLeft>=0) x += (cellWidth + 5) * dLeft;
-                                    iWidget.pushedCol = dLeft;
-                                    pushed = true;
-                                }
-                                break;
-                        }
-
-                        if(pushed){
-                            //Transform Widget to position.
-                            iElement.style.webkitTransform = 'translate(' + x + 'px, ' + y + 'px)';
-
-                            //Update widget attributes.
-                            iWidget.column += x/(cellWidth+cellOffset);
-                            iWidget.row += y/(cellHeight+cellOffset);
-                            iWidget.pushed = true;
-                            iWidget.pushing = true;
-
-                            //Update widget element attributes.
-                            iElement.setAttribute('data-x', x);
-                            iElement.setAttribute('data-y', y);
-                        }
-                    }
-                }
-
-            }
-
-        },
-
-        /**
-         * Layout.isValidHome
-         *
-         * Checks to see if coordinates are occupied.
-         *
-         * @param element
-         * @returns {boolean}
-         */
-        isValidHome: function(element){
-
-            var elementRect = element.getBoundingClientRect();
-
-            for(var i = 0; i<addedWidgets.length; i++){
-                //Makes sure element isn't compared to itself.
-                if(element.id != addedWidgets[i].id){
-                    var clientRect = addedWidgets[i].element.getBoundingClientRect();
-                    if(intersectRect(elementRect, clientRect)) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        },
-
-        /**
-         * Layout.freePushed
-         *
-         * Iterates through widgets to see if their homes are available.
-         */
-        freePushed: function(){
-
-            if(collider==null) {
-                //console.debug("useless call");
-                return;
-            }
-
-            for(var i = 0; i<addedWidgets.length; i++){
-
-                var iWidget = addedWidgets[i];
-
-                if(collider.id!=iWidget.id&&!iWidget.pushing){
-
-                    var iterations = 0;
-                    var iElement = document.getElementById(iWidget.id);
-                    var iComp = prepWidget(iWidget);
-
-                    var x = (parseFloat(iElement.getAttribute('data-start_x')) || 0);
-                    var y = (parseFloat(iElement.getAttribute('data-start_y')) || 0);
-
-                    //p prefix means pushed value, contrary to the normal one which is its home (original) value
-
-                    var px = x, py = y;
-
-                    var tOffs = (cellHeight + 5);
-                    var lOffs = (cellWidth + 5);
-                    var rOffs = (cellWidth + cellOffset);
-                    var bOffs = (cellHeight + cellOffset);
-
-                    var pc = iWidget.pushedCol;
-                    var pr = iWidget.pushedRow;
-
-                    // Multiples to emulate one grid movement
-                    var cMult = 0;
-                    var rMult = 0;
-
-                    //Iterate movement from 1 to see if home is free
-                    while(cMult!=pc||pr!=rMult){
-
-                        if(pc>0&&pc!=cMult){
-                            if(iterations>0){
-                                cMult += 1;
-                                x += rOffs;
-                                iComp.col++;
-                            }
-                        }
-                        if(pc<0&&pc!=cMult){
-                            if(iterations>0){
-                                cMult -= 1;
-                                x -= lOffs;
-                                iComp.row--;
-                            }
-                        }
-                        if(pr>0&&pr!=rMult){
-                            if(iterations>0){
-                                rMult += 1;
-                                y += bOffs;
-                                iComp.row++;
-                            }
-                        }
-                        if(pr<0&&pr!=rMult){
-                            if(iterations>0){
-                                rMult -= 1;
-                                y -= tOffs;
-                                iComp.row--;
-                            }
-                        }
-
-                        if(isAvailableArea(iWidget, iComp)){
-
-                            //Check to see there is a need to be freed.
-                            if(parseInt(iElement.getAttribute('data-x'))==x && parseInt(iElement.getAttribute('data-y'))==y){
-                                //reset
-                                iWidget.column += Math.abs(x/(cellWidth+5));
-                                iWidget.row += Math.abs(y/(cellHeight+cellOffset));
-                                break;
-                            }
-
-
-                            iElement.style.webkitTransform ='translate(' + x + 'px, ' + y + 'px)';
-
-                            //Update widget attributes.
-                            iWidget.column += Math.abs(x/(cellWidth+5));
-                            iWidget.row += Math.abs(y/(cellHeight+cellOffset));
-
-
-                            if(x==px && y==py){
-                                //reset
-                                iWidget.pushed = false;
-                                iWidget.pushedCol = 0;
-                                iWidget.pushedRow = 0;
-                            };
-
-                            iElement.setAttribute('data-x', x);
-                            iElement.setAttribute('data-y', y);
-                            break;
-
-                        }
-                        iterations++;
-                    }
-                    if(iWidget.pushedCol == 0&&
-                        iWidget.pushedRow == 0){
-                        //reset pushed state
-                        iWidget.pushed = false;
-                    }
-                }
-            }
-        },
-
-        /**
-         * Layout.reset
-         *
-         * Resets the layout so future drag events can occur normally.
-         */
-        reset: function(){
-            collider = null;
-            for(var i = 0; i<addedWidgets.length; i++){
-                var widget = addedWidgets[i];
-                var widgetElement = document.getElementById(widget.id);
-
-                if(this.pinActivated && !widget.pinned && widget.id!=0) widgetElement.style.opacity = '0';
-
-                var x = widgetElement.getAttribute("data-x");
-                var y = widgetElement.getAttribute("data-y");
-                widgetElement.setAttribute("data-start_x",x);
-                widgetElement.setAttribute("data-start_y",y);
-
-                resetWidget(widgetElement);
-                widget.homeRect = widgetElement.getBoundingClientRect();
-                widget.linked_collider = null;
-                widget.pushed = false;
-                widget.pushing = false;
-                widget.pushedCol = 0;
-                widget.pushedRow = 0;
-
-            }
-
-        },
-
-        mother: document.getElementById('parent'),
-        gridCols: 8,
-        gridRows: 5,
-        screenWidth: document.getElementById('parent').getBoundingClientRect().width,
-        screenHeight: document.getElementById('parent').getBoundingClientRect().height,
-        cellOffset: 5,
-        cellWidth: screenWidth/8-cellOffset,
-        cellHeight: screenHeight/5-cellOffset,
-        addedWidgets: addedWidgets
-
     };
 
-})();
+    //Logic for widget collision (Currently in Testing Phase)
+    collisionDetect(id){
+
+        var self = this;
+
+        var findHome = function(widget){
+            return {
+                width: widget.actWidth,
+                height: widget.actHeight,
+                top: widget.actTop,
+                left: widget.actLeft,
+            }
+        }
+
+        var findPushDirection = function(id, cRect, iRect){
+
+            var gauge = {
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0
+            }
+
+            if(cRect.top<iRect.top){
+                gauge.top = iRect.top;
+            }
+            else gauge.top = cRect.top;
+
+            if(cRect.top + cRect.height<iRect.top + iRect.height){
+                gauge.bottom = cRect.top + cRect.height;
+            }
+            else gauge.bottom = iRect.top + iRect.height;
+
+            if(cRect.left<iRect.left){
+                gauge.left = iRect.left;
+            }
+            else gauge.left = cRect.left;
+
+            if(cRect.left + cRect.width<iRect.left + iRect.width){
+                gauge.right = cRect.left + cRect.width;
+            }
+            else gauge.right = iRect.left + iRect.width;
+
+            var iRect_width = gauge.right - gauge.left;
+            var iRect_height = gauge.bottom - gauge.top;
+
+            var right = 0, left = 0, up = 0, down = 0;
+
+            if(gauge.bottom == iRect.top + iRect_height) down = iRect_width;
+            else if(gauge.top == iRect.top + iRect.height - iRect_height) up = iRect_width;
+            if(gauge.left == iRect.left + iRect.width - iRect_width) left = iRect_height;
+            else if(gauge.right == iRect.left + iRect_width) right = iRect_height;
+
+            var max = Math.max(right,left,up,down);
+            console.log("MAX:", max);
+            if(max==0) return 'none';
+
+            var gridHeight = self.state.gridHeight,
+                gridWidth = self.state.gridWidth,
+                offset = self.state.cellOffset;
+
+            switch(max){
+                case right :
+                    iRect.left += gridWidth;
+                    if(isValidHome(id,iRect)){
+                        return {direction: "right", magnitude: gridWidth};
+                    }
+                    iRect.left -= (gridWidth + Math.round(iRect.width/gridWidth)*gridWidth);
+                    if(isValidHome(id,iRect)){
+                        console.log(gridWidth)
+                        return {direction: "left", magnitude: -Math.round(iRect.width/gridWidth)*gridWidth};;
+                    }
+                    else return {direction: "r none", magnitude: 0};
+                case left :
+                    iRect.left -= gridWidth ;
+                    if(isValidHome(id,iRect)){
+                        return {direction: "left", magnitude: -gridWidth};;
+                    }
+                    iRect.left = cRect.left+cRect.width;
+                    if(isValidHome(id,iRect)){
+                        return {direction: "right", magnitude: cRect.left+cRect.width - iRect.width};;
+                    }
+                    else return {direction: "l none", magnitude: 0};
+                case up :
+                    iRect.top -= cRect.height;
+                    if(isValidHome(id,iRect)){
+                        return "up";
+                    }
+                    iRect.top += cRect.height * 2;
+                    if(isValidHome(id,iRect)){
+                        return "down";
+                    }
+                    else return {direction: "none", magnitude: 0};
+                case down :
+                    iRect.top += cRect.height;
+                    if(isValidHome(id,iRect)){
+                        return "down";
+                    }
+                    iRect.top -= cRect.height * 2;
+                    if(isValidHome(id,iRect)){
+                        return "up";
+                    }
+                    else return {direction: "none", magnitude: 0};
+            }
+        };
+
+        var collider, cRect;
+
+        for(var i = 0; i<this.state.widgets.length; i ++){
+            if(this.state.widgets[i].id == id){
+                collider = this.state.widgets[i];
+            }
+        }
+
+        cRect = this.prepRect(collider);
+
+        this.state.widgets.forEach(function(widget){
+            if(!widget.dragging){
+                var iRect = prepRect(widget);
+
+                if(collides(cRect,iRect, 50) && !widget.pushed){
+                    var push = findPushDirection(widget.id, cRect, iRect);
+                    console.log("Direction:", push);
+                    switch(push.direction){
+                        case "right" :
+                            widget.tmpLeft += push.magnitude;
+                            widget.pushed = true;
+                            break;
+                        case "left" :
+                            widget.tmpLeft += push.magnitude;
+                            widget.pushed = true;
+                            break;
+                        case "down" :
+                            widget.tmpTop += cRect.height + self.state.cellOffset * 2;
+                            widget.pushed = true;
+                            break;
+                        case "up" :
+                            widget.tmpTop += cRect.height + self.state.cellOffset * 2;
+                            widget.pushed = true;
+                            break;
+                    }
+                }
+                else if(widget.pushed){
+
+                    var x = widget.actLeft, y = widget.actTop;
+                    console.log("Validating for home");
+                    if(isValidHome(widget.id, findHome(widget))) {
+                        widget.tmpTop = 0;
+                        widget.tmpLeft = 0;
+                        widget.pushed = false;
+                        console.log("Resetting");
+                    }
+                }
+            }
+        });
+        this.forceUpdate();
+    }
+
+    render(){
+
+        var self = this;
+        var widgets = this.state.widgets.map(function(widget, i){
+            return(
+                <Widget id = {widget.id}
+                        key = {widget.id}
+                        content = {widget.content}
+                        dragging = {false}
+                        pushed = {false}
+                        collisionDetect = {self.collisionDetect.bind(self)}
+                        solidifyWidgets = {self.solidifyWidgets.bind(self)}
+                        update = {self.updateWidget.bind(self)}
+                        actWidth = {widget.actWidth}
+                        actHeight = {widget.actHeight}
+                        actLeft = {widget.actLeft}
+                        actTop = {widget.actTop}
+                        tmpWidth = {widget.tmpWidth}
+                        tmpHeight = {widget.tmpHeight}
+                        tmpLeft = {widget.tmpLeft}
+                        tmpTop = {widget.tmpTop}
+                        refWidth = {widget.refWidth}
+                        refHeight = {widget.refHeight}
+                        refLeft = {widget.refLeft}
+                        refTop = {widget.refTop}
+                        minWidth = {widget.minWidth}
+                        minHeight = {widget.minHeight}
+                        maxWidth = {widget.maxWidth}
+                        maxHeight = {widget.maxHeight}
+                        gridWidth = {self.state.gridWidth}
+                        gridHeight = {self.state.gridHeight}
+                        cellOffset = {self.state.cellOffset}
+                        index = {widget.index || 0}
+                        transition = {widget.transition || 'all .5s ease'}
+                        toggleGrid = {self.toggleGrid.bind(self)}
+                        validateHome = {self.isValidHome.bind(self)}>
+                </Widget>
+            )
+        });
+
+        return (
+            <div className='layout'
+                 ref='layoutRef'>
+                <MenuBar />
+                <Grid gridCols={this.state.gridCols}
+                      gridRows={this.state.gridRows}
+                      screenWidth = {this.state.screenWidth}
+                      screenHeight = {this.state.screenHeight}
+                      widgets = {widgets}
+                      visibility = {this.state.gridToggled}>
+                </Grid>
+            </div>
+        );
+    }
+};
+
+
+//React component that draws the grid
+class Grid extends React.Component{
+
+    componentDidMount(){
+        var w = this.props.screenWidth - 40, h = this.props.screenHeight,
+            wOffs = w/this.props.gridCols,
+            hOffs = h/this.props.gridRows,
+            canvas = this.refs.gridRef,
+            ctx = canvas.getContext('2d');
+
+        ctx.canvas.width  = w;
+        ctx.canvas.height = h;
+        ctx.strokeStyle = getComputedStyle(canvas).getPropertyValue('border-color');
+        //ctx.setLineDash([1, 8]);
+        ctx.lineWidth=1;
+        ctx.stroke();
+        for (let x=0;x<=w;x+=wOffs) {
+            for (let y=0;y<=h;y+=hOffs) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+        }
+
+        var grid = document.getElementById('gridContainer');
+        grid.style.minHeight = h + 'px';
+        grid.style.minWidth = w + 'px';
+
+        this.forceUpdate();
+    }
+
+    componentDidUpdate(){
+        var canvas = this.refs.gridRef,
+            visibility = this.props.visibility;
+        if(visibility) {
+            canvas.style.opacity = '1';
+        }
+        else {
+            canvas.style.opacity = '0';
+        }
+    }
+
+    render(){
+        return (
+            <div id = 'gridContainer'>
+                <canvas id = 'grid'
+                        ref = 'gridRef'
+                        className = 'themeGridColor'
+                        onClick = {this.props.exit}>
+                </canvas>
+                {this.props.widgets}
+            </div>
+        );
+    }
+}
