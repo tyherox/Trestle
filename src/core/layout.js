@@ -346,6 +346,7 @@ export default class Layout extends React.Component{
                 <Widget id = {widget.id}
                         key = {widget.id}
                         content = {widget.content}
+                        toolbar = {widget.toolbar}
                         dragging = {false}
                         pushed = {false}
                         collisionDetect = {self.collisionDetect.bind(self)}

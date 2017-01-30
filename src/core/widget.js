@@ -239,34 +239,36 @@ export default class Widget extends React.Component{
     }
 
     render(){
-        var Content = this.props.content;
-        if(this.props.id){
-            if(Content){
-                return(
-                    <div className = 'widget widgetBackground'
-                         ref = 'widgetRef'>
-                        <div className = 'widgetToolbar themeSecondaryColor'
-                             ref="widgetToolbarRef">
-                        </div>
-                        <div className = 'widgetContainer'>
-                            <Content refWidth = {this.props.refWidth}
-                                      refHeight = {this.props.refHeight}/>
-                        </div>
-                    </div>
-                )
-            }
-            else{
-                return(
-                    <div className = 'widget widgetBackground'
-                         ref = 'widgetRef'>
-                        <div className = 'widgetToolbar themeSecondaryColor'
-                             ref="widgetToolbarRef">
-                        </div>
-                        <div className = 'widgetContainer'>
-                        </div>
-                    </div>
-                )
-            }
-        }
+        var Content = this.props.content,
+            CustomToolbarElem = this.props.toolbar;
+
+        if(CustomToolbarElem==null) CustomToolbarElem = EmptyToolbar;
+
+        return(
+            <div className = 'widget widgetBackground'
+                 ref = 'widgetRef'>
+                <div className = 'widgetToolbar themeSecondaryColor'
+                     ref="widgetToolbarRef">
+                    <CustomToolbarElem />
+                    <button className="widgetToolbarButtons">1</button>
+                    <button className="widgetToolbarButtons">2</button>
+                    <button className="widgetToolbarButtons">3</button>
+                </div>
+                <div className = 'widgetContainer'>
+                    <Content refWidth = {this.props.refWidth}
+                             refHeight = {this.props.refHeight}/>
+                </div>
+            </div>
+        )
+
+    }
+}
+
+class EmptyToolbar extends React.Component {
+    render(){
+        return(
+            <div>
+            </div>
+        )
     }
 }

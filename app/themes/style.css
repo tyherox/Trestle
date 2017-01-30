@@ -1151,10 +1151,6 @@ input[type="number"].rye-inputArea{
     width: calc(100% - 20px);
 }
 
-#time{
-    text-align: center;
-}
-
 /**
  * Draft v0.10.0
  *
@@ -1196,4 +1192,18 @@ input[type="number"].rye-inputArea{
 
 .public-DraftStyleDefault-block{
     margin-bottom: 10px;
+}
+
+.sheet-title{
+    height: 25px;
+    line-height: 25px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    font-size: 150%;
+}
+
+#time{
+    text-align: center;
 }

@@ -21,6 +21,14 @@ class Hub extends React.Component {
     }
 }
 
+class Toolbar extends React.Component {
+    render(){
+        return(
+            <input className = "sheet-title"/>
+        )
+    }
+}
+
 export default {
     id:1,
     refWidth: 1,
@@ -31,5 +39,6 @@ export default {
     minHeight: 3,
     maxWidth: 10,
     maxHeight: 10,
+    toolbar: Toolbar,
     content: Hub
 };
