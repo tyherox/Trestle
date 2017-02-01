@@ -115,7 +115,7 @@ export default class Widget extends React.Component{
             .actionChecker(function (pointer, event, action) {
                 if(action.name=='drag'){
                     //Invalidate actions for widget content drag (users can only drag by using the toolbar)
-                    if(event.target.className == 'widgetToolbar themeSecondaryColor'){
+                    if(event.target.className.includes("widgetToolbar") || event.target.className.includes("sheet-title")){
                         action.name = 'drag';
                     }
                     else{
@@ -133,6 +133,7 @@ export default class Widget extends React.Component{
         this.setLocation();
         this.setTransition();
         this.setIndex();
+        this.setOpacity();
 
         self.props.update(self.props.id,{
             actLeft: (self.props.actLeft + self.props.cellOffset),
@@ -181,17 +182,18 @@ export default class Widget extends React.Component{
     }
 
     //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
-    componentDidUpdate(prevProps, prevState){
+    componentDidUpdate(){
 
-        if(prevProps.actWidth != this.props.actWidth || prevProps.actHeight != this.props.actHeight ||
-            prevProps.tmpWidth != this.props.tmpWidth || prevProps.tmpHeight != this.props.tmpHeight ) this.setSize();
-        if(prevProps.minWidth != this.props.minWidth || prevProps.minHeight != this.props.minHeight) this.setMinSize();
-        if(prevProps.maxWidth != this.props.maxWidth || prevProps.maxWidth != this.props.maxWidth) this.setMaxSize();
-        if(prevProps.actLeft != this.props.actLeft || prevProps.actTop != this.props.actTop ||
-            prevProps.tmpLeft != this.props.tmpLeft || prevProps.tmpTop != this.props.tmpTop ) this.setLocation();
-        if(prevProps.transition != this.props.transition) this.setTransition();
-        if(prevProps.index != this.props.index) this.setIndex();
+        this.setSize();
+        this.setMinSize();
+        this.setMaxSize();
+        this.setLocation();
+        this.setTransition();
+        this.setIndex();
+        this.setOpacity()
 
+
+        console.log("State:", this.props.refLeft, this.props.refTop, this.props.refHeight,this.props.refWidth,);
     }
 
     setSize(){
@@ -238,23 +240,30 @@ export default class Widget extends React.Component{
         widget.style.zIndex = this.props.index;
     }
 
+    setOpacity(){
+        var widget = this.refs.widgetRef;
+        widget.style.opacity = this.props.config.widgetOpacity * .01;
+    }
+
     render(){
         var Content = this.props.content,
-            CustomToolbarElem = this.props.toolbar;
+            CustomToolbarElem = this.props.toolbar,
+            toolbar = "widgetToolbar themeSecondaryColor";
 
         if(CustomToolbarElem==null) CustomToolbarElem = EmptyToolbar;
+        if(!this.props.config.toolbar) toolbar = "widgetToolbar";
 
         return(
             <div className = 'widget widgetBackground'
                  ref = 'widgetRef'>
-                <div className = 'widgetToolbar themeSecondaryColor'
+                <div className = {toolbar}
                      ref="widgetToolbarRef">
                     <CustomToolbarElem />
                     <button className="widgetToolbarButtons">1</button>
                     <button className="widgetToolbarButtons">2</button>
                     <button className="widgetToolbarButtons">3</button>
                 </div>
-                <div className = 'widgetContainer'>
+                <div className = 'widgetContainer' ref="widgetContainerRef">
                     <Content refWidth = {this.props.refWidth}
                              refHeight = {this.props.refHeight}/>
                 </div>

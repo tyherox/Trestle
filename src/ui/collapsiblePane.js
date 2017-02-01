@@ -1,5 +1,7 @@
 /**
  * Created by JohnBae on 1/30/17.
+ *
+ * React "Collapsible Pane" to handle collapsing / expanding behaviour or panes.
  */
 
 import React from "react";
@@ -19,6 +21,7 @@ export default class Collapsible extends React.Component{
         //this.refs.cPane.style.height = parseInt(this.refs.cPane.getBoundingClientRect().height) + 'px';
     }
 
+    //Handle collapsed / expanded state changes
     setCollapse(){
         var pane = this.refs.cPane;
         if(this.state.collapse){
@@ -35,8 +38,8 @@ export default class Collapsible extends React.Component{
         return(
             <div className="rye-collapsiblePane" ref="cPane">
                 <div className="rye-collapsiblePane-topBar">
-                    <div className="rye-collapsiblePane-topBarTitle" onClick={()=>this.setCollapse()}>{this.props.title}</div>
-                    <button className="rye-collapsiblePane-topBarIcon" onClick={()=>this.setCollapse()}>*</button>
+                    <div className="rye-collapsiblePane-topBar-title" onClick={()=>this.setCollapse()}>{this.props.title}</div>
+                    <button className="rye-collapsiblePane-topBar-icon" onClick={()=>this.setCollapse()}>*</button>
                 </div>
                 {this.props.children}
             </div>

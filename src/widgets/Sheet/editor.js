@@ -17,6 +17,7 @@ export default class MyEditor extends React.Component {
 
         const {editorState} = this.state;
 
+
         return (
             <div className="editorContainer">
                 <div className="editorContent"

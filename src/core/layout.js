@@ -1,7 +1,5 @@
 /*Tyherox
 *
-* Layout
-*
 * The layout module of Scribe handles tasks related to decorating and arranging widgets on the screen.
 * Main components include both the widget and its Element object counterpart. Custom data is stored within Widget props
 * using React.
@@ -87,6 +85,7 @@ export default class Layout extends React.Component{
             widget.tmpTop = 0;
             widget.refLeft = self.findCol(widget.actLeft);
             widget.refTop = self.findRow(widget.actTop);
+
         })
         this.setState({widgets:widgets});
     }
@@ -374,7 +373,8 @@ export default class Layout extends React.Component{
                         index = {widget.index || 0}
                         transition = {widget.transition || 'all .5s ease'}
                         toggleGrid = {self.toggleGrid.bind(self)}
-                        validateHome = {self.isValidHome.bind(self)}>
+                        validateHome = {self.isValidHome.bind(self)}
+                        config = {self.props.config}>
                 </Widget>
             )
         });
@@ -382,7 +382,7 @@ export default class Layout extends React.Component{
         return (
             <div className='layout'
                  ref='layoutRef'>
-                <MenuBar />
+                <MenuBar config={this.props.config} setConfig={this.props.setConfig}/>
                 <Grid gridCols={this.state.gridCols}
                       gridRows={this.state.gridRows}
                       screenWidth = {this.state.screenWidth}

@@ -14,7 +14,7 @@
     line-height: 25px;
 }
 
-.rye-collapsiblePane-topBarTitle{
+.rye-collapsiblePane-topBar-title{
     position: relative;
     display: inline-block;
     width: 150px;
@@ -23,7 +23,7 @@
     cursor: default;
 }
 
-.rye-collapsiblePane-topBarIcon{
+.rye-collapsiblePane-topBar-icon{
     position: absolute;
     top:0;
     right:0;
@@ -32,12 +32,4 @@
     outline: none;
     width: 30px;
     height:100%;
-}
-
-.rye-collapsiblePane-item{
-    position: relative;
-    display: block;
-
-    width: 100%;
-    height: 200px;
 }

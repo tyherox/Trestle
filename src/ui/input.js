@@ -1,5 +1,7 @@
 /**
  * Created by JohnBae on 1/30/17.
+ *
+ * React form "Input" components for easy custom styling and data management.
  */
 
 import React from "react";
@@ -15,7 +17,18 @@ export default class Input extends React.Component{
     }
 
     handleNewValue(){
-        this.props.changeValue(this.props.checked);
+        var value = null,
+            type = this.props.type;
+        switch(type){
+            case "checkbox" : value = this.props.checked;
+                break;
+            case "number" : value = this.refs.input.value;
+                break;
+            case "range" : value = this.refs.input.value;
+                break;
+        }
+        console.log("INPUT VALUE:", value);
+        this.props.changeValue(value);
     }
 
 
@@ -26,7 +39,7 @@ export default class Input extends React.Component{
 
         switch(type){
             case "checkbox" :
-                input = <input className = "rye-inputArea"
+                input = <input className = "rye-input-area"
                                ref="input"
                                type="checkbox"
                                checked={this.props.checked}
@@ -34,27 +47,29 @@ export default class Input extends React.Component{
                 break;
 
             case "number" :
-                input = <input className = "rye-inputArea"
+                input = <input className = "rye-input-area"
                                ref="input"
                                type="number"
-                               checked={this.props.checked}
+                               max={this.props.max}
+                               min={this.props.min}
+                               value={this.props.value}
+                               onChange={this.handleNewValue.bind(this)} />;
+                break;
+
+            case "range" :
+                input = <input className = "rye-input-area"
+                               ref="input"
+                               type="range"
+                               max={this.props.max}
+                               min={this.props.min}
+                               value={this.props.value}
                                onChange={this.handleNewValue.bind(this)} />;
                 break;
         }
 
-        /*
-         return(
-         <div className = "rye-input">
-         <div className = "rye-inputText"
-         onClick={this.handleNewValue.bind(this)}>{this.props.text}</div>
-         {input}
-         </div>
-         )
-         */
-
         return(
             <div className = "rye-input">
-                <div className = "rye-inputText"
+                <div className = "rye-input-title"
                      onClick={this.handleNewValue.bind(this)}>{this.props.text}</div>
                 {input}
             </div>

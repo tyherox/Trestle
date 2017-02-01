@@ -2,10 +2,9 @@
  * Created by JohnBae on 12/1/16.
  */
 
-import ReactDOM from 'react-dom';
+import React, {Component} from 'react-dom';
 import { remote } from 'electron';
 import jetpack from 'fs-jetpack';
-import React from 'react';
 import layout from './core/layout.js';
 import decor from './helpers/decor.js';
 import dev from './helpers/dev.js';

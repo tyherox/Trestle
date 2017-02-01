@@ -29,16 +29,16 @@ class Toolbar extends React.Component {
     }
 }
 
-export default {
-    id:1,
-    refWidth: 1,
-    refHeight: 1,
-    refLeft: 0,
-    refTop: 0,
-    minWidth: 3,
-    minHeight: 3,
-    maxWidth: 10,
-    maxHeight: 10,
-    toolbar: Toolbar,
-    content: Hub
-};
+ export default {
+ id:1,
+ refWidth: 3,
+ refHeight: 3,
+ refLeft: 0,
+ refTop: 0,
+ minWidth: 2,
+ minHeight: 2,
+ maxWidth: 10,
+ maxHeight: 10,
+ toolbar: Toolbar,
+ content: Hub
+ };

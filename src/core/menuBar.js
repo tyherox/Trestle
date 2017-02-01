@@ -7,8 +7,9 @@ import Button from "../ui/button";
 import Buffer from "../ui/buffer";
 import Input from "../ui/input"
 import Collapsible from '../ui/collapsiblePane'
+import Scrollable from '../ui/scrollPane'
 
-export default class NavBar extends React.Component{
+export default class MenuBar extends React.Component{
 
     constructor(props){
         super(props);
@@ -49,30 +50,13 @@ export default class NavBar extends React.Component{
     }
 
     toggleSub(pane){
-        var subMenu = this.refs.subMenu,
-            overlay = this.refs.overlay;
+        var overlay = this.refs.overlay;
 
-        if(subMenu!=null){
-            if(pane==null){
-                subMenu.style.width = "0";
-                overlay.style.width = "0";
-                overlay.style.height = "0";
-                this.setState({subMenu:null})
-            }
-            else if(this.state.subMenu==null || this.state.subMenu!=pane){
-                console.log("EXPANDING");
-                subMenu.style.width = "240px";
-                overlay.style.width = "100vw";
-                overlay.style.height = "100vh";
-                overlay.display = "inline";
-                this.setState({subMenu:pane})
-            }
-            else if(this.state.subMenu || pane==null){
-                subMenu.style.width = "0";
-                overlay.style.width = "0";
-                overlay.style.height = "0";
-                this.setState({subMenu:null})
-            }
+        if(pane==null || this.state.subMenu==pane){
+            this.setState({subMenu:null})
+        }
+        else if(this.state.subMenu==null || this.state.subMenu!=pane){
+            this.setState({subMenu:pane})
         }
 
     }
@@ -80,42 +64,48 @@ export default class NavBar extends React.Component{
     render(){
 
 
-        var subMenu = null,
+        var subMenuContent = null,
+            subMenu = null,
             openedMenu = this.state.subMenu,
-            self = this;
+            self = this,
+            overlay = null;
 
         if(openedMenu!=null){
             switch(openedMenu){
-                case "setting" : subMenu = <SettingPane />
+                case "setting" : subMenuContent = <SettingPane config = {this.props.config}
+                                                               setConfig = {this.props.setConfig}/>
                     break;
-                case "display" : subMenu = <DisplayPane />
+                case "display" : subMenuContent = <DisplayPane />
                     break;
-                case "file" : subMenu = <FilePane />
+                case "file" : subMenuContent = <FilePane />
                     break;
                 default : console.log("Unregistered Pane!");
                     break;
             }
+            subMenu = <div id ="menuBar-subMenu" ref="subMenu">
+                {subMenuContent}
+            </div>
+
+            overlay = <div id = "menuBar-overlay"
+                           onClick = {self.closeSubMenu.bind(self)}
+                           ref="overlay">
+            </div>
         }
 
         return(
             <div id = "menuBar" className = "themeSecondaryColor" ref="menu">
-                <div id = "menuBar-overlay"
-                     onClick = {self.closeSubMenu.bind(self)}
-                     ref="overlay">
-                </div>
-                <div id ="menuBar-top">
+                {overlay}
+                <div id ="menuBar-topButtonGroup">
                     <Button onClick={self.exit.bind(self)}>E</Button>
                     <Button onClick={self.openSetting.bind(self)}>S</Button>
                     <Button onClick={self.openDisplay.bind(self)}>D</Button>
                     <Button onClick={self.openFiles.bind(self)}>F</Button>
                 </div>
-                <div id ="menuBar-bot">
-                    <Button className = "rye-button">F</Button>
-                    <Button className = "rye-button">+</Button>
+                <div id ="menuBar-botButtonGroup">
+                    <Button>F</Button>
+                    <Button>+</Button>
                 </div>
-                <div id ="menuBar-subMenu" ref="subMenu">
-                    {subMenu}
-                </div>
+                {subMenu}
             </div>
         )
     }
@@ -123,50 +113,64 @@ export default class NavBar extends React.Component{
 
 class SettingPane extends React.Component{
 
-    constructor(props){
-        super(props);
-        this.state = {toolbar: true, find: true, focus: true, opacity: 100}
-    }
-
     toggleToolbar(state){
-        this.setState({toolbar: !state});
+        console.log("check:",state);
+        this.props.setConfig({toolbar: !state});
     }
 
     toggleFindButton(state){
-        this.setState({find: !state});
+        this.props.setConfig({findButton: !state});
     }
 
     toggleFocusButton(state){
-        this.setState({focus: !state});
+        this.props.setConfig({sentenceFocusButton: !state});
     }
 
     setWidgetOpacity(state){
-        this.setState({opacity: state});
+        console.log(state);
+        this.props.setConfig({widgetOpacity: state});
+    }
+
+    reset(){
+        this.props.setConfig({toolbar: true, findButton: true, sentenceFocusButton: true, widgetOpacity: 100});
     }
 
     render(){
         return(
             <div className = "subMenu">
                 <h1>Settings</h1>
-                <div className = "subMenu-settings">
-                    <Input text="Hide toolbar"
+                <div className="subMenu-settings-attrGroup">
+                    <Input text="Show toolbar"
                            type="checkbox"
-                           checked={this.state.toolbar}
+                           checked={this.props.config.toolbar}
                            changeValue={this.toggleToolbar.bind(this)} />
-                    <Input text="Hide find button"
+                    <Input text="Show find button"
                            type="checkbox"
-                           checked={this.state.find}
+                           checked={this.props.config.findButton}
                            changeValue={this.toggleFindButton.bind(this)}/>
-                    <Input text="Hide sentence focus button"
+                    <Input text="Show sentence focus button"
                            type="checkbox"
-                           checked={this.state.focus}
+                           checked={this.props.config.sentenceFocusButton}
                            changeValue={this.toggleFocusButton.bind(this)}/>
+                </div>
+                <div className="subMenu-settings-attrGroup">
                     <Input text="Widget opacity"
                            type="number"
-                           checked={this.state.toolbar}
+                           max="100"
+                           min="0"
+                           value={this.props.config.widgetOpacity}
+                           changeValue={this.setWidgetOpacity.bind(this)}/>
+                    <Input type="range"
+                           max="100"
+                           min="0"
+                           value={this.props.config.widgetOpacity}
                            changeValue={this.setWidgetOpacity.bind(this)}/>
                 </div>
-                <button className = 'rye-button subMenu-defaultButton'> Default </button>
+                <div className = 'subMenu-botToolGroup'>
+                    <Button height="50"
+                            width="150"
+                            onClick={this.reset.bind(this)}> Default </Button>
+                </div>
             </div>
         )
     }
@@ -184,26 +188,24 @@ class DisplayPane extends React.Component{
 
     render(){
         return(
-            <div className = "subMenu">
+            <div className="subMenu">
                 <h1>Display</h1>
-                <div className="subMenu-display">
-                    <div className="subMenu-displayScroll">
-                        <Collapsible title = "Layouts">
-                            <button className="subMenu-collapsiblePane-item">TEST 1</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 2</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 3</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 4</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 5</button>
-                        </Collapsible>
-                        <Collapsible title = "Widgets">
-                            <button className="subMenu-collapsiblePane-item">TEST 1</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 2</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 3</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 4</button>
-                            <button className="subMenu-collapsiblePane-item">TEST 5</button>
-                        </Collapsible>
-                    </div>
-                </div>
+                <Scrollable className="subMenu-displayScroll">
+                    <Collapsible title = "Layouts">
+                        <button className="subMenu-collapsiblePane-item">TEST 1</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 2</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 3</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 4</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 5</button>
+                    </Collapsible>
+                    <Collapsible title = "Widgets">
+                        <button className="subMenu-collapsiblePane-item">TEST 1</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 2</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 3</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 4</button>
+                        <button className="subMenu-collapsiblePane-item">TEST 5</button>
+                    </Collapsible>
+                </Scrollable>
             </div>
         )
     }
@@ -235,46 +237,44 @@ class FilePane extends React.Component{
                             <option value="Date Modified">Date Modified&nbsp;&nbsp;</option>
                         </select>
                     </div>
-                    <div className="subMenu-filesScroll">
-                        <div className="subMenu-files-list">
-                            <div className="exampleFile" > TEST 1 </div>
-                            <div className="exampleFile" > TEST 2 </div>
-                            <div className="exampleFile" > TEST 3 </div>
-                            <div className="exampleFile" > TEST 4 </div>
-                            <div className="exampleFile" > TEST 5 </div>
-                            <div className="exampleFile" > TEST 6 </div>
-                            <div className="exampleFile" > TEST 7 </div>
-                            <div className="exampleFile" > TEST 8 </div>
-                            <div className="exampleFile" > TEST 9 </div>
-                            <div className="exampleFile" > TEST 10 </div>
-                            <div className="exampleFile" > TEST 11 </div>
-                            <div className="exampleFile" > TEST 12 </div>
-                            <div className="exampleFile" > TEST 13 </div>
-                            <div className="exampleFile" > TEST 14 </div>
-                            <div className="exampleFile" > TEST 15 </div>
-                            <div className="exampleFile" > TEST 16 </div>
-                            <div className="exampleFile" > TEST 1 </div>
-                            <div className="exampleFile" > TEST 2 </div>
-                            <div className="exampleFile" > TEST 3 </div>
-                            <div className="exampleFile" > TEST 4 </div>
-                            <div className="exampleFile" > TEST 5 </div>
-                            <div className="exampleFile" > TEST 6 </div>
-                            <div className="exampleFile" > TEST 7 </div>
-                            <div className="exampleFile" > TEST 8 </div>
-                            <div className="exampleFile" > TEST 9 </div>
-                            <div className="exampleFile" > TEST 10 </div>
-                            <div className="exampleFile" > TEST 11 </div>
-                            <div className="exampleFile" > TEST 12 </div>
-                            <div className="exampleFile" > TEST 13 </div>
-                            <div className="exampleFile" > TEST 14 </div>
-                            <div className="exampleFile" > TEST 15 </div>
-                            <div className="exampleFile" > TEST 16 </div>
-                        </div>
-                    </div>
+                    <Scrollable className="subMenu-filesScroll">
+                        <div className="exampleFile" > TEST 1 </div>
+                        <div className="exampleFile" > TEST 2 </div>
+                        <div className="exampleFile" > TEST 3 </div>
+                        <div className="exampleFile" > TEST 4 </div>
+                        <div className="exampleFile" > TEST 5 </div>
+                        <div className="exampleFile" > TEST 6 </div>
+                        <div className="exampleFile" > TEST 7 </div>
+                        <div className="exampleFile" > TEST 8 </div>
+                        <div className="exampleFile" > TEST 9 </div>
+                        <div className="exampleFile" > TEST 10 </div>
+                        <div className="exampleFile" > TEST 11 </div>
+                        <div className="exampleFile" > TEST 12 </div>
+                        <div className="exampleFile" > TEST 13 </div>
+                        <div className="exampleFile" > TEST 14 </div>
+                        <div className="exampleFile" > TEST 15 </div>
+                        <div className="exampleFile" > TEST 16 </div>
+                        <div className="exampleFile" > TEST 1 </div>
+                        <div className="exampleFile" > TEST 2 </div>
+                        <div className="exampleFile" > TEST 3 </div>
+                        <div className="exampleFile" > TEST 4 </div>
+                        <div className="exampleFile" > TEST 5 </div>
+                        <div className="exampleFile" > TEST 6 </div>
+                        <div className="exampleFile" > TEST 7 </div>
+                        <div className="exampleFile" > TEST 8 </div>
+                        <div className="exampleFile" > TEST 9 </div>
+                        <div className="exampleFile" > TEST 10 </div>
+                        <div className="exampleFile" > TEST 11 </div>
+                        <div className="exampleFile" > TEST 12 </div>
+                        <div className="exampleFile" > TEST 13 </div>
+                        <div className="exampleFile" > TEST 14 </div>
+                        <div className="exampleFile" > TEST 15 </div>
+                        <div className="exampleFile" > TEST 16 </div>
+                    </Scrollable>
                 </div>
-                <div className="subMenu-files-botTools">
-                    <button className="botTool">1</button>
-                    <button className="botTool">2</button>
+                <div className="subMenu-botToolGroup">
+                    <Button className="subMenu-botToolGroup-item">1</Button>
+                    <Button className="subMenu-botToolGroup-item">2</Button>
                 </div>
             </div>
         )

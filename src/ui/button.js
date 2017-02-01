@@ -1,10 +1,12 @@
 /**
  * Created by JohnBae on 1/30/17.
+ *
+ * React "Button" component to handle theme dependent styles.
  */
 
-import React from "react";
+import React, {Component} from "react";
 
-export default class Button extends React.Component{
+export default class Button extends Component{
 
     componentDidMount(){
         this.decorateButton()
@@ -14,9 +16,9 @@ export default class Button extends React.Component{
         this.decorateButton()
     }
 
+    //Styling Button with theme dependent icons / parameters.
     decorateButton(){
         var button = this.refs.button;
-        console.log("Decorating");
         if(this.props.width!=null && this.props.height!=null){
             button.style.width = this.props.width + "px";
             button.style.height = this.props.height + "px";
@@ -29,9 +31,11 @@ export default class Button extends React.Component{
 
     render(){
         return(
-            <button className = "rye-button"
+            <button className = {"rye-button " + this.props.className}
                     ref = "button"
-                    onClick={this.props.onClick}>{this.props.children}</button>
+                    onClick={this.props.onClick}>
+                {this.props.children}
+            </button>
         )
     }
 }
