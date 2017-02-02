@@ -17,7 +17,8 @@ export default class Layout extends React.Component{
 
     constructor(props){
         super(props);
-        var self = this;
+
+        this.useSavedLayout();
 
         this.state = {
             screenWidth: this.props.screenWidth,
@@ -30,11 +31,30 @@ export default class Layout extends React.Component{
             widgets: this.props.widgets || [],
             gridToggled: false
         };
+    }
 
+    useSavedLayout(){
+        var self = this;
+
+        this.props.layout.map(function(attr){
+            var id = attr["id"];
+            var widgets = self.props.widgets;
+            widgets.forEach(function(widget){
+                if(id==widget.id) {
+                    for(var prop in attr) {
+                        widget[prop] = attr[prop];
+                    }
+                }
+            })
+        });
+    }
+
+    componentDidMount(){
+        this.translateToLocalScreen();
     }
 
     //Initialize Widget Locations based on col and row variables for screen size independence
-    componentWillMount(){
+    translateToLocalScreen(){
         var widgets = this.props.widgets, self = this;
         widgets.forEach(function(widget){
             if(widget.refLeft!=null && widget.refTop!=null){
@@ -85,7 +105,11 @@ export default class Layout extends React.Component{
             widget.tmpTop = 0;
             widget.refLeft = self.findCol(widget.actLeft);
             widget.refTop = self.findRow(widget.actTop);
-
+            self.props.saveLayout(widget.id,{
+                refWidth: widget.refWidth,
+                refHeight: widget.refHeight,
+                refLeft: widget.refLeft,
+                refTop: widget.refTop});
         })
         this.setState({widgets:widgets});
     }
@@ -107,12 +131,11 @@ export default class Layout extends React.Component{
     }
 
     findX(column){
-        var test = Math.round(column * this.state.gridWidth);
-        return test;
+        return Math.round(column * this.state.gridWidth + this.state.cellOffset);
     }
 
     findY(row){
-        return Math.round(row * this.state.gridHeight);
+        return Math.round(row * this.state.gridHeight + this.state.cellOffset);
     }
 
     findRow(y){

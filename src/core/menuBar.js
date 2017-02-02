@@ -138,7 +138,7 @@ class SettingPane extends React.Component{
     render(){
         return(
             <div className = "subMenu">
-                <h1>Settings</h1>
+                <h2>Settings</h2>
                 <div className="subMenu-settings-attrGroup">
                     <Input text="Show toolbar"
                            type="checkbox"
@@ -186,10 +186,14 @@ class DisplayPane extends React.Component{
 
     }
 
+    addLayout(){
+
+    }
+
     render(){
         return(
             <div className="subMenu">
-                <h1>Display</h1>
+                <h2>Display</h2>
                 <Scrollable className="subMenu-displayScroll">
                     <Collapsible title = "Layouts">
                         <button className="subMenu-collapsiblePane-item">TEST 1</button>
@@ -226,7 +230,7 @@ class FilePane extends React.Component{
     render(){
         return(
             <div className = "subMenu">
-                <h1>Files</h1>
+                <h2>Files</h2>
                 <div className="subMenu-files">
                     <div className="subMenu-files-toolbar">
                         <select value={this.state.value}

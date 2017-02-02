@@ -42,16 +42,13 @@ export default function(){
                         refHeight: 3,
                         refLeft: 0,
                         refTop: 0,
-                        minWidth: 3,
-                        minHeight: 3,
-                        maxWidth: 10,
-                        maxHeight: 10,
-                    }],
+                    }]
                 }
             }
 
+
             this.setConfig = this.setConfig.bind(this);
-            this.setLayout = this.setLayout.bind(this);
+            this.saveLayout = this.saveLayout.bind(this);
             console.log(this.state);
         }
 
@@ -61,27 +58,34 @@ export default function(){
                 for(var prop in configChanges) {
                     attr[prop] = configChanges[prop];
                 }
-            })
+            });
             this.setState({config:config});
+            this.saveStateToLocal();
+        }
 
-            var state = JSON.stringify(this.state);
+        saveLayout(ID, layoutChanges){
+            var layout = this.state.layout;
+            layout.forEach(function(attr){
+                var id = attr["id"];
+                if(id==ID){
+                    console.log(1);
+                    for(var prop in layoutChanges) {
+                        attr[prop] = layoutChanges[prop];
+                        console.log(2);
+                    }
+                }
+            });
+            this.setState({layout: layout});
+            this.saveStateToLocal();
+        }
+
+        saveStateToLocal(){
+            var state = JSON.stringify(this.state, null, "\t");
             jetpack.write("state.json",state);
         }
 
-        setLayout(layoutChanges){
-            var layout = this.state.layout;
-            layout.forEach(function(widget){
-                for(var prop in layoutChanges) {
-                    widget[prop] = layoutChanges[prop];
-                }
-            })
-            this.setState({config:layout});
-
-            var state = JSON.stringify(this.state);
-            jetpack.write("config.json",state);
-        }
-
         render(){
+
             return(
                 <div>
                     <Layout widgets = {widgets}
@@ -90,7 +94,7 @@ export default function(){
                             config = {this.state.config[0]}
                             setConfig = {this.setConfig}
                             saveLayout = {this.saveLayout}
-                            layout = {this.state.layout[0]}
+                            layout = {this.state.layout}
                             screenWidth = {screenWidth}
                             screenHeight ={screenHeight}/>
                 </div>

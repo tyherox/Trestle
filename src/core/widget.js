@@ -192,8 +192,6 @@ export default class Widget extends React.Component{
         this.setIndex();
         this.setOpacity()
 
-
-        console.log("State:", this.props.refLeft, this.props.refTop, this.props.refHeight,this.props.refWidth,);
     }
 
     setSize(){

@@ -44,8 +44,9 @@
 .subMenu{
     position: relative;
     margin: 5px;
+    margin-top: 10px;
     width:calc(100% - 10px);
-    height: calc(100% - 10px);
+    height: calc(100% - 20px);
 }
 
 .subMenu-settings-attrGroup{
