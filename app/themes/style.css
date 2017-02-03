@@ -501,6 +501,109 @@ template {
     display: none;
 }
 
+.rye-button{
+    background-color: white;
+    border: transparent;
+    outline: none;
+    margin: 2px;
+}
+
+.rye-button:active{
+    border: thin solid #2D98E0;
+}
+
+.rye-collapsiblePane{
+    display: block;
+    margin-bottom: 10px;
+    overflow: scroll;
+    transition: all .5s ease;
+}
+
+.rye-collapsiblePane-topBar{
+    position: relative;
+    margin-bottom: 10px;
+    height: 25px;
+    line-height: 25px;
+    background-color: gray;
+}
+
+.rye-collapsiblePane-topBar-title{
+    position: relative;
+    display: inline-block;
+    width: 150px;
+    top: 0;
+    left: 0;
+    cursor: default;
+}
+
+.rye-collapsiblePane-topBar-icon{
+    position: absolute;
+    top:0;
+    right:0;
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 30px;
+    height:100%;
+}
+
+.rye-input{
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.rye-input-title{
+    display: inline-block;
+    position: relative;
+    width: 150px;
+    left: 0;
+}
+
+.rye-input-title:hover{
+    cursor: default;
+}
+
+.rye-input-area{
+    position: absolute;
+    top: 0;
+    right:0;
+}
+
+input[type="checkbox"].rye-input-area{
+    width: 1em; /*Desired width*/
+    height: 1em; /*Desired height*/
+}
+
+input[type="number"].rye-input-area{
+    width: 2.5em; /*Desired width*/
+    border: transparent;
+    border-radius: 3px;
+    outline: none;
+    margin: 0;
+    padding: 0;
+}
+
+input[type="range"].rye-input-area{
+    width: 100%; /*Desired width*/
+    border: transparent;
+    outline: none;
+    margin: 0;
+    padding: 0;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.rye-scrollPane{
+    overflow: scroll;
+}
+
+.rye-scrollPane-container{
+
+}
+
 #layout{
     height: 100%;
     width: 100%;
@@ -601,8 +704,12 @@ template {
     position: relative;
     display: block;
 
-    width: 100%;
-    height: 200px;
+    margin: 10px;
+
+    border-radius: 5px;
+
+    width: calc(100% - 20px);
+    height: 180px;
 }
 
 .subMenu-files{
@@ -701,110 +808,6 @@ template {
 
 .widgetToolbarButtons:active{
     background-color: rgba(39, 49, 138, 0.46);
-}
-
-.rye-button{
-    background-color: white;
-    border: transparent;
-    outline: none;
-    margin: 2px;
-}
-
-.rye-button:active{
-    border: thin solid #2D98E0;
-}
-
-.rye-collapsiblePane{
-    background-color: honeydew;
-    display: block;
-    margin-bottom: 10px;
-    overflow: scroll;
-    transition: all .5s ease;
-}
-
-.rye-collapsiblePane-topBar{
-    position: relative;
-    background-color: wheat;
-    margin-bottom: 10px;
-    height: 25px;
-    line-height: 25px;
-}
-
-.rye-collapsiblePane-topBar-title{
-    position: relative;
-    display: inline-block;
-    width: 150px;
-    top: 0;
-    left: 0;
-    cursor: default;
-}
-
-.rye-collapsiblePane-topBar-icon{
-    position: absolute;
-    top:0;
-    right:0;
-    background: transparent;
-    border: none;
-    outline: none;
-    width: 30px;
-    height:100%;
-}
-
-.rye-input{
-    position: relative;
-    margin-bottom: 15px;
-}
-
-.rye-input-title{
-    display: inline-block;
-    position: relative;
-    width: 150px;
-    left: 0;
-}
-
-.rye-input-title:hover{
-    cursor: default;
-}
-
-.rye-input-area{
-    position: absolute;
-    top: 0;
-    right:0;
-}
-
-input[type="checkbox"].rye-input-area{
-    width: 1em; /*Desired width*/
-    height: 1em; /*Desired height*/
-}
-
-input[type="number"].rye-input-area{
-    width: 2.5em; /*Desired width*/
-    border: transparent;
-    border-radius: 3px;
-    outline: none;
-    margin: 0;
-    padding: 0;
-}
-
-input[type="range"].rye-input-area{
-    width: 100%; /*Desired width*/
-    border: transparent;
-    outline: none;
-    margin: 0;
-    padding: 0;
-}
-
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.rye-scrollPane{
-    overflow: scroll;
-}
-
-.rye-scrollPane-container{
-
 }
 
 #time{

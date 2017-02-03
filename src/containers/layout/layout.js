@@ -7,8 +7,8 @@
 */
 
 import React from 'react';
-import Widget from './widget';
-import MenuBar from './menuBar';
+import Widget from '../widget/widget';
+import MenuBar from '../menubar/menuBar';
 
 var key = 1;
 
@@ -18,7 +18,7 @@ export default class Layout extends React.Component{
     constructor(props){
         super(props);
 
-        this.useSavedLayout();
+        this.manualLayout();
 
         this.state = {
             screenWidth: this.props.screenWidth,
@@ -33,7 +33,7 @@ export default class Layout extends React.Component{
         };
     }
 
-    useSavedLayout(){
+    manualLayout(){
         var self = this;
 
         this.props.layout.map(function(attr){
@@ -109,7 +109,8 @@ export default class Layout extends React.Component{
                 refWidth: widget.refWidth,
                 refHeight: widget.refHeight,
                 refLeft: widget.refLeft,
-                refTop: widget.refTop});
+                refTop: widget.refTop
+            });
         })
         this.setState({widgets:widgets});
     }
@@ -201,6 +202,19 @@ export default class Layout extends React.Component{
         }
         return false;
     };
+
+    useSavedLayout(data){
+        var widgets = this.state.widgets;
+        widgets.forEach(function(widget){
+            data.forEach(function(iteration){
+                if(iteration["id"]==widget.id) {
+                    for(var prop in iteration) {
+                        widget[prop] = iteration[prop];
+                    }
+                }
+            })
+        });
+    }
 
     //Logic for widget collision (Currently in Testing Phase)
     collisionDetect(id){
@@ -362,8 +376,12 @@ export default class Layout extends React.Component{
 
     render(){
 
+        this.manualLayout();
+        this.translateToLocalScreen();
+
         var self = this;
         var widgets = this.state.widgets.map(function(widget, i){
+
             return(
                 <Widget id = {widget.id}
                         key = {widget.id}
@@ -405,7 +423,10 @@ export default class Layout extends React.Component{
         return (
             <div className='layout'
                  ref='layoutRef'>
-                <MenuBar config={this.props.config} setConfig={this.props.setConfig}/>
+                <MenuBar config={this.props.config}
+                         setConfig={this.props.setConfig}
+                         addLayout={this.props.addLayout}
+                         setLayout={this.useSavedLayout.bind(this)}/>
                 <Grid gridCols={this.state.gridCols}
                       gridRows={this.state.gridRows}
                       screenWidth = {this.state.screenWidth}

@@ -9,7 +9,7 @@
 
 import { remote } from 'electron';
 import React, {Component} from 'react';
-import Layout from '../core/layout.js';
+import Layout from '../containers/layout/layout.js';
 import ReactDOM from 'react-dom';
 import TimeWidget from '../widgets/Time/main.js';
 import Sheet from '../widgets/Sheet/main.js';
@@ -18,6 +18,7 @@ import jetpack from 'fs-jetpack';
 export default function(){
 
     var widgets = [],
+        userData = "dev",
         mother = document.getElementById('parent'),
         screenWidth = mother.getBoundingClientRect().width,
         screenHeight = mother.getBoundingClientRect().height;
@@ -29,8 +30,8 @@ export default function(){
         constructor(props){
             super(props);
 
-            if(jetpack.exists('state.json')){
-                var savedState = jetpack.read('state.json','json')
+            if(jetpack.exists(userData+'/state.json')){
+                var savedState = jetpack.read(userData+'/state.json','json')
                 this.state = savedState;
             }
             else{
@@ -49,6 +50,8 @@ export default function(){
 
             this.setConfig = this.setConfig.bind(this);
             this.saveLayout = this.saveLayout.bind(this);
+            this.saveLayoutToLocal = this.saveLayoutToLocal.bind(this);
+            this.setLayout = this.setLayout.bind(this);
             console.log(this.state);
         }
 
@@ -68,10 +71,8 @@ export default function(){
             layout.forEach(function(attr){
                 var id = attr["id"];
                 if(id==ID){
-                    console.log(1);
                     for(var prop in layoutChanges) {
                         attr[prop] = layoutChanges[prop];
-                        console.log(2);
                     }
                 }
             });
@@ -81,7 +82,19 @@ export default function(){
 
         saveStateToLocal(){
             var state = JSON.stringify(this.state, null, "\t");
-            jetpack.write("state.json",state);
+            jetpack.write(userData+"/state.json",state);
+        }
+
+
+        setLayout(data){
+            this.setState({layout: data});
+            console.log("State:", this.state);
+        }
+
+        saveLayoutToLocal(name){
+            var layout = JSON.stringify(this.state.layout, null, "\t");
+            jetpack.write(userData+"/layouts/"+name+".json",layout);
+            console.log("ADDED");
         }
 
         render(){
@@ -93,7 +106,9 @@ export default function(){
                             rows = '5'
                             config = {this.state.config[0]}
                             setConfig = {this.setConfig}
+                            addLayout = {this.saveLayoutToLocal}
                             saveLayout = {this.saveLayout}
+                            setLayout = {this.setLayout}
                             layout = {this.state.layout}
                             screenWidth = {screenWidth}
                             screenHeight ={screenHeight}/>

@@ -5,7 +5,7 @@
 import React, {Component} from 'react-dom';
 import { remote } from 'electron';
 import jetpack from 'fs-jetpack';
-import layout from './core/layout.js';
+import layout from './containers/layout/layout.js';
 import decor from './helpers/decor.js';
 import dev from './helpers/dev.js';
 

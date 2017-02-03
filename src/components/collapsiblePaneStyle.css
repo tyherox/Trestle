@@ -1,5 +1,4 @@
 .rye-collapsiblePane{
-    background-color: honeydew;
     display: block;
     margin-bottom: 10px;
     overflow: scroll;
@@ -8,10 +7,10 @@
 
 .rye-collapsiblePane-topBar{
     position: relative;
-    background-color: wheat;
     margin-bottom: 10px;
     height: 25px;
     line-height: 25px;
+    background-color: gray;
 }
 
 .rye-collapsiblePane-topBar-title{

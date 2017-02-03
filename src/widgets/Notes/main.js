@@ -16,7 +16,7 @@ function NoteWidget(){
 
     console.log(module.parent);
 
-    var Widget = require('../../core/Widget');
+    var Widget = require('../../containers/widget/widget');
     var data = require('../../core/settings');
     var config = new data('2');
 
