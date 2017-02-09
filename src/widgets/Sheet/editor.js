@@ -4,19 +4,23 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Editor, EditorState} from 'draft-js';
+import {Editor, EditorState, convertFromRaw, convertToRaw} from 'draft-js';
 
 export default class MyEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {editorState: EditorState.createEmpty()};
-        this.onChange = (editorState) => this.setState({editorState});
+        this.onChange = (editorState) => {
+            this.setState({editorState});
+            var content = this.state.editorState.getCurrentContent();
+            var raw = convertToRaw(content);
+            this.props.save(raw);
+        }
         this.focus = () => this.refs.editor.focus();
     }
     render() {
 
         const {editorState} = this.state;
-
 
         return (
             <div className="editorContainer">
@@ -34,7 +38,6 @@ export default class MyEditor extends React.Component {
                     />
                 </div>
             </div>
-
         );
     }
 }

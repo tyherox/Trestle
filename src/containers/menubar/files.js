@@ -26,8 +26,8 @@ export default class FilePane extends React.Component{
                     <div className="subMenu-files-toolbar">
                         <select value={this.state.value}
                                 onChange={this.handleChange}>
+                            <option value="Name">Name&nbsp;&nbsp;</option>
                             <option value="Recently Opened">Recently Opened&nbsp;&nbsp;</option>
-                            <option value="Date">Date</option>
                             <option value="Date Created">Date Created&nbsp;&nbsp;</option>
                             <option value="Date Modified">Date Modified&nbsp;&nbsp;</option>
                         </select>

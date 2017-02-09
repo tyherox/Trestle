@@ -1,9 +1,7 @@
 #menuBar{
     z-index: 10;
-
     display: block;
     position:absolute;
-
     top: 0;
     left: 0px;
     width: 40px;
@@ -64,16 +62,58 @@
     overflow: scroll;
 }
 
-.subMenu-collapsiblePane-item{
+.subMenu-display-layout{
+    margin-bottom: 20px;
+}
+
+.subMenu-display-layoutItem{
     position: relative;
     display: block;
-
-    margin: 10px;
-
+    margin-left: 10px;
+    margin-right: 10px;
     border-radius: 5px;
-
+    background: white;
     width: calc(100% - 20px);
-    height: 180px;
+    height: 160px;
+}
+
+.subMenu-display-layoutTitle{
+    margin: 10px;
+    outline: none;
+    border: none;
+    border-bottom-style: solid;
+    border-bottom-color: #2D98E0;
+    background-color: transparent;
+    text-align: center;
+    width: calc(100% - 20px);
+}
+
+.subMenu-display-initializeLayout{
+    width: calc(100% - 20px);
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.subMenu-display-confirmLayout{
+    position: relative;
+    display: block;
+    margin: 10px;
+    padding: 5px;
+    outline: none;
+    border-radius: 5px;
+    text-align: center;
+    background-color: white;
+    width: calc(100% - 20px);
+}
+
+.subMenu-display-layoutDelete{
+    position: relative;
+    float:right;
+    width: 25px;
+    height: 25px;
+    border-radius: 25px;
+    background-color: red;
 }
 
 .subMenu-files{
@@ -93,7 +133,9 @@
 }
 
 .subMenu-files-toolbar{
+    padding-left: 1px;
     margin-bottom: 15px;
+    overflow: visible;
 }
 
 .exampleFile{

@@ -45,9 +45,12 @@
     border-left-style: solid;
     border-left-width: 5px;
     border-left-color: transparent;
+    color: #b3b3b3;
+    transition: all .5s;
 }
 
 .sheet-title:focus{
     border-left-color: red;
     background-color: white;
+    color: black;
 }

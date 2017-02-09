@@ -7,23 +7,20 @@
  *
  */
 
-import { remote } from 'electron';
 import React, {Component} from 'react';
 import Layout from '../containers/layout/layout.js';
+import MenuBar from '../containers/menubar/menuBar.js'
 import ReactDOM from 'react-dom';
-import TimeWidget from '../widgets/Time/main.js';
 import Sheet from '../widgets/Sheet/main.js';
 import jetpack from 'fs-jetpack';
+import merge from 'deepmerge'
 
 export default function(){
 
-    var widgets = [],
+    var widgets = [Sheet],
         userData = "dev",
-        mother = document.getElementById('parent'),
-        screenWidth = mother.getBoundingClientRect().width,
-        screenHeight = mother.getBoundingClientRect().height;
-
-    var widgets = [Sheet];
+        screenWidth =screen.width,
+        screenHeight = screen.height;
 
     class App extends Component{
 
@@ -31,87 +28,153 @@ export default function(){
             super(props);
 
             if(jetpack.exists(userData+'/state.json')){
-                var savedState = jetpack.read(userData+'/state.json','json')
-                this.state = savedState;
+                this.state = jetpack.read(userData+'/state.json','json');
             }
             else{
                 this.state = {
-                    config: [{toolbar: true, findButton: true, sentenceFocusButton: true, widgetOpacity: 100}],
+                    settings: {
+                        toolbar: true,
+                        findButton: true,
+                        sentenceFocusButton: true,
+                        widgetOpacity: 100
+                    },
                     layout: [{
-                        id:1,
-                        refWidth: 3,
-                        refHeight: 3,
-                        refLeft: 0,
+                        id: 1,
+                        refWidth: 4,
+                        refHeight:5,
                         refTop: 0,
-                    }]
+                        refLeft: 2,
+                        state: []
+                    }],
+                    themeStorage: [
+                        {}
+                    ],
+                    widgetStorage: [
+                        Sheet
+                    ],
+                    layoutStorage: [
+                        {}
+                    ]
                 }
             }
 
-
-            this.setConfig = this.setConfig.bind(this);
-            this.saveLayout = this.saveLayout.bind(this);
-            this.saveLayoutToLocal = this.saveLayoutToLocal.bind(this);
+            this.scanUserData = this.scanUserData.bind(this);
+            this.readExternalData = this.readExternalData.bind(this);
+            this.storeExternalData = this.storeExternalData.bind(this);
+            this.setSettings = this.setSettings.bind(this);
             this.setLayout = this.setLayout.bind(this);
-            console.log(this.state);
+            this.addLayout = this.addLayout.bind(this);
+            this.deleteLayout = this.deleteLayout.bind(this);
+            this.renameLayout = this.renameLayout.bind(this);
+            this.updateWidgetState = this.updateWidgetState.bind(this);
+            this.saveStateToLocal = this.saveStateToLocal.bind(this);
         }
 
-        setConfig(configChanges){
-            var config = this.state.config;
-            config.forEach(function(attr){
-                for(var prop in configChanges) {
-                    attr[prop] = configChanges[prop];
-                }
-            });
-            this.setState({config:config});
+        componentDidMount(){
+            this.scanUserData();
+        }
+
+        scanUserData(){
+           if(jetpack.exists(userData+'/layouts')){
+               console.log("SCANNING LAYOUTS");
+               var layouts = jetpack.list(userData+'/layouts');
+               layouts = layouts.map(function(layout){
+                   return({
+                       name: layout,
+                       data: jetpack.read(userData+'/layouts/'+layout, "json")
+                   })
+               });
+               this.setState({layoutStorage: layouts});
+           }
+        }
+
+        readExternalData(){
+
+        }
+
+        storeExternalData(){
+
+        }
+
+        setSettings(settingChanges){
+            var settings = this.state.settings;
+            for(var prop in settingChanges) {
+                settings[prop] = settingChanges[prop];
+            }
+            this.setState({settings:settings});
             this.saveStateToLocal();
         }
 
-        saveLayout(ID, layoutChanges){
-            var layout = this.state.layout;
-            layout.forEach(function(attr){
-                var id = attr["id"];
-                if(id==ID){
-                    for(var prop in layoutChanges) {
-                        attr[prop] = layoutChanges[prop];
-                    }
-                }
-            });
+        setLayout(layout){
             this.setState({layout: layout});
             this.saveStateToLocal();
         }
 
-        saveStateToLocal(){
-            var state = JSON.stringify(this.state, null, "\t");
-            jetpack.write(userData+"/state.json",state);
-        }
-
-
-        setLayout(data){
-            this.setState({layout: data});
-            console.log("State:", this.state);
-        }
-
-        saveLayoutToLocal(name){
+        addLayout(name){
             var layout = JSON.stringify(this.state.layout, null, "\t");
             jetpack.write(userData+"/layouts/"+name+".json",layout);
-            console.log("ADDED");
+            console.log("ADDED LAYOUT");
+            this.scanUserData();
+        }
+
+        deleteLayout(name){
+            jetpack.remove(userData+"/layouts/"+name+".json");
+            this.scanUserData();
+        }
+
+        renameLayout(prevName, name){
+            jetpack.rename(userData+"/layouts/"+prevName+".json", name+".json");
+            this.scanUserData();
+        }
+
+        updateWidgetState(id, state){
+            var widget = this.state.widgetStorage.find(function(elem){
+                return elem.id == id;
+            });
+            var result = merge(widget, state);
+            var widgets = this.state.widgetStorage;
+            widgets.forEach(function(widget){
+                if(id==widget.id) {
+                    for(var props in result){
+                        widget[props] = result[props];
+                    }
+                }
+            });
+            this.setState({widgetStorage:widgets});
+        }
+
+        saveStateToLocal(){
+            var state = JSON.stringify(this.state, null, "\t");
+            //jetpack.write(userData+"/state.json",state);
         }
 
         render(){
 
+            console.log("Dev:",this.state.layout);
             return(
                 <div>
-                    <Layout widgets = {widgets}
-                            cols = '8'
-                            rows = '5'
-                            config = {this.state.config[0]}
-                            setConfig = {this.setConfig}
-                            addLayout = {this.saveLayoutToLocal}
-                            saveLayout = {this.saveLayout}
-                            setLayout = {this.setLayout}
-                            layout = {this.state.layout}
+                    <MenuBar settings={this.state.settings}
+                             setSettings={this.setSettings}
+                             layouts={this.state.layoutStorage}
+                             addLayout={this.addLayout}
+                             setLayout={this.setLayout}
+                             deleteLayout={this.deleteLayout}
+                             renameLayout={this.renameLayout}
+                             widgets = {this.state.widgetStorage}/>
+
+                    <Layout gridCols = '8'
+                            gridRows = '5'
                             screenWidth = {screenWidth}
-                            screenHeight ={screenHeight}/>
+                            screenHeight ={screenHeight}
+                            gridHeight = {screenHeight/5}
+                            gridWidth = {(screenWidth - 40)/8}
+                            cellOffset = {4}
+                            settings = {this.state.settings}
+                            layout = {this.state.layout}
+                            setLayout = {this.setLayout}
+                            widgets = {this.state.widgetStorage}
+                            updateWidgetState = {this.updateWidgetState}
+                            />
                 </div>
             )
         }
@@ -120,3 +183,4 @@ export default function(){
 
     ReactDOM.render(<App/>, document.getElementById('parent'));
 };
+

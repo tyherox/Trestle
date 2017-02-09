@@ -74,11 +74,13 @@ export default class MenuBar extends React.Component{
 
         if(openedMenu!=null){
             switch(openedMenu){
-                case "setting" : subMenuContent = <Settings config = {this.props.config}
-                                                            setConfig = {this.props.setConfig}/>
+                case "setting" : subMenuContent = <Settings settings = {this.props.settings}
+                                                            setSettings = {this.props.setSettings}/>
                     break;
-                case "display" : subMenuContent = <Display config = {this.props.config}
+                case "display" : subMenuContent = <Display layouts={this.props.layouts}
+                                                           deleteLayout={this.props.deleteLayout}
                                                            addLayout={this.props.addLayout}
+                                                           renameLayout={this.props.renameLayout}
                                                            setLayout={this.props.setLayout}/>
                     break;
                 case "file" : subMenuContent = <Files />
