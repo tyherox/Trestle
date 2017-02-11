@@ -38,39 +38,42 @@ export default function(){
                         sentenceFocusButton: true,
                         widgetOpacity: 100
                     },
-                    layout: [{
+                    layout: [
+                        {
                         id: 1,
                         refWidth: 4,
                         refHeight:5,
                         refTop: 0,
                         refLeft: 2,
                         state: []
-                    }],
-                    themeStorage: [
-                        {}
+                        }
                     ],
-                    widgetStorage: [
+                    savedThemes: [
+                    ],
+                    savedWidgets: [
                         Sheet
                     ],
-                    layoutStorage: [
-                        {}
+                    savedLayouts: [
                     ]
                 }
             }
 
             this.scanUserData = this.scanUserData.bind(this);
-            this.readExternalData = this.readExternalData.bind(this);
-            this.storeExternalData = this.storeExternalData.bind(this);
+            this.readWidgetStorage = this.readWidgetStorage.bind(this);
+            this.saveWidgetStorage = this.saveWidgetStorage.bind(this);
+            this.deleteWidgetStorage = this.deleteWidgetStorage.bind(this);
+            this.renameWidgetStorage = this.renameWidgetStorage.bind(this);
             this.setSettings = this.setSettings.bind(this);
             this.setLayout = this.setLayout.bind(this);
             this.addLayout = this.addLayout.bind(this);
             this.deleteLayout = this.deleteLayout.bind(this);
             this.renameLayout = this.renameLayout.bind(this);
             this.updateWidgetState = this.updateWidgetState.bind(this);
+            this.getWidgetState = this.getWidgetState.bind(this);
             this.saveStateToLocal = this.saveStateToLocal.bind(this);
         }
 
-        componentDidMount(){
+        componentWillMount(){
             this.scanUserData();
         }
 
@@ -84,16 +87,49 @@ export default function(){
                        data: jetpack.read(userData+'/layouts/'+layout, "json")
                    })
                });
-               this.setState({layoutStorage: layouts});
+               this.setState({savedLayouts: layouts});
            }
+
+            this.setState({savedWidgets: [Sheet]});
         }
 
-        readExternalData(){
+        readWidgetStorage(id, path, fun){
 
+            var widget = this.state.savedWidgets.find(function(elem){
+                return elem.id == id;
+            });
+
+            path = widget.storage + "/" + path;
+
+            if(jetpack.exists(userData+'/widgets/' + path) && jetpack.inspect(userData+'/widgets/' + path).type == "dir"){
+                var data = jetpack.list(userData+'/widgets/' + path);
+                if(!fun) return data;
+                return data.map(fun);
+            }
+            else if(jetpack.exists(userData+'/widgets/' + path) && jetpack.inspect(userData+'/widgets/' + path).type == "file"){
+                var data = jetpack.read(userData+'/widgets/' + path);
+                if(!fun) return data;
+                return data.map(fun);
+            }
+            return false;
         }
 
-        storeExternalData(){
+        renameWidgetStorage(id, prevName, name){
+            var widget = this.findWidgetInSavedWidgets(id);
+            jetpack.rename(userData+"/widgets/"+ widget.storage + "/" + prevName, name);
+            this.scanUserData();
+        }
 
+        deleteWidgetStorage(id, path){
+            var widget = this.findWidgetInSavedWidgets(id);console.log("Deleting :" + userData+"/widgets/"+ widget.storage + "/" + path);
+            jetpack.remove(userData+"/widgets/"+ widget.storage + "/" + path);
+        }
+
+        saveWidgetStorage(id, data, path){
+            var widget = this.findWidgetInSavedWidgets(id);
+            var json = JSON.stringify(data, null, "\t");
+            console.log("SAVING");
+            jetpack.write(userData+"/widgets/"+ widget.storage + "/" + path, json);
         }
 
         setSettings(settingChanges){
@@ -101,13 +137,16 @@ export default function(){
             for(var prop in settingChanges) {
                 settings[prop] = settingChanges[prop];
             }
-            this.setState({settings:settings});
-            this.saveStateToLocal();
+            this.setState({settings:settings},function(){
+                this.saveStateToLocal();
+            });
         }
 
         setLayout(layout){
-            this.setState({layout: layout});
-            this.saveStateToLocal();
+            console.log("SETTING LAYOUT:", layout);
+            this.setState({layout: layout}, function(){
+                this.saveStateToLocal();
+            });
         }
 
         addLayout(name){
@@ -127,40 +166,91 @@ export default function(){
             this.scanUserData();
         }
 
-        updateWidgetState(id, state){
-            var widget = this.state.widgetStorage.find(function(elem){
+        updateWidgetState(id, state, permanent){
+
+           var widget = this.findWidgetInLayout(id);
+
+            switch(permanent){
+                case true:
+                    var result = merge(widget, state);
+                    var widgets = this.state.layout;
+                    widgets.forEach(function(widget){
+                        if(id==widget.id) {
+                            for(var props in result){
+                                widget[props] = result[props];
+                            }
+                        }
+                    });
+                    this.setState({layout:widgets}, function(){
+                        this.saveStateToLocal();
+                    });
+                    break;
+                default :
+                    var result = merge(widget.state, state);
+                    var widgets = this.state.layout;
+                    widgets.forEach(function(widget){
+                        if(id==widget.id) {
+                            for(var props in result){
+                                widget.state[props] = result[props];
+                            }
+                        }
+                    });
+                    this.setState({layout:widgets});
+                    break;
+            }
+
+        }
+
+        getWidgetState(id, state){
+            var widget = this.findWidgetInLayout(id);
+            return widget[state];
+        }
+
+        findWidgetInLayout(id){
+            var widget = this.state.layout.find(function(elem){
                 return elem.id == id;
             });
-            var result = merge(widget, state);
-            var widgets = this.state.widgetStorage;
-            widgets.forEach(function(widget){
-                if(id==widget.id) {
-                    for(var props in result){
-                        widget[props] = result[props];
-                    }
-                }
+            return widget;
+        }
+
+        findWidgetInSavedWidgets(id){
+            var widget = this.state.savedWidgets.find(function(elem){
+                return elem.id == id;
             });
-            this.setState({widgetStorage:widgets});
+            return widget;
         }
 
         saveStateToLocal(){
-            var state = JSON.stringify(this.state, null, "\t");
-            //jetpack.write(userData+"/state.json",state);
+
+            var state = JSON.parse(JSON.stringify(this.state));
+            state.layout.forEach(function(widget){
+               widget.state = [];
+            });
+            state.savedLayouts = [];
+            state.savedThemes = [];
+            state.savedWidgets = [];
+
+            //console.log("1:", state, "2:", this.state);
+
+            jetpack.write(userData+"/state.json",state);
         }
 
         render(){
 
-            console.log("Dev:",this.state.layout);
+            //console.log("THIS STATE:", this.state);
+
             return(
                 <div>
                     <MenuBar settings={this.state.settings}
                              setSettings={this.setSettings}
-                             layouts={this.state.layoutStorage}
+                             layouts={this.state.savedLayouts}
                              addLayout={this.addLayout}
                              setLayout={this.setLayout}
                              deleteLayout={this.deleteLayout}
                              renameLayout={this.renameLayout}
-                             widgets = {this.state.widgetStorage}/>
+                             readWidgetStorage = {this.readWidgetStorage}
+                             saveWidgetStorage = {this.saveWidgetStorage}
+                             widgets = {this.state.savedWidgets}/>
 
                     <Layout gridCols = '8'
                             gridRows = '5'
@@ -172,7 +262,12 @@ export default function(){
                             settings = {this.state.settings}
                             layout = {this.state.layout}
                             setLayout = {this.setLayout}
-                            widgets = {this.state.widgetStorage}
+                            widgets = {this.state.savedWidgets}
+                            getWidgetState = {this.getWidgetState}
+                            readWidgetStorage = {this.readWidgetStorage}
+                            saveWidgetStorage = {this.saveWidgetStorage}
+                            deleteWidgetStorage = {this.deleteWidgetStorage}
+                            renameWidgetStorage = {this.renameWidgetStorage}
                             updateWidgetState = {this.updateWidgetState}
                             />
                 </div>

@@ -2,11 +2,11 @@
  * Created by JohnBae on 1/29/17.
  */
 
-import React from "react";
+import React, {Component} from "react";
 import Button from "../../components/button";
 import Scrollable from '../../components/scrollPane'
 
-export default class FilePane extends React.Component{
+export default class FilePane extends Component{
 
     constructor(props) {
         super(props);
@@ -18,7 +18,18 @@ export default class FilePane extends React.Component{
         this.setState({value: event.target.value});
     }
 
+
     render(){
+
+        var files = this.props.readWidgetStorage(1, "docs");
+        console.log("FILES:", files);
+        files = files.map(function(file){
+            console.log("FILE:", file);
+            return(
+                <File name = {file} key ={file}/>
+            )
+        })
+
         return(
             <div className = "subMenu">
                 <h2>Files</h2>
@@ -33,38 +44,7 @@ export default class FilePane extends React.Component{
                         </select>
                     </div>
                     <Scrollable className="subMenu-filesScroll">
-                        <div className="exampleFile" > TEST 1 </div>
-                        <div className="exampleFile" > TEST 2 </div>
-                        <div className="exampleFile" > TEST 3 </div>
-                        <div className="exampleFile" > TEST 4 </div>
-                        <div className="exampleFile" > TEST 5 </div>
-                        <div className="exampleFile" > TEST 6 </div>
-                        <div className="exampleFile" > TEST 7 </div>
-                        <div className="exampleFile" > TEST 8 </div>
-                        <div className="exampleFile" > TEST 9 </div>
-                        <div className="exampleFile" > TEST 10 </div>
-                        <div className="exampleFile" > TEST 11 </div>
-                        <div className="exampleFile" > TEST 12 </div>
-                        <div className="exampleFile" > TEST 13 </div>
-                        <div className="exampleFile" > TEST 14 </div>
-                        <div className="exampleFile" > TEST 15 </div>
-                        <div className="exampleFile" > TEST 16 </div>
-                        <div className="exampleFile" > TEST 1 </div>
-                        <div className="exampleFile" > TEST 2 </div>
-                        <div className="exampleFile" > TEST 3 </div>
-                        <div className="exampleFile" > TEST 4 </div>
-                        <div className="exampleFile" > TEST 5 </div>
-                        <div className="exampleFile" > TEST 6 </div>
-                        <div className="exampleFile" > TEST 7 </div>
-                        <div className="exampleFile" > TEST 8 </div>
-                        <div className="exampleFile" > TEST 9 </div>
-                        <div className="exampleFile" > TEST 10 </div>
-                        <div className="exampleFile" > TEST 11 </div>
-                        <div className="exampleFile" > TEST 12 </div>
-                        <div className="exampleFile" > TEST 13 </div>
-                        <div className="exampleFile" > TEST 14 </div>
-                        <div className="exampleFile" > TEST 15 </div>
-                        <div className="exampleFile" > TEST 16 </div>
+                        {files}
                     </Scrollable>
                 </div>
                 <div className="subMenu-botToolGroup">
@@ -72,6 +52,18 @@ export default class FilePane extends React.Component{
                     <Button className="subMenu-botToolGroup-item">2</Button>
                 </div>
             </div>
+        )
+    }
+}
+
+class File extends Component{
+
+    constructor(props){
+        super(props);
+    }
+    render(){
+        return(
+            <div className="exampleFile" > {this.props.name} </div>
         )
     }
 }

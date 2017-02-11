@@ -25,21 +25,23 @@ export default class Layout extends React.Component{
 
     //Clean temporary props of Widgets. Used for dragging (Interact.js)
     solidifyWidgets(){
-        var widgets = this.props.widgets,
-            layout = [],
+        var currentLayout = this.props.layout,
+            newLayout = [],
             self = this;
 
-        widgets.forEach(function(widget){
-            console.log("!!!", widget);
-            layout.push({
-                id: widget.id,
-                refWidth: widget.refWidth,
-                refHeight: widget.refHeight,
-                refLeft: widget.refLeft,
-                refTop: widget.refTop
+        currentLayout.forEach(function(layout){
+            console.log("!!!", layout.state);
+            newLayout.push({
+                id: layout.id,
+                refWidth: layout.state.refWidth,
+                refHeight: layout.state.refHeight,
+                refLeft: layout.state.refLeft,
+                refTop: layout.state.refTop,
+                state: layout.state
             });
         })
-        this.props.setLayout(layout);
+        console.log("Preping layout:", newLayout);
+        this.props.setLayout(newLayout);
     }
 
     toggleGrid(visibility){
@@ -122,18 +124,17 @@ export default class Layout extends React.Component{
 
         var self = this;
         var widgets = this.props.widgets.map(function(widget, i){
-
-            console.log("1!:", self.props.widgets);
-            console.log("2!:", self.props.layout);
-
             var widgetRef = self.props.layout.find(function(elem){
                 return elem["id"]==widget.id;
             });
 
+            //console.log("1:",widgetRef);
+
             var width = widgetRef["refWidth"],
                 height = widgetRef["refHeight"],
                 top = widgetRef["refTop"],
-                left = widgetRef["refLeft"];
+                left = widgetRef["refLeft"],
+                state = widget.state;
 
             return(
                 <Widget id = {widget.id}
@@ -143,10 +144,10 @@ export default class Layout extends React.Component{
                         dragging = {false}
                         pushed = {false}
                         solidifyWidgets = {self.solidifyWidgets.bind(self)}
-                        tmpWidth = {widget.tmpWidth || 0}
-                        tmpHeight = {widget.tmpHeight || 0}
-                        tmpLeft = {widget.tmpLeft || 0}
-                        tmpTop = {widget.tmpTop || 0}
+                        tmpWidth = {(widgetRef.state && widgetRef.state.tmpWidth) || 0}
+                        tmpHeight = {(widgetRef.state && widgetRef.state.tmpHeight) || 0}
+                        tmpLeft = {(widgetRef.state && widgetRef.state.tmpLeft) || 0}
+                        tmpTop = {(widgetRef.state && widgetRef.state.tmpTop)|| 0}
                         refWidth = {width}
                         refHeight = {height}
                         refLeft = {left}
@@ -158,11 +159,16 @@ export default class Layout extends React.Component{
                         gridWidth = {self.props.gridWidth}
                         gridHeight = {self.props.gridHeight}
                         cellOffset = {self.props.cellOffset}
-                        index = {widget.index || 0}
-                        transition = {widget.transition || 'all .5s ease'}
+                        saveStorage = {self.props.saveWidgetStorage}
+                        readStorage = {self.props.readWidgetStorage}
+                        index = {(widgetRef.state && widgetRef.state.index) || 0}
+                        transition = {(widgetRef.state && widgetRef.state.transition) || 'all .5s ease'}
                         toggleGrid = {self.toggleGrid.bind(self)}
                         validateHome = {self.isValidHome.bind(self)}
                         settings = {self.props.settings}
+                        getWidgetState = {self.props.getWidgetState}
+                        renameWidgetStorage = {self.props.renameWidgetStorage}
+                        deleteWidgetStorage = {self.props.deleteWidgetStorage}
                         updateWidgetState={self.props.updateWidgetState}>
                 </Widget>
             )

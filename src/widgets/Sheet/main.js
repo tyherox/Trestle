@@ -9,6 +9,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import RichEditorExample from './editor.js';
+import jetpack from 'fs-jetpack';
 
 class Hub extends React.Component {
     constructor(props) {
@@ -17,14 +18,31 @@ class Hub extends React.Component {
 
     }
 
+    componentWillMount(){
+        var title = this.props.getWidgetState(this.props.id,"title"),
+            files =  this.props.readStorage(1, "docs");
+
+        var file = files.find(function(file){
+            return file = title;
+        })
+        var content = this.props.readStorage(1, "docs/" + title);
+
+        if(content) this.setState({content: content})
+        else if(content!="Untitled" && content!=null) {
+            this.props.deleteWidgetStorage(this.props.id, "doc/" + title);
+            this.props.updateWidgetState(this.props.id, {title: "Untitled"}, true);
+        }
+    }
+
     save(data){
-        this.props.updateWidgetState(1, {state: {text: data}});
-        //this.setState({data: data});
+        //this.props.updateWidgetState(this.props.id, {text: data}, true);
+        //this.setState({text: data});
+        this.props.saveStorage(1, data, "docs/" + this.props.getWidgetState(this.props.id,"title"));
     }
 
     render() {
         return(
-            <RichEditorExample save={this.save.bind(this)}/>
+            <RichEditorExample save={this.save.bind(this)} editorState={this.state.content}/>
         )
     }
 }
@@ -41,27 +59,34 @@ class Toolbar extends React.Component {
     }
 
     setTitle(){
-        this.props.updateWidgetState(1, {state: {title: this.refs.input.value}});
+        this.props.renameWidgetStorage(1, "docs/" + this.props.getWidgetState(this.props.id,"title"), this.refs.input.value);
+        this.props.updateWidgetState(this.props.id, {title: this.refs.input.value}, true);
+    }
+
+    componentWillMount(){
+        var title = this.props.getWidgetState(this.props.id, "title") || "Untitled";
+        this.props.updateWidgetState(this.props.id, {title: title}, true);
     }
 
     render(){
         return(
             <input className = "sheet-title"
-                   defaultValue = "Untitled"
+                   defaultValue = {this.props.getWidgetState(this.props.id, "title")}
                    ref = "input"
                    onClick={this.selectAll.bind(this)}
-                   onChange={this.setTitle.bind(this)}/>
+                   onBlur={this.setTitle.bind(this)}/>
         )
     }
 }
 
  export default {
      id:1,
+     multi: true,
      minWidth: 2,
      minHeight: 2,
      maxWidth: 10,
      maxHeight: 10,
-     state: [],
+     storage: "1-sheets",
      toolbar: Toolbar,
      content: Hub
  };

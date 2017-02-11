@@ -2,7 +2,7 @@
  * Created by JohnBae on 12/1/16.
  */
 
-import React, {Component} from 'react-dom';
+import React from 'react-dom';
 import { remote } from 'electron';
 import jetpack from 'fs-jetpack';
 import layout from './containers/layout/layout.js';

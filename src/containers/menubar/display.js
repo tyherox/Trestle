@@ -6,6 +6,7 @@ import React, {Component} from "react";
 import Collapsible from '../../components/collapsiblePane'
 import Scrollable from '../../components/scrollPane'
 import Button from '../../components/button'
+import jetpack from 'fs-jetpack';
 
 var id = 0;
 
@@ -55,7 +56,6 @@ export default class DisplayPane extends Component{
         }
 
         if(layouts.length > 0) layouts = layouts.map(function(layout){
-            console.log("@",layout);
             return(
                 <Layout key = {id++}
                         layout = {layout.data}
@@ -119,7 +119,7 @@ class Layout extends Component{
     }
 
     renameLayout(){
-        this.props.renameLayout(this.props.name,this.refs.input.value);
+        this.props.renameLayout(this.props.name, this.refs.input.value);
     }
 
     deleteLayout(){

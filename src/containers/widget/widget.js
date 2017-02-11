@@ -130,13 +130,6 @@ export default class Widget extends React.Component{
         this.setIndex();
         this.setOpacity();
 
-        self.props.updateWidgetState(self.props.id,{
-            tmpLeft: 0,
-            tmpTop: 0,
-            tmpWidth: 0,
-            tmpHeight: 0
-        });
-
         //Prep Layout/Widget for drag
         var startDrag = function(){
             self.props.toggleGrid(true);
@@ -179,10 +172,7 @@ export default class Widget extends React.Component{
                     tmpWidth: 0,
                     tmpHeight: 0
                 });
-
-                console.log("END 2");
             }
-            console.log("ENDED DRAG:", self.props);
             self.props.solidifyWidgets();
         }
 
@@ -269,7 +259,13 @@ export default class Widget extends React.Component{
                  ref = 'widgetRef'>
                 <div className = {toolbar}
                      ref="widgetToolbarRef">
-                    <CustomToolbarElem updateWidgetState={this.props.updateWidgetState}/>
+                    <CustomToolbarElem  id = {this.props.id}
+                                        updateWidgetState={this.props.updateWidgetState}
+                                        getWidgetState = {this.props.getWidgetState}
+                                        renameWidgetStorage = {this.props.renameWidgetStorage}
+                                        deleteWidgetStorage = {this.props.deleteWidgetStorage}
+                                        readStorage = {this.props.readStorage}
+                                        saveStorage = {this.props.saveStorage}/>
                     <button className="widgetToolbarButtons">1</button>
                     <button className="widgetToolbarButtons">2</button>
                     <button className="widgetToolbarButtons">3</button>
@@ -277,6 +273,12 @@ export default class Widget extends React.Component{
                 <div className = "widgetContainer" ref="widgetContainerRef">
                     <Content refWidth = {this.props.refWidth}
                              refHeight = {this.props.refHeight}
+                             id = {this.props.id}
+                             saveStorage = {this.props.saveStorage}
+                             readStorage = {this.props.readStorage}
+                             getWidgetState = {this.props.getWidgetState}
+                             renameWidgetStorage = {this.props.renameWidgetStorage}
+                             deleteWidgetStorage = {this.props.deleteWidgetStorage}
                              updateWidgetState={this.props.updateWidgetState}/>
                 </div>
             </div>

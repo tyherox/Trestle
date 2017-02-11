@@ -77,13 +77,14 @@ export default class MenuBar extends React.Component{
                 case "setting" : subMenuContent = <Settings settings = {this.props.settings}
                                                             setSettings = {this.props.setSettings}/>
                     break;
-                case "display" : subMenuContent = <Display layouts={this.props.layouts}
+                case "display" : subMenuContent = <Display addLayout={this.props.addLayout}
                                                            deleteLayout={this.props.deleteLayout}
-                                                           addLayout={this.props.addLayout}
                                                            renameLayout={this.props.renameLayout}
+                                                           layouts={this.props.layouts}
                                                            setLayout={this.props.setLayout}/>
                     break;
-                case "file" : subMenuContent = <Files />
+                case "file" : subMenuContent = <Files readWidgetStorage = {this.props.readWidgetStorage}
+                                                      saveWidgetStorage = {this.props.saveWidgetStorage}/>
                     break;
                 default : console.log("Unregistered Pane!");
                     break;
