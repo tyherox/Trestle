@@ -4,19 +4,35 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Editor, EditorState} from 'draft-js';
+import {Editor, EditorState, convertFromRaw, convertToRaw,} from 'draft-js';
 
 export default class MyEditor extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {editorState: EditorState.createEmpty()};
-        this.onChange = (editorState) => this.setState({editorState});
+
+        var editorState = this.props.editorState;
+        if(editorState){
+            editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(editorState)));
+        }
+        else{
+            editorState = EditorState.createEmpty()
+        }
+
+        this.state = {editorState: editorState};
+        var self = this;
+        this.onChange = (editorState) => {
+            if(editorState.getCurrentContent() != self.state.editorState.getCurrentContent()){
+                var content = editorState.getCurrentContent();
+                var raw = convertToRaw(content);
+                self.props.save(raw);
+            }
+            this.setState({editorState: editorState});
+        };
         this.focus = () => this.refs.editor.focus();
     }
     render() {
 
         const {editorState} = this.state;
-
 
         return (
             <div className="editorContainer">
@@ -30,11 +46,12 @@ export default class MyEditor extends React.Component {
                             handleKeyCommand={this.handleKeyCommand}
                             onChange={this.onChange}
                             onTab={this.onTab}
+                            onFocus={()=>this.setState({focused: true})}
+                            onBlur={()=>this.setState({focused: false})}
                             spellCheck={true}
                     />
                 </div>
             </div>
-
         );
     }
 }

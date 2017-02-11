@@ -45,13 +45,10 @@ export default class Widget extends React.Component{
                     startDrag();
                 },
                 onmove: function(event){
-                    self.props.update(self.props.id, {
+                    self.props.updateWidgetState(self.props.id, {
                         tmpLeft: (self.props.tmpLeft + event.dx),
-                        tmpTop: (self.props.tmpTop + event.dy),
-                        refTop: Math.round(self.props.actTop/self.props.gridHeight),
-                        refLeft: Math.round(self.props.actLeft/self.props.gridWidth)
+                        tmpTop: (self.props.tmpTop + event.dy)
                     });
-                    //self.props.collisionDetect(self.props.id);
                 },
                 onend: function(){
                     endDrag();
@@ -97,11 +94,9 @@ export default class Widget extends React.Component{
                     if(height<=0) height = gHeight - offset;
                     else if(height>self.props.maxHeight * gHeight - offset) height = self.props.maxHeight * gHeight - offset;
 
-                    self.props.update(self.props.id,{
+                    self.props.updateWidgetState(self.props.id,{
                         tmpWidth: width,
                         tmpHeight: height,
-                        refWidth: Math.ceil(width/self.props.gridWidth),
-                        refHeight: Math.ceil(height/self.props.gridHeight)
                     });
                     //self.props.collisionDetect(self.props.id);
                 },
@@ -135,23 +130,12 @@ export default class Widget extends React.Component{
         this.setIndex();
         this.setOpacity();
 
-        self.props.update(self.props.id,{
-            actLeft: (self.props.actLeft + self.props.cellOffset),
-            actTop: (self.props.actTop + self.props.cellOffset),
-            tmpLeft: 0,
-            tmpTop: 0,
-            actWidth: self.props.actWidth,
-            actHeight: self.props.actHeight,
-            tmpWidth: 0,
-            tmpHeight: 0
-        });
-
         //Prep Layout/Widget for drag
         var startDrag = function(){
             self.props.toggleGrid(true);
-            self.props.update(self.props.id,{
+            self.props.updateWidgetState(self.props.id,{
                 dragging: true,
-                index: 100,
+                index: 10,
                 transition: 'transform 0s, width .0s, height .0s, box-shadow .5s'
             });
         }
@@ -159,14 +143,27 @@ export default class Widget extends React.Component{
         //Clean up temp variables for drag
         var endDrag = function(){
             if(self.props.validateHome(self.props)){
-                self.props.update(self.props.id,{
+                var top = self.props.tmpTop,
+                    left = self.props.tmpLeft,
+                    width = self.props.tmpWidth,
+                    height= self.props.tmpHeight;
+
+                self.props.updateWidgetState(self.props.id,{
                     index: 1,
                     transition: 'all .5s ease',
                     dragging: false,
+                    refTop: self.props.refTop + Math.round(top/self.props.gridHeight),
+                    refLeft: self.props.refLeft + Math.round(left/self.props.gridWidth),
+                    refWidth: width==0 ?self.props.refWidth : Math.ceil(width/self.props.gridWidth),
+                    refHeight: height==0 ?self.props.refHeight : Math.ceil(height/self.props.gridHeight),
+                    tmpLeft: 0,
+                    tmpTop: 0,
+                    tmpWidth: 0,
+                    tmpHeight: 0
                 });
             }
             else{
-                self.props.update(self.props.id,{
+                self.props.updateWidgetState(self.props.id,{
                     index: 1,
                     transition: 'all .5s ease',
                     dragging: false,
@@ -196,9 +193,11 @@ export default class Widget extends React.Component{
 
     setSize(){
 
+        var self = this;
+
         var widget = this.refs.widgetRef,
-            width = this.props.actWidth,
-            height = this.props.actHeight;
+            width = this.props.refWidth * this.props.gridWidth - this.props.cellOffset * 2,
+            height = this.props.refHeight * this.props.gridHeight - this.props.cellOffset * 2;
 
         if(this.props.tmpWidth != 0 || this.props.tmpHeight != 0){
             width = this.props.tmpWidth;
@@ -223,9 +222,13 @@ export default class Widget extends React.Component{
 
     setLocation(){
         var widget = this.refs.widgetRef,
-            width = this.props.actLeft + this.props.tmpLeft,
-            height = this.props.actTop  + this.props.tmpTop;
-        widget.style.transform = 'translate(' + width + 'px, ' + height + 'px)';
+            x = this.props.refLeft * this.props.gridWidth + this.props.cellOffset,
+            y = this.props.refTop * this.props.gridHeight + this.props.cellOffset ;
+        if(this.props.tmpTop!=0 || this.props.tmpLeft!=0){
+            x += this.props.tmpLeft;
+            y += this.props.tmpTop;
+        }
+        widget.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
     }
 
     setTransition(){
@@ -240,7 +243,7 @@ export default class Widget extends React.Component{
 
     setOpacity(){
         var widget = this.refs.widgetRef;
-        widget.style.opacity = this.props.config.widgetOpacity * .01;
+        widget.style.opacity = this.props.settings.widgetOpacity * .01;
     }
 
     render(){
@@ -249,21 +252,34 @@ export default class Widget extends React.Component{
             toolbar = "widgetToolbar themeSecondaryColor";
 
         if(CustomToolbarElem==null) CustomToolbarElem = EmptyToolbar;
-        if(!this.props.config.toolbar) toolbar = "widgetToolbar";
+        if(!this.props.settings.toolbar) toolbar = "widgetToolbar";
 
         return(
             <div className = 'widget widgetBackground'
                  ref = 'widgetRef'>
                 <div className = {toolbar}
                      ref="widgetToolbarRef">
-                    <CustomToolbarElem />
+                    <CustomToolbarElem  id = {this.props.id}
+                                        updateWidgetState={this.props.updateWidgetState}
+                                        getWidgetState = {this.props.getWidgetState}
+                                        renameWidgetStorage = {this.props.renameWidgetStorage}
+                                        deleteWidgetStorage = {this.props.deleteWidgetStorage}
+                                        readStorage = {this.props.readStorage}
+                                        saveStorage = {this.props.saveStorage}/>
                     <button className="widgetToolbarButtons">1</button>
                     <button className="widgetToolbarButtons">2</button>
                     <button className="widgetToolbarButtons">3</button>
                 </div>
-                <div className = 'widgetContainer' ref="widgetContainerRef">
+                <div className = "widgetContainer" ref="widgetContainerRef">
                     <Content refWidth = {this.props.refWidth}
-                             refHeight = {this.props.refHeight}/>
+                             refHeight = {this.props.refHeight}
+                             id = {this.props.id}
+                             saveStorage = {this.props.saveStorage}
+                             readStorage = {this.props.readStorage}
+                             getWidgetState = {this.props.getWidgetState}
+                             renameWidgetStorage = {this.props.renameWidgetStorage}
+                             deleteWidgetStorage = {this.props.deleteWidgetStorage}
+                             updateWidgetState={this.props.updateWidgetState}/>
                 </div>
             </div>
         )
