@@ -39,13 +39,11 @@ export default class Layout extends React.Component{
                 refTop: layout.state.refTop,
                 state: layout.state
             });
-        })
-        console.log("Preping layout:", newLayout);
+        });
         this.props.setLayout(newLayout);
     }
 
     toggleGrid(visibility){
-        console.log("Toggling GRID:",visibility);
         this.setState({gridToggled: visibility});
     }
 
@@ -120,49 +118,85 @@ export default class Layout extends React.Component{
         return false;
     };
 
+    generateMultiId(id){
+        var offset = 1,
+            generated = id + "." + offset;
+
+        while(this.props.layout.find(function(id){
+            return id==generated
+        })){
+            generated = id + "." + ++offset;
+        }
+
+        return generated;
+    }
+
+    findAvailableSpace(id,w,h){
+        var currentLayout = this.props.layout,
+            newLayout = [],
+            self = this;
+
+        currentLayout.forEach(function(layout){
+            if(id==layout.id){
+
+            }
+            else newLayout.push({
+                id: layout.id,
+                refWidth: layout.state.refWidth,
+                refHeight: layout.state.refHeight,
+                refLeft: layout.state.refLeft,
+                refTop: layout.state.refTop,
+                state: layout.state
+            });
+        })
+        console.log("Preping layout:", newLayout);
+        this.props.setLayout(newLayout);
+    }
+
     render(){
 
         var self = this;
-        var widgets = this.props.widgets.map(function(widget, i){
-            var widgetRef = self.props.layout.find(function(elem){
-                return elem["id"]==widget.id;
+        var widgets = this.props.layout.map(function(widget, i){
+
+            var id = JSON.stringify(widget.id);
+            if(id.includes(".")) id = id.substring(0,id.indexOf("."));
+            var widgetRef = self.props.widgets.find(function(elem){
+                return elem["id"]==id;
             });
+            console.log("WIDGET:", id);
 
-            //console.log("1:",widgetRef);
-
-            var width = widgetRef["refWidth"],
-                height = widgetRef["refHeight"],
-                top = widgetRef["refTop"],
-                left = widgetRef["refLeft"],
-                state = widget.state;
-
+            var width = widget["refWidth"],
+                height = widget["refHeight"],
+                top = widget["refTop"],
+                left = widget["refLeft"],
+                state = widgetRef.state;
             return(
                 <Widget id = {widget.id}
                         key = {widget.id}
-                        content = {widget.content}
-                        toolbar = {widget.toolbar}
+                        content = {widgetRef.content}
+                        toolbar = {widgetRef.toolbar}
                         dragging = {false}
                         pushed = {false}
                         solidifyWidgets = {self.solidifyWidgets.bind(self)}
-                        tmpWidth = {(widgetRef.state && widgetRef.state.tmpWidth) || 0}
-                        tmpHeight = {(widgetRef.state && widgetRef.state.tmpHeight) || 0}
-                        tmpLeft = {(widgetRef.state && widgetRef.state.tmpLeft) || 0}
-                        tmpTop = {(widgetRef.state && widgetRef.state.tmpTop)|| 0}
+                        tmpWidth = {(widget.state && widget.state.tmpWidth) || 0}
+                        tmpHeight = {(widget.state && widget.state.tmpHeight) || 0}
+                        tmpLeft = {(widget.state && widget.state.tmpLeft) || 0}
+                        tmpTop = {(widget.state && widget.state.tmpTop)|| 0}
                         refWidth = {width}
                         refHeight = {height}
                         refLeft = {left}
                         refTop = {top}
-                        minWidth = {widget.minWidth}
-                        minHeight = {widget.minHeight}
-                        maxWidth = {widget.maxWidth}
-                        maxHeight = {widget.maxHeight}
+                        minWidth = {widgetRef.minWidth}
+                        minHeight = {widgetRef.minHeight}
+                        maxWidth = {widgetRef.maxWidth}
+                        maxHeight = {widgetRef.maxHeight}
                         gridWidth = {self.props.gridWidth}
                         gridHeight = {self.props.gridHeight}
                         cellOffset = {self.props.cellOffset}
                         saveStorage = {self.props.saveWidgetStorage}
                         readStorage = {self.props.readWidgetStorage}
-                        index = {(widgetRef.state && widgetRef.state.index) || 0}
-                        transition = {(widgetRef.state && widgetRef.state.transition) || 'all .5s ease'}
+                        index = {(widget.state && widget.state.index) || 0}
+                        transition = {(widget.state && widget.state.transition) || 'all .5s ease'}
                         toggleGrid = {self.toggleGrid.bind(self)}
                         validateHome = {self.isValidHome.bind(self)}
                         settings = {self.props.settings}

@@ -68,6 +68,7 @@ export default function(){
             this.addLayout = this.addLayout.bind(this);
             this.deleteLayout = this.deleteLayout.bind(this);
             this.renameLayout = this.renameLayout.bind(this);
+            this.addWidget = this.addWidget.bind(this);
             this.updateWidgetState = this.updateWidgetState.bind(this);
             this.getWidgetState = this.getWidgetState.bind(this);
             this.saveStateToLocal = this.saveStateToLocal.bind(this);
@@ -235,10 +236,14 @@ export default function(){
             jetpack.write(userData+"/state.json",state);
         }
 
+        addWidget(widget){
+            var layout = this.state.layout;
+            layout.push(widget);
+            this.setState({layout: layout})
+            console.log("STATE:", this.state);
+        }
+
         render(){
-
-            //console.log("THIS STATE:", this.state);
-
             return(
                 <div>
                     <MenuBar settings={this.state.settings}
@@ -248,6 +253,7 @@ export default function(){
                              setLayout={this.setLayout}
                              deleteLayout={this.deleteLayout}
                              renameLayout={this.renameLayout}
+                             addWidget = {this.addWidget}
                              readWidgetStorage = {this.readWidgetStorage}
                              saveWidgetStorage = {this.saveWidgetStorage}
                              widgets = {this.state.savedWidgets}/>

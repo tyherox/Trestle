@@ -44,7 +44,16 @@ export default class MenuBar extends React.Component{
     }
 
     addSheet(){
-
+        this.props.addWidget(
+            {
+                id: "1*",
+                refWidth: 2,
+                refHeight: 2,
+                refLeft: 0,
+                refTop: 0,
+                state: []
+            }
+        );
     }
 
     closeSubMenu(){
@@ -110,7 +119,7 @@ export default class MenuBar extends React.Component{
                 </div>
                 <div id ="menuBar-botButtonGroup">
                     <Button type="square">F</Button>
-                    <Button type="square">+</Button>
+                    <Button type="square" onClick = {this.addSheet.bind(this)}>+</Button>
                 </div>
                 {subMenu}
             </div>

@@ -29,7 +29,7 @@ class Hub extends React.Component {
 
         if(content) this.setState({content: content})
         else if(content!="Untitled" && content!=null) {
-            this.props.deleteWidgetStorage(this.props.id, "doc/" + title);
+            this.props.deleteWidgetStorage(1, "doc/" + title);
             this.props.updateWidgetState(this.props.id, {title: "Untitled"}, true);
         }
     }
