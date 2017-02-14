@@ -46,7 +46,7 @@ export default class MenuBar extends React.Component{
     addSheet(){
         this.props.addWidget(
             {
-                id: "1*",
+                id: '1*',
                 refWidth: 2,
                 refHeight: 2,
                 refLeft: 0,
@@ -70,6 +70,20 @@ export default class MenuBar extends React.Component{
             this.setState({subMenu:pane})
         }
 
+    }
+
+    shouldComponentUpdate(nextProps, nextStates){
+        //console.log("Checking:", this.props,"and",nextProps);
+        if(this.props.settings==nextProps.settings &&
+            this.props.widgets==nextProps.widgets &&
+            this.props.layouts==nextProps.layouts &&
+            this.state==nextStates){
+            console.log("SAME THING~~~");
+            return false;
+        }
+        var k = 10;
+
+        return true;
     }
 
     render(){
@@ -109,6 +123,7 @@ export default class MenuBar extends React.Component{
         }
 
         return(
+
             <div id = "menuBar" className = "themeSecondaryColor" ref="menu">
                 {overlay}
                 <div id ="menuBar-topButtonGroup">

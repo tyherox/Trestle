@@ -1,0 +1,31 @@
+{
+  "settings": {
+    "toolbar": true,
+    "findButton": true,
+    "sentenceFocusButton": true,
+    "widgetOpacity": 100
+  },
+  "layout": [
+    {
+      "id": 1,
+      "refWidth": 4,
+      "refHeight": 5,
+      "refTop": 0,
+      "refLeft": 3,
+      "state": [],
+      "title": "UntitledA"
+    },
+    {
+      "id": 1.1,
+      "refWidth": 2,
+      "refHeight": 2,
+      "refLeft": 0,
+      "refTop": 2,
+      "state": [],
+      "title": "UntitledBina"
+    }
+  ],
+  "savedThemes": [],
+  "savedWidgets": [],
+  "savedLayouts": []
+}

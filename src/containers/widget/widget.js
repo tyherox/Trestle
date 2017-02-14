@@ -142,25 +142,34 @@ export default class Widget extends React.Component{
 
         //Clean up temp variables for drag
         var endDrag = function(){
-            if(self.props.validateHome(self.props)){
-                var top = self.props.tmpTop,
-                    left = self.props.tmpLeft,
-                    width = self.props.tmpWidth,
-                    height= self.props.tmpHeight;
 
+            var top = self.props.tmpTop,
+                left = self.props.tmpLeft,
+                width = self.props.tmpWidth,
+                height= self.props.tmpHeight;
+
+            var home = {
+                top: self.props.refTop + Math.round(top/self.props.gridHeight),
+                left: self.props.refLeft + Math.round(left/self.props.gridWidth),
+                width: width==0 ?self.props.refWidth : Math.ceil(width/self.props.gridWidth),
+                height: height==0 ?self.props.refHeight : Math.ceil(height/self.props.gridHeight),
+            };
+
+            if(self.props.validateHome(self.props.id, home)){
+                console.log("FOUND HOME:", home);
                 self.props.updateWidgetState(self.props.id,{
                     index: 1,
                     transition: 'all .5s ease',
                     dragging: false,
-                    refTop: self.props.refTop + Math.round(top/self.props.gridHeight),
-                    refLeft: self.props.refLeft + Math.round(left/self.props.gridWidth),
-                    refWidth: width==0 ?self.props.refWidth : Math.ceil(width/self.props.gridWidth),
-                    refHeight: height==0 ?self.props.refHeight : Math.ceil(height/self.props.gridHeight),
+                    refTop: home.top,
+                    refLeft: home.left,
+                    refWidth: home.width,
+                    refHeight: home.height,
                     tmpLeft: 0,
                     tmpTop: 0,
                     tmpWidth: 0,
                     tmpHeight: 0
-                });
+                }, false, self.props.solidifyWidgets);
             }
             else{
                 self.props.updateWidgetState(self.props.id,{
@@ -171,9 +180,8 @@ export default class Widget extends React.Component{
                     tmpTop: 0,
                     tmpWidth: 0,
                     tmpHeight: 0
-                });
+                }, false, self.props.solidifyWidgets);
             }
-            self.props.solidifyWidgets();
         }
 
     }
@@ -247,6 +255,9 @@ export default class Widget extends React.Component{
     }
 
     render(){
+
+        console.log("REDOING WIDGET:", this.props.id);
+
         var Content = this.props.content,
             CustomToolbarElem = this.props.toolbar,
             toolbar = "widgetToolbar themeSecondaryColor";

@@ -8,12 +8,13 @@
 
 import React from 'react';
 import Widget from '../widget/widget';
+import {connect} from 'react-redux'
 import MenuBar from '../menubar/menuBar';
 
 var key = 1;
 
 //React component in charge of managing graphical layout
-export default class Layout extends React.Component{
+class Layout extends React.Component{
 
     constructor(props){
         super(props);
@@ -30,15 +31,17 @@ export default class Layout extends React.Component{
             self = this;
 
         currentLayout.forEach(function(layout){
-            console.log("!!!", layout.state);
-            newLayout.push({
-                id: layout.id,
-                refWidth: layout.state.refWidth,
-                refHeight: layout.state.refHeight,
-                refLeft: layout.state.refLeft,
-                refTop: layout.state.refTop,
-                state: layout.state
-            });
+
+            var source = layout.state;
+            if(typeof source === "undefined" || Object.keys(source).length==0){
+                source = layout;
+            }
+
+            layout.refWidth = source.refWidth;
+            layout.refHeight = source.refHeight;
+            layout.refLeft = source.refLeft;
+            layout.refTop = source.refTop;
+            newLayout.push(layout);
         });
         this.props.setLayout(newLayout);
     }
@@ -82,12 +85,11 @@ export default class Layout extends React.Component{
     }
 
     //Check to see if widget can be placed at current location
-    isValidHome(widget){
-        var rect = this.prepRect(widget);
-        for(var i = 0; i<this.props.widgets.length; i ++){
-            if(this.props.widgets[i].id != widget.id){
-                var cRect = this.prepRect(this.props.widgets[i]);
-                if(this.intersects(rect, cRect,50)) {
+    isValidHome(id, rect){
+        for(var i = 0; i<this.props.layout.length; i ++){
+            if(this.props.layout[i].id != id){
+                var cRect = this.prepRect(this.props.layout[i]);
+                if(this.intersects(rect, cRect,0)) {
                     return false;
                 }
                 else if(rect.left<0 || rect.top<0 || rect.left + rect.width > this.props.screenWidth - 40 || rect.top + rect.height > this.props.screenHeight){
@@ -109,27 +111,14 @@ export default class Layout extends React.Component{
      * @returns {boolean}: true for intersect, false for non-intersect
      */
     intersects(cRect, iRect, offset){
-        if(((cRect.left>=iRect.left + offset&&cRect.left<=iRect.left+iRect.width - offset)||
-            (iRect.left + offset>=cRect.left&&iRect.left + offset<=cRect.left+cRect.width))&&
-            ((cRect.top>=iRect.top + offset &&cRect.top<=iRect.top+iRect.height - offset)||
-            (iRect.top + offset>=cRect.top&&iRect.top + offset<=cRect.top+cRect.height))){
+        if(((cRect.left>=iRect.left + offset&&cRect.left<iRect.left+iRect.width - offset)||
+            (iRect.left + offset>=cRect.left&&iRect.left + offset<cRect.left+cRect.width))&&
+            ((cRect.top>=iRect.top + offset &&cRect.top<iRect.top+iRect.height - offset)||
+            (iRect.top + offset>=cRect.top&&iRect.top + offset<cRect.top+cRect.height))){
             return true;
         }
         return false;
     };
-
-    generateMultiId(id){
-        var offset = 1,
-            generated = id + "." + offset;
-
-        while(this.props.layout.find(function(id){
-            return id==generated
-        })){
-            generated = id + "." + ++offset;
-        }
-
-        return generated;
-    }
 
     findAvailableSpace(id,w,h){
         var currentLayout = this.props.layout,
@@ -149,27 +138,42 @@ export default class Layout extends React.Component{
                 state: layout.state
             });
         })
-        console.log("Preping layout:", newLayout);
         this.props.setLayout(newLayout);
+    }
+
+    generateMultiId(id){
+        id = id.replace(/"/g,"");
+        var offset = 1,
+            generated = id + "." + offset.toString();
+
+        while(this.props.layout.find(function(id){
+            return id==generated
+        })){
+            generated = id + "." + (++offset).toString();
+        }
+        return generated;
     }
 
     render(){
 
-        var self = this;
+        var self = this, {store} = this.context;
+        console.log("STORE TEST:", store);
+        
         var widgets = this.props.layout.map(function(widget, i){
 
             var id = JSON.stringify(widget.id);
+
             if(id.includes(".")) id = id.substring(0,id.indexOf("."));
             var widgetRef = self.props.widgets.find(function(elem){
                 return elem["id"]==id;
             });
-            console.log("WIDGET:", id);
 
             var width = widget["refWidth"],
                 height = widget["refHeight"],
                 top = widget["refTop"],
                 left = widget["refLeft"],
                 state = widgetRef.state;
+
             return(
                 <Widget id = {widget.id}
                         key = {widget.id}
@@ -282,3 +286,5 @@ class Grid extends React.Component{
         );
     }
 }
+
+export default connect()(Layout);

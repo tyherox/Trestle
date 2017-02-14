@@ -22,16 +22,28 @@ class Hub extends React.Component {
         var title = this.props.getWidgetState(this.props.id,"title"),
             files =  this.props.readStorage(1, "docs");
 
-        var file = files.find(function(file){
-            return file = title;
-        })
-        var content = this.props.readStorage(1, "docs/" + title);
+        console.log("title of sheet:", title);
 
-        if(content) this.setState({content: content})
-        else if(content!="Untitled" && content!=null) {
-            this.props.deleteWidgetStorage(1, "doc/" + title);
+        if(!title || title==="") {
             this.props.updateWidgetState(this.props.id, {title: "Untitled"}, true);
+            title = "Untitled";
+            console.log("new title of sheet:", title);
         }
+
+        if(files){
+            var file = files.find(function(file){
+                return file = title;
+            })
+            var content = this.props.readStorage(1, "docs/" + title);
+
+            if(content) this.setState({content: content})
+            else if(content!="Untitled" && content!=null) {
+                this.props.deleteWidgetStorage(1, "doc/" + title);
+                this.props.updateWidgetState(this.props.id, {title: "Untitled"}, true);
+            }
+        }
+
+
     }
 
     save(data){
@@ -54,29 +66,21 @@ class Toolbar extends React.Component {
         this.state = {}
     }
 
-    selectAll(){
-        this.refs.input.setSelectionRange(0, this.refs.input.value.length)
-    }
-
-    setTitle(){
-        this.props.renameWidgetStorage(1, "docs/" + this.props.getWidgetState(this.props.id,"title"), this.refs.input.value);
-        this.props.updateWidgetState(this.props.id, {title: this.refs.input.value}, true);
-    }
-
-    componentWillMount(){
-        var title = this.props.getWidgetState(this.props.id, "title") || "Untitled";
-        this.props.updateWidgetState(this.props.id, {title: title}, true);
+    saveTitle(event){
+        var title = this.props.getWidgetState(this.props.id,"title");
+        if(this.props.readStorage(1, "docs/" + title)) this.props.renameWidgetStorage(1, "docs/" + title, event.target.value);
+        this.props.updateWidgetState(this.props.id, {title: event.target.value}, true);
     }
 
     render(){
         return(
             <input className = "sheet-title"
-                   defaultValue = {this.props.getWidgetState(this.props.id, "title")}
-                   ref = "input"
-                   onClick={this.selectAll.bind(this)}
-                   onBlur={this.setTitle.bind(this)}/>
+                   type="text"
+                   value = {this.props.getWidgetState(this.props.id, "title") || ""}
+                   onChange={this.saveTitle.bind(this)}/>
         )
     }
+
 }
 
  export default {

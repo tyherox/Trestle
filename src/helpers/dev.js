@@ -13,12 +13,17 @@ import MenuBar from '../containers/menubar/menuBar.js'
 import ReactDOM from 'react-dom';
 import Sheet from '../widgets/Sheet/main.js';
 import jetpack from 'fs-jetpack';
-import merge from 'deepmerge'
+import merge from 'deepmerge';
+import {createStore} from 'redux';
+import reducer from '../reducers/index';
+import action from '../actions/index';
+import * as types from '../constants/actionTypes';
+import {Provider} from 'react-redux';
 
 export default function(){
-
-    var widgets = [Sheet],
+    let widgets = [Sheet],
         userData = "dev",
+        store = createStore(reducer),
         screenWidth =screen.width,
         screenHeight = screen.height;
 
@@ -116,6 +121,7 @@ export default function(){
         }
 
         renameWidgetStorage(id, prevName, name){
+            console.log("NAMES:", prevName, name)
             var widget = this.findWidgetInSavedWidgets(id);
             jetpack.rename(userData+"/widgets/"+ widget.storage + "/" + prevName, name);
             this.scanUserData();
@@ -167,39 +173,35 @@ export default function(){
             this.scanUserData();
         }
 
-        updateWidgetState(id, state, permanent){
-
-           var widget = this.findWidgetInLayout(id);
-
+        updateWidgetState(id, state, permanent, fun){
+           var foundWidget = this.findWidgetInLayout(id);
             switch(permanent){
                 case true:
-                    var result = merge(widget, state);
+                    var result = merge(foundWidget, state);
                     var widgets = this.state.layout;
-                    widgets.forEach(function(widget){
-                        if(id==widget.id) {
-                            for(var props in result){
-                                widget[props] = result[props];
-                            }
-                        }
-                    });
+                    for(var props in result){
+                        foundWidget[props] = result[props];
+                    }
                     this.setState({layout:widgets}, function(){
                         this.saveStateToLocal();
+                        if(fun) {
+                            fun();
+                        }
                     });
                     break;
                 default :
-                    var result = merge(widget.state, state);
+                    var result = merge(foundWidget.state, state);
                     var widgets = this.state.layout;
-                    widgets.forEach(function(widget){
-                        if(id==widget.id) {
-                            for(var props in result){
-                                widget.state[props] = result[props];
-                            }
+                    for(var props in result){
+                        foundWidget.state[props] = result[props];
+                    }
+                    this.setState({layout:widgets}, function(prev){
+                        if(fun) {
+                            fun();
                         }
                     });
-                    this.setState({layout:widgets});
                     break;
             }
-
         }
 
         getWidgetState(id, state){
@@ -231,52 +233,74 @@ export default function(){
             state.savedThemes = [];
             state.savedWidgets = [];
 
-            //console.log("1:", state, "2:", this.state);
-
             jetpack.write(userData+"/state.json",state);
+        }
+
+        generateMultiId(id){
+            id = id.replace(/"/g,"");
+            var offset = 1,
+                generated = id + "." + offset.toString();
+
+            while(this.state.layout.find(function(widget){
+                return widget.id==generated
+            })){
+                generated = id + "." + (++offset).toString();
+            }
+
+            return generated;
         }
 
         addWidget(widget){
             var layout = this.state.layout;
+
+            var id = JSON.stringify(widget.id);
+            if(id.includes("*")){
+                id = this.generateMultiId(id.replace("*",""));
+                widget.id = parseFloat(id);
+            }
+
+            store.dispatch(action("EMAIL"));
+
             layout.push(widget);
             this.setState({layout: layout})
-            console.log("STATE:", this.state);
         }
 
         render(){
             return(
-                <div>
-                    <MenuBar settings={this.state.settings}
-                             setSettings={this.setSettings}
-                             layouts={this.state.savedLayouts}
-                             addLayout={this.addLayout}
-                             setLayout={this.setLayout}
-                             deleteLayout={this.deleteLayout}
-                             renameLayout={this.renameLayout}
-                             addWidget = {this.addWidget}
-                             readWidgetStorage = {this.readWidgetStorage}
-                             saveWidgetStorage = {this.saveWidgetStorage}
-                             widgets = {this.state.savedWidgets}/>
+                <Provider store={store}>
+                    <div>
+                        <MenuBar settings={this.state.settings}
+                                 setSettings={this.setSettings}
+                                 layouts={this.state.savedLayouts}
+                                 addLayout={this.addLayout}
+                                 setLayout={this.setLayout}
+                                 deleteLayout={this.deleteLayout}
+                                 renameLayout={this.renameLayout}
+                                 addWidget = {this.addWidget}
+                                 readWidgetStorage = {this.readWidgetStorage}
+                                 saveWidgetStorage = {this.saveWidgetStorage}
+                                 widgets = {this.state.savedWidgets}/>
 
-                    <Layout gridCols = '8'
-                            gridRows = '5'
-                            screenWidth = {screenWidth}
-                            screenHeight ={screenHeight}
-                            gridHeight = {screenHeight/5}
-                            gridWidth = {(screenWidth - 40)/8}
-                            cellOffset = {4}
-                            settings = {this.state.settings}
-                            layout = {this.state.layout}
-                            setLayout = {this.setLayout}
-                            widgets = {this.state.savedWidgets}
-                            getWidgetState = {this.getWidgetState}
-                            readWidgetStorage = {this.readWidgetStorage}
-                            saveWidgetStorage = {this.saveWidgetStorage}
-                            deleteWidgetStorage = {this.deleteWidgetStorage}
-                            renameWidgetStorage = {this.renameWidgetStorage}
-                            updateWidgetState = {this.updateWidgetState}
-                            />
-                </div>
+                        <Layout gridCols = '8'
+                                gridRows = '5'
+                                screenWidth = {screenWidth}
+                                screenHeight ={screenHeight}
+                                gridHeight = {screenHeight/5}
+                                gridWidth = {(screenWidth - 40)/8}
+                                cellOffset = {4}
+                                settings = {this.state.settings}
+                                layout = {this.state.layout}
+                                setLayout = {this.setLayout}
+                                widgets = {this.state.savedWidgets}
+                                getWidgetState = {this.getWidgetState}
+                                readWidgetStorage = {this.readWidgetStorage}
+                                saveWidgetStorage = {this.saveWidgetStorage}
+                                deleteWidgetStorage = {this.deleteWidgetStorage}
+                                renameWidgetStorage = {this.renameWidgetStorage}
+                                updateWidgetState = {this.updateWidgetState}
+                        />
+                    </div>
+                </Provider>
             )
         }
     }
