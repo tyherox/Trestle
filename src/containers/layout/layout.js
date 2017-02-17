@@ -8,8 +8,10 @@
 
 import React from 'react';
 import Widget from '../widget/widget';
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import MenuBar from '../menubar/menuBar';
+import * as Actions from '../../actions/index';
 
 var key = 1;
 
@@ -156,9 +158,9 @@ class Layout extends React.Component{
 
     render(){
 
-        var self = this, {store} = this.context;
+        var self = this, store = {1:this.props.state, 2:this.props.actions};
         console.log("STORE TEST:", store);
-        
+
         var widgets = this.props.layout.map(function(widget, i){
 
             var id = JSON.stringify(widget.id);
@@ -287,4 +289,12 @@ class Grid extends React.Component{
     }
 }
 
-export default connect()(Layout);
+const mapStateToProps = (state) => ({
+    state: state.layout
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    actions: bindActionCreators(Actions, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);

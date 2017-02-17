@@ -16,7 +16,7 @@ import jetpack from 'fs-jetpack';
 import merge from 'deepmerge';
 import {createStore} from 'redux';
 import reducer from '../reducers/index';
-import action from '../actions/index';
+import * as Actions from '../actions/index';
 import * as types from '../constants/actionTypes';
 import {Provider} from 'react-redux';
 
@@ -24,7 +24,7 @@ export default function(){
     let widgets = [Sheet],
         userData = "dev",
         store = createStore(reducer),
-        screenWidth =screen.width,
+        screenWidth = screen.width,
         screenHeight = screen.height;
 
     class App extends Component{
@@ -233,7 +233,7 @@ export default function(){
             state.savedThemes = [];
             state.savedWidgets = [];
 
-            jetpack.write(userData+"/state.json",state);
+            //jetpack.write(userData+"/state.json",state);
         }
 
         generateMultiId(id){
@@ -259,10 +259,9 @@ export default function(){
                 widget.id = parseFloat(id);
             }
 
-            store.dispatch(action("EMAIL"));
-
-            layout.push(widget);
-            this.setState({layout: layout})
+            //layout.push(widget);
+            //this.setState({layout: layout})
+            store.dispatch(Actions.modifyAtLayout({"TEST": "BLA"}));
         }
 
         render(){

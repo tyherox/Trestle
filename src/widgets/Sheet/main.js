@@ -73,6 +73,7 @@ class Toolbar extends React.Component {
     }
 
     render(){
+
         return(
             <input className = "sheet-title"
                    type="text"

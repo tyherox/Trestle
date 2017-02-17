@@ -72,20 +72,6 @@ export default class MenuBar extends React.Component{
 
     }
 
-    shouldComponentUpdate(nextProps, nextStates){
-        //console.log("Checking:", this.props,"and",nextProps);
-        if(this.props.settings==nextProps.settings &&
-            this.props.widgets==nextProps.widgets &&
-            this.props.layouts==nextProps.layouts &&
-            this.state==nextStates){
-            console.log("SAME THING~~~");
-            return false;
-        }
-        var k = 10;
-
-        return true;
-    }
-
     render(){
 
 
@@ -97,8 +83,7 @@ export default class MenuBar extends React.Component{
 
         if(openedMenu!=null){
             switch(openedMenu){
-                case "setting" : subMenuContent = <Settings settings = {this.props.settings}
-                                                            setSettings = {this.props.setSettings}/>
+                case "setting" : subMenuContent = <Settings />
                     break;
                 case "display" : subMenuContent = <Display addLayout={this.props.addLayout}
                                                            deleteLayout={this.props.deleteLayout}

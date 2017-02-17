@@ -4,48 +4,57 @@
 
 import React from "react";
 import Button from "../../components/button";
-import Input from "../../components/input"
+import Input from "../../components/input";
+import * as Actions from '../../actions/index';
+import {connect} from "react-redux";
+import {bindActionCreators} from 'redux';
 
-export default class SettingPane extends React.Component{
+class SettingPane extends React.Component{
+
+    constructor(props) {
+        super(props);
+    }
 
     toggleToolbar(state){
-        console.log("check:",state);
-        this.props.setSettings({toolbar: !state});
+        this.props.reduxActions.modifyAtSetting({toolbar: !state})
     }
 
     toggleFindButton(state){
-        this.props.setSettings({findButton: !state});
+        this.props.reduxActions.modifyAtSetting({findButton: !state})
     }
 
     toggleFocusButton(state){
-        this.props.setSettings({sentenceFocusButton: !state});
+        this.props.reduxActions.modifyAtSetting({sentenceFocusButton: !state})
     }
 
     setWidgetOpacity(state){
-        console.log(state);
-        this.props.setSettings({widgetOpacity: state});
+        console.log("SETTING:", state);
+        this.props.reduxActions.modifyAtSetting({widgetOpacity: state});
     }
 
     reset(){
-        this.props.setSettings({toolbar: true, findButton: true, sentenceFocusButton: true, widgetOpacity: 100});
+        this.props.reduxActions.modifyAtSetting({toolbar: true, findButton: true, sentenceFocusButton: true, widgetOpacity: 100});
     }
 
     render(){
+
+        console.log("RENDERING:", this.props.reduxState.get("widgetOpacity"));
+
         return(
             <div className = "subMenu">
                 <h2>Settings</h2>
                 <div className="subMenu-settings-attrGroup">
                     <Input text="Show toolbar"
                            type="checkbox"
-                           checked={this.props.settings.toolbar}
+                           checked={this.props.reduxState.get("toolbar")}
                            changeValue={this.toggleToolbar.bind(this)} />
                     <Input text="Show find button"
                            type="checkbox"
-                           checked={this.props.settings.findButton}
+                           checked={this.props.reduxState.get("findButton")}
                            changeValue={this.toggleFindButton.bind(this)}/>
                     <Input text="Show sentence focus button"
                            type="checkbox"
-                           checked={this.props.settings.sentenceFocusButton}
+                           checked={this.props.reduxState.get("sentenceFocusButton")}
                            changeValue={this.toggleFocusButton.bind(this)}/>
                 </div>
                 <div className="subMenu-settings-attrGroup">
@@ -53,12 +62,12 @@ export default class SettingPane extends React.Component{
                            type="number"
                            max="100"
                            min="0"
-                           value={this.props.settings.widgetOpacity}
+                           value={this.props.reduxState.get("widgetOpacity")}
                            changeValue={this.setWidgetOpacity.bind(this)}/>
                     <Input type="range"
                            max="100"
                            min="0"
-                           value={this.props.settings.widgetOpacity}
+                           value={this.props.reduxState.get("widgetOpacity")}
                            changeValue={this.setWidgetOpacity.bind(this)}/>
                 </div>
                 <div className = 'subMenu-botToolGroup'>
@@ -70,3 +79,13 @@ export default class SettingPane extends React.Component{
         )
     }
 }
+
+const mapStateToProps = (state) => ({
+    reduxState: state.settings,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    reduxActions: bindActionCreators(Actions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingPane);
