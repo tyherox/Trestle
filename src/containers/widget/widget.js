@@ -10,16 +10,15 @@
 
 import React from 'react';
 import Interact from 'interact.js';
+import * as Actions from '../../actions/index';
+import {connect} from "react-redux";
+import {bindActionCreators} from 'redux';
 
-export default class Widget extends React.Component{
-
-    constructor(props){
-        super(props);
-    }
-
+class Widget extends React.Component{
     componentDidMount(){
 
-        var self = this, widget = self.refs.widgetRef;
+        var self = this,
+            widget = self.refs.widgetRef;
 
         //Initialize Drag Module for Widget
         Interact(widget)
@@ -45,7 +44,7 @@ export default class Widget extends React.Component{
                     startDrag();
                 },
                 onmove: function(event){
-                    self.props.updateWidgetState(self.props.id, {
+                    self.props.reduxActions.modifyAtLayout(self.props.id, {
                         tmpLeft: (self.props.tmpLeft + event.dx),
                         tmpTop: (self.props.tmpTop + event.dy)
                     });
@@ -67,9 +66,9 @@ export default class Widget extends React.Component{
                 edges: { left: false, right: true, bottom: true, top: false },
                 snap: {
                     targets: [
-                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight})
+                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight })
                     ],
-                    offset: { x: self.props.cellOffset, y: self.props.cellOffset},
+                    offset: { x: self.props.cellOffset, y: self.props.cellOffset },
                     range: Infinity,
                     relativePoints: [ { x: 0, y: 0 } ],
                     endOnly: true
@@ -94,11 +93,10 @@ export default class Widget extends React.Component{
                     if(height<=0) height = gHeight - offset;
                     else if(height>self.props.maxHeight * gHeight - offset) height = self.props.maxHeight * gHeight - offset;
 
-                    self.props.updateWidgetState(self.props.id,{
+                    self.props.reduxActions.modifyAtLayout(self.props.id,{
                         tmpWidth: width,
                         tmpHeight: height,
                     });
-                    //self.props.collisionDetect(self.props.id);
                 },
                 onend: function(event){
                     endDrag();
@@ -133,7 +131,7 @@ export default class Widget extends React.Component{
         //Prep Layout/Widget for drag
         var startDrag = function(){
             self.props.toggleGrid(true);
-            self.props.updateWidgetState(self.props.id,{
+            self.props.reduxActions.modifyAtLayout(self.props.id,{
                 dragging: true,
                 index: 10,
                 transition: 'transform 0s, width .0s, height .0s, box-shadow .5s'
@@ -157,7 +155,7 @@ export default class Widget extends React.Component{
 
             if(self.props.validateHome(self.props.id, home)){
                 console.log("FOUND HOME:", home);
-                self.props.updateWidgetState(self.props.id,{
+                self.props.reduxActions.modifyAtLayout(self.props.id,{
                     index: 1,
                     transition: 'all .5s ease',
                     dragging: false,
@@ -172,7 +170,7 @@ export default class Widget extends React.Component{
                 }, false, self.props.solidifyWidgets);
             }
             else{
-                self.props.updateWidgetState(self.props.id,{
+                self.props.reduxActions.modifyAtLayout(self.props.id,{
                     index: 1,
                     transition: 'all .5s ease',
                     dragging: false,
@@ -187,21 +185,21 @@ export default class Widget extends React.Component{
     }
 
     //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
-    componentDidUpdate(){
+    componentDidUpdate(props){
 
-        this.setSize();
-        this.setMinSize();
-        this.setMaxSize();
-        this.setLocation();
-        this.setTransition();
-        this.setIndex();
-        this.setOpacity()
+        if(this.props.tmpWidth != props.tmpWidth || this.props.tmpHeight != props.tmpHeight||
+            this.props.refWidth != props.refWidth || this.props.refHeight != props.refHeight) this.setSize();
+        if(this.props.minWidth!=props.minWidth || this.props.minHeight!=props.minHeight) this.setMinSize();
+        if(this.props.maxWidth!=props.maxWidth || this.props.maxHeight!=props.maxHeight)this.setMaxSize();
+        if(this.props.tmpLeft != props.tmpLeft|| this.props.tmpTop != props.tmpTop||
+            this.props.refLeft != props.refLeft|| this.props.refTop != props.refTop)this.setLocation();
+        if(this.props.transition!=props.transition)this.setTransition();
+        if(this.props.index!=props.index)this.setIndex();
+        if(this.props.opacity!=props.opacity)this.setOpacity()
 
     }
 
     setSize(){
-
-        var self = this;
 
         var widget = this.refs.widgetRef,
             width = this.props.refWidth * this.props.gridWidth - this.props.cellOffset * 2,
@@ -211,6 +209,8 @@ export default class Widget extends React.Component{
             width = this.props.tmpWidth;
             height = this.props.tmpHeight;
         }
+
+        console.log(this.props.refWidth, this.props.gridWidth);
 
         widget.style.width = width + "px";
         widget.style.height = height + "px";
@@ -241,7 +241,7 @@ export default class Widget extends React.Component{
 
     setTransition(){
         var widget = this.refs.widgetRef;
-        widget.style.transition = this.props.transition;
+        widget.style.transition = this.props.transition || 'all .5s ease';
     }
 
     setIndex(){
@@ -251,46 +251,36 @@ export default class Widget extends React.Component{
 
     setOpacity(){
         var widget = this.refs.widgetRef;
-        widget.style.opacity = this.props.settings.widgetOpacity * .01;
+        widget.style.opacity = this.props.opacity * .01;
+    }
+
+    shouldComponentUpdate(props, state){
+        if(props===this.props && state===this.state){
+            console.log("SAME SAME!");
+            return false;
+        }
+        return true;
     }
 
     render(){
-
-        console.log("REDOING WIDGET:", this.props.id);
-
         var Content = this.props.content,
             CustomToolbarElem = this.props.toolbar,
             toolbar = "widgetToolbar themeSecondaryColor";
 
         if(CustomToolbarElem==null) CustomToolbarElem = EmptyToolbar;
-        if(!this.props.settings.toolbar) toolbar = "widgetToolbar";
-
+        if(!this.props.toolbar) toolbar = "widgetToolbar";
         return(
             <div className = 'widget widgetBackground'
                  ref = 'widgetRef'>
                 <div className = {toolbar}
                      ref="widgetToolbarRef">
-                    <CustomToolbarElem  id = {this.props.id}
-                                        updateWidgetState={this.props.updateWidgetState}
-                                        getWidgetState = {this.props.getWidgetState}
-                                        renameWidgetStorage = {this.props.renameWidgetStorage}
-                                        deleteWidgetStorage = {this.props.deleteWidgetStorage}
-                                        readStorage = {this.props.readStorage}
-                                        saveStorage = {this.props.saveStorage}/>
+                    <CustomToolbarElem id = {this.props.id}/>
                     <button className="widgetToolbarButtons">1</button>
                     <button className="widgetToolbarButtons">2</button>
                     <button className="widgetToolbarButtons">3</button>
                 </div>
                 <div className = "widgetContainer" ref="widgetContainerRef">
-                    <Content refWidth = {this.props.refWidth}
-                             refHeight = {this.props.refHeight}
-                             id = {this.props.id}
-                             saveStorage = {this.props.saveStorage}
-                             readStorage = {this.props.readStorage}
-                             getWidgetState = {this.props.getWidgetState}
-                             renameWidgetStorage = {this.props.renameWidgetStorage}
-                             deleteWidgetStorage = {this.props.deleteWidgetStorage}
-                             updateWidgetState={this.props.updateWidgetState}/>
+                    <Content id = {this.props.id}/>
                 </div>
             </div>
         )
@@ -306,3 +296,27 @@ class EmptyToolbar extends React.Component {
         )
     }
 }
+
+const mapStateToProps = (state, props) => ({
+    reduxState: state.layout.get(props.id.toString()),
+    refWidth: state.layout.get(props.id.toString()).get("refWidth"),
+    refHeight: state.layout.get(props.id.toString()).get("refHeight"),
+    refLeft: state.layout.get(props.id.toString()).get("refLeft"),
+    refTop: state.layout.get(props.id.toString()).get("refTop"),
+    tmpWidth: state.layout.get(props.id.toString()).get("tmpWidth"),
+    tmpHeight: state.layout.get(props.id.toString()).get("tmpHeight"),
+    tmpLeft: state.layout.get(props.id.toString()).get("tmpLeft"),
+    tmpTop: state.layout.get(props.id.toString()).get("tmpTop"),
+    transition: state.layout.get(props.id.toString()).get("transition"),
+    index: state.layout.get(props.id.toString()).get("index"),
+    opacity: state.settings.get("widgetOpacity"),
+    gridWidth: (state.settings.get("screenWidth") - 40 ) / state.settings.get("gridCols"),
+    gridHeight: state.settings.get("screenHeight") / state.settings.get("gridRows"),
+    cellOffset: state.settings.get("cellOffset")
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    reduxActions: bindActionCreators(Actions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Widget);

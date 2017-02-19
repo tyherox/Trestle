@@ -81,15 +81,13 @@ export default class MenuBar extends React.Component{
             self = this,
             overlay = null;
 
+        console.log("RENDERING: Menubar");
+
         if(openedMenu!=null){
             switch(openedMenu){
                 case "setting" : subMenuContent = <Settings />
                     break;
-                case "display" : subMenuContent = <Display addLayout={this.props.addLayout}
-                                                           deleteLayout={this.props.deleteLayout}
-                                                           renameLayout={this.props.renameLayout}
-                                                           layouts={this.props.layouts}
-                                                           setLayout={this.props.setLayout}/>
+                case "display" : subMenuContent = <Display />
                     break;
                 case "file" : subMenuContent = <Files readWidgetStorage = {this.props.readWidgetStorage}
                                                       saveWidgetStorage = {this.props.saveWidgetStorage}/>

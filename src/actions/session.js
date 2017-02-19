@@ -27,3 +27,10 @@ export const deleteAtSession = (key) =>{
         payload: key
     }
 };
+
+export const testingMessage = (text)=>{
+    console.log("Messaging test:", text);
+    return {
+        type: null
+    }
+}

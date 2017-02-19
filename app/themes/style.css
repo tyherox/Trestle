@@ -634,6 +634,62 @@ input[type="number"]::-webkit-inner-spin-button {
     -webkit-transition: all .5s ease;
 }
 
+.widget {
+    position: absolute;
+    z-index: 1;
+
+    text-align: center;
+    border: 5px;
+    border-radius: 1px;
+
+    transform: translate(0px, 0px);
+    transition: all .5s ease;
+
+    color: #424242;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
+}
+
+.widgetContainer {
+    width:calc(100% - 2px);
+    height: calc(100% - 31px);
+    margin-right: 1px;
+    margin-left: 1px;
+    margin-bot: 1px;
+    overflow: visible;
+}
+
+.widgetToolbar {
+    width:100%;
+    height:30px;
+    display: block;
+    z-index: 1;
+    font-size: 12px;
+    text-align: left;
+    overflow: visible;
+}
+
+.widgetToolbarButtons {
+    position: relative;
+    display: inline;
+
+    width:26px;
+    height:26px;
+    float: right;
+    border: none;
+    outline: none;
+    margin:2px;
+
+    background-color: rgba(128, 128, 128, 0);
+}
+
+.widgetToolbarButtons:hover{
+    background-color: #c2cdc4;
+}
+
+.widgetToolbarButtons:active{
+    background-color: rgba(39, 49, 138, 0.46);
+}
+
 #menuBar{
     z-index: 10;
     display: block;
@@ -796,62 +852,6 @@ input[type="number"]::-webkit-inner-spin-button {
     right: 0;
     bottom: 0;
     padding: 10px;
-}
-
-.widget {
-    position: absolute;
-    z-index: 1;
-
-    text-align: center;
-    border: 5px;
-    border-radius: 1px;
-
-    transform: translate(0px, 0px);
-    transition: all .5s ease;
-
-    color: #424242;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
-}
-
-.widgetContainer {
-    width:calc(100% - 2px);
-    height: calc(100% - 31px);
-    margin-right: 1px;
-    margin-left: 1px;
-    margin-bot: 1px;
-    overflow: visible;
-}
-
-.widgetToolbar {
-    width:100%;
-    height:30px;
-    display: block;
-    z-index: 1;
-    font-size: 12px;
-    text-align: left;
-    overflow: visible;
-}
-
-.widgetToolbarButtons {
-    position: relative;
-    display: inline;
-
-    width:26px;
-    height:26px;
-    float: right;
-    border: none;
-    outline: none;
-    margin:2px;
-
-    background-color: rgba(128, 128, 128, 0);
-}
-
-.widgetToolbarButtons:hover{
-    background-color: #c2cdc4;
-}
-
-.widgetToolbarButtons:active{
-    background-color: rgba(39, 49, 138, 0.46);
 }
 
 /**

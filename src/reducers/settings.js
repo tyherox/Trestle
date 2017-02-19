@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = Map({
     screenHeight: screen.height,
     gridCols: 8,
     gridRows: 5,
+    cellOffset: 4,
     toolbar: true,
     findButton: true,
     sentenceFocusButton: true,
@@ -17,6 +18,7 @@ const DEFAULT_SETTINGS = Map({
 });
 
 function settings(state = DEFAULT_SETTINGS, action) {
+
     switch (action.type) {
         case types.MODIFY_AT_SETTING:
             return state.merge(action.payload);

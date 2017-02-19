@@ -43,16 +43,6 @@ export default function(){
                         sentenceFocusButton: true,
                         widgetOpacity: 100
                     },
-                    layout: [
-                        {
-                        id: 1,
-                        refWidth: 4,
-                        refHeight:5,
-                        refTop: 0,
-                        refLeft: 2,
-                        state: []
-                        }
-                    ],
                     savedThemes: [
                     ],
                     savedWidgets: [
@@ -85,7 +75,7 @@ export default function(){
 
         scanUserData(){
            if(jetpack.exists(userData+'/layouts')){
-               console.log("SCANNING LAYOUTS");
+                   console.log("SCANNING LAYOUTS");
                var layouts = jetpack.list(userData+'/layouts');
                layouts = layouts.map(function(layout){
                    return({
@@ -265,6 +255,7 @@ export default function(){
         }
 
         render(){
+            console.log("RENDERING: DEV", store.getState().layout);
             return(
                 <Provider store={store}>
                     <div>
@@ -280,23 +271,9 @@ export default function(){
                                  saveWidgetStorage = {this.saveWidgetStorage}
                                  widgets = {this.state.savedWidgets}/>
 
-                        <Layout gridCols = '8'
-                                gridRows = '5'
-                                screenWidth = {screenWidth}
-                                screenHeight ={screenHeight}
-                                gridHeight = {screenHeight/5}
-                                gridWidth = {(screenWidth - 40)/8}
-                                cellOffset = {4}
-                                settings = {this.state.settings}
-                                layout = {this.state.layout}
+                        <Layout layout = {store.getState().layout}
                                 setLayout = {this.setLayout}
                                 widgets = {this.state.savedWidgets}
-                                getWidgetState = {this.getWidgetState}
-                                readWidgetStorage = {this.readWidgetStorage}
-                                saveWidgetStorage = {this.saveWidgetStorage}
-                                deleteWidgetStorage = {this.deleteWidgetStorage}
-                                renameWidgetStorage = {this.renameWidgetStorage}
-                                updateWidgetState = {this.updateWidgetState}
                         />
                     </div>
                 </Provider>

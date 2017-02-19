@@ -4,14 +4,14 @@
 
 import * as types from '../constants/actionTypes';
 
-export const addStoredLayout = (layout) => {
+export const addStoredWidget = (widget) => {
     return {
-        type: types.ADD_STORED_LAYOUTS,
-        payload: layout
+        type: types.ADD_STORED_WIDGETS,
+        payload: widget
     }
 };
 
-export const renameStoredLayout = (prevName, newName) => {
+export const renameStoredWidget = (prevName, newName) => {
     return {
         type: types.RENAME_STORED_LAYOUTS,
         payload: {
@@ -21,9 +21,9 @@ export const renameStoredLayout = (prevName, newName) => {
     }
 };
 
-export const deleteStoredLayout = (layout) => {
+export const deleteStoredWidget = (layout) => {
     return {
-        type: types.DELETE_STORED_LAYOUTS,
+        type: types.DELETE_AT_LAYOUT,
         payload: layout
     }
 };

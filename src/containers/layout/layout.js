@@ -16,7 +16,7 @@ import * as Actions from '../../actions/index';
 var key = 1;
 
 //React component in charge of managing graphical layout
-class Layout extends React.Component{
+export default class Layout extends React.Component{
 
     constructor(props){
         super(props);
@@ -24,28 +24,6 @@ class Layout extends React.Component{
         this.state = {
             gridToggled: false
         };
-    }
-
-    //Clean temporary props of Widgets. Used for dragging (Interact.js)
-    solidifyWidgets(){
-        var currentLayout = this.props.layout,
-            newLayout = [],
-            self = this;
-
-        currentLayout.forEach(function(layout){
-
-            var source = layout.state;
-            if(typeof source === "undefined" || Object.keys(source).length==0){
-                source = layout;
-            }
-
-            layout.refWidth = source.refWidth;
-            layout.refHeight = source.refHeight;
-            layout.refLeft = source.refLeft;
-            layout.refTop = source.refTop;
-            newLayout.push(layout);
-        });
-        this.props.setLayout(newLayout);
     }
 
     toggleGrid(visibility){
@@ -158,58 +136,31 @@ class Layout extends React.Component{
 
     render(){
 
-        var self = this, store = {1:this.props.state, 2:this.props.actions};
-        console.log("STORE TEST:", store);
+        var self = this;
 
-        var widgets = this.props.layout.map(function(widget, i){
+        console.log("RENDERING: Layout");
 
-            var id = JSON.stringify(widget.id);
+        var widgets = this.props.layout.valueSeq().map(function(widget, i){
+            var id = JSON.stringify(widget.get("id"));
 
             if(id.includes(".")) id = id.substring(0,id.indexOf("."));
             var widgetRef = self.props.widgets.find(function(elem){
                 return elem["id"]==id;
             });
 
-            var width = widget["refWidth"],
-                height = widget["refHeight"],
-                top = widget["refTop"],
-                left = widget["refLeft"],
-                state = widgetRef.state;
-
             return(
-                <Widget id = {widget.id}
-                        key = {widget.id}
+                <Widget id = {widget.get("id")}
+                        key = {widget.get("id")}
                         content = {widgetRef.content}
                         toolbar = {widgetRef.toolbar}
                         dragging = {false}
                         pushed = {false}
-                        solidifyWidgets = {self.solidifyWidgets.bind(self)}
-                        tmpWidth = {(widget.state && widget.state.tmpWidth) || 0}
-                        tmpHeight = {(widget.state && widget.state.tmpHeight) || 0}
-                        tmpLeft = {(widget.state && widget.state.tmpLeft) || 0}
-                        tmpTop = {(widget.state && widget.state.tmpTop)|| 0}
-                        refWidth = {width}
-                        refHeight = {height}
-                        refLeft = {left}
-                        refTop = {top}
                         minWidth = {widgetRef.minWidth}
                         minHeight = {widgetRef.minHeight}
                         maxWidth = {widgetRef.maxWidth}
                         maxHeight = {widgetRef.maxHeight}
-                        gridWidth = {self.props.gridWidth}
-                        gridHeight = {self.props.gridHeight}
-                        cellOffset = {self.props.cellOffset}
-                        saveStorage = {self.props.saveWidgetStorage}
-                        readStorage = {self.props.readWidgetStorage}
-                        index = {(widget.state && widget.state.index) || 0}
-                        transition = {(widget.state && widget.state.transition) || 'all .5s ease'}
                         toggleGrid = {self.toggleGrid.bind(self)}
-                        validateHome = {self.isValidHome.bind(self)}
-                        settings = {self.props.settings}
-                        getWidgetState = {self.props.getWidgetState}
-                        renameWidgetStorage = {self.props.renameWidgetStorage}
-                        deleteWidgetStorage = {self.props.deleteWidgetStorage}
-                        updateWidgetState={self.props.updateWidgetState}>
+                        validateHome = {self.isValidHome.bind(self)}>
                 </Widget>
             )
         });
@@ -288,13 +239,3 @@ class Grid extends React.Component{
         );
     }
 }
-
-const mapStateToProps = (state) => ({
-    state: state.layout
-});
-
-const mapDispatchToProps = (dispatch) => ({
-    actions: bindActionCreators(Actions, dispatch)
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Layout);

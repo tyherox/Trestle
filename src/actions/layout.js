@@ -4,10 +4,13 @@
 
 import * as types from '../constants/actionTypes';
 
-export const modifyAtLayout = (layout) =>{
+export const modifyAtLayout = (id, layout) =>{
     return {
         type: types.MODIFY_AT_LAYOUT,
-        payload: layout
+        payload: {
+            id: id,
+            layout: layout
+        }
     }
 };
 

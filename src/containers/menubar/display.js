@@ -16,49 +16,48 @@ class DisplayPane extends Component{
 
     constructor(props){
         super(props);
-        this.state = {newLayout: false}
+        this.setLayout = this.setLayout.bind(this);
         this.addLayout = this.addLayout.bind(this);
+        this.deleteLayout = this.deleteLayout.bind(this);
+        this.renameLayout = this.renameLayout.bind(this);
     }
 
     setLayout(data){
-        //this.props.setLayout(data);
+        this.props.reduxActions.setLayout(data);
     }
 
     addLayout(name){
-        var k = {};
-        k["Testing:"+id] = {1:"NOW",2:"HERE"}
-        this.props.reduxActions.addStoredLayout(k);
-        //this.props.addLayout(name);
+        name = "TEST";
+        var layout = {};
+        layout[name] = name;
+        this.props.reduxActions.addStoredLayout({name:"NOW"});
     }
 
     deleteLayout(name){
-        this.props.reduxActions.deleteStoredLayout("TESTING");
-        //this.props.deleteLayout(name);
+        this.props.reduxActions.deleteStoredLayout(name);
     }
 
     renameLayout(prevName, name){
-        this.props.reduxActions.renameStoredLayout("Testing:"+3,"OMGOMG");
-        //this.props.renameLayout(prevName, name);
+        this.props.reduxActions.renameStoredLayout(prevName, name);
     }
 
     render(){
 
-        console.log("Display Test:", this.props.reduxProps);
+        var layouts = this.props.reduxState, self = this;
 
-        var layouts = this.props.layouts,
-            self = this;
-
-        if(layouts.length > 0) layouts = layouts.map(function(layout){
-
-            return(
-                <Layout key = {id++}
-                        layout = {layout.data}
-                        name = {layout.name.replace(".json","")}
-                        renameLayout = {self.renameLayout.bind(self)}
-                        deleteLayout = {self.deleteLayout.bind(self)}
-                        setLayout = {self.setLayout.bind(self)}/>
-            )
-        });
+        if(layouts.length > 0) {
+            layouts = layouts.map(function(layout){
+                return(
+                    <Layout key = {id++}
+                            layout = {layout.data || {}}
+                            name = {layout.name ? layout.name.replace(".json","") : "Untitled"}
+                            renameLayout = {self.renameLayout}
+                            deleteLayout = {self.deleteLayout}
+                            setLayout = {self.setLayout}/>
+                )
+            });
+        }
+        else layouts = null;
 
         return(
             <div className="subMenu">
@@ -67,10 +66,10 @@ class DisplayPane extends Component{
                     <Collapsible title = "Layouts">
                         {layouts}
                         <Button className="subMenu-display-layoutItem"
-                                onClick={this.addLayout.bind(this)}><h1>+</h1><br/> Save Current Layout</Button>
+                                onClick={this.addLayout}><h1>+</h1><br/> Save Current Layout</Button>
                     </Collapsible>
                     <Collapsible title = "Widgets">
-                        <Button className="subMenu-display-widgetItem">TEST 1</Button>
+                        <Button className="subMenu-display-widgetItem">TEST WIDGET LOCATION</Button>
                     </Collapsible>
                 </Scrollable>
             </div>
@@ -118,11 +117,11 @@ class Layout extends Component{
 }
 
 const mapStateToProps = (state) => ({
-    reduxProps: state.storedLayouts,
+    reduxState: state.storedLayouts.toArray(),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    reduxActions: bindActionCreators(Actions, dispatch)
+    reduxActions: bindActionCreators(Actions, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayPane);

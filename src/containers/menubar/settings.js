@@ -38,8 +38,6 @@ class SettingPane extends React.Component{
 
     render(){
 
-        console.log("RENDERING:", this.props.reduxState.get("widgetOpacity"));
-
         return(
             <div className = "subMenu">
                 <h2>Settings</h2>

@@ -19,6 +19,7 @@ class Hub extends React.Component {
     }
 
     componentWillMount(){
+        /*
         var title = this.props.getWidgetState(this.props.id,"title"),
             files =  this.props.readStorage(1, "docs");
 
@@ -42,14 +43,13 @@ class Hub extends React.Component {
                 this.props.updateWidgetState(this.props.id, {title: "Untitled"}, true);
             }
         }
-
-
+        */
     }
 
     save(data){
         //this.props.updateWidgetState(this.props.id, {text: data}, true);
         //this.setState({text: data});
-        this.props.saveStorage(1, data, "docs/" + this.props.getWidgetState(this.props.id,"title"));
+        //this.props.saveStorage(1, data, "docs/" + this.props.getWidgetState(this.props.id,"title"));
     }
 
     render() {
@@ -67,9 +67,9 @@ class Toolbar extends React.Component {
     }
 
     saveTitle(event){
-        var title = this.props.getWidgetState(this.props.id,"title");
-        if(this.props.readStorage(1, "docs/" + title)) this.props.renameWidgetStorage(1, "docs/" + title, event.target.value);
-        this.props.updateWidgetState(this.props.id, {title: event.target.value}, true);
+        //var title = this.props.getWidgetState(this.props.id,"title");
+        //if(this.props.readStorage(1, "docs/" + title)) this.props.renameWidgetStorage(1, "docs/" + title, event.target.value);
+        //this.props.updateWidgetState(this.props.id, {title: event.target.value}, true);
     }
 
     render(){
@@ -77,7 +77,7 @@ class Toolbar extends React.Component {
         return(
             <input className = "sheet-title"
                    type="text"
-                   value = {this.props.getWidgetState(this.props.id, "title") || ""}
+                   value = {""}
                    onChange={this.saveTitle.bind(this)}/>
         )
     }
