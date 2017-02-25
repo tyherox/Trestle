@@ -8,17 +8,46 @@
  */
 
 
+import Perf from 'react-addons-perf'
 import React from 'react';
 import Interact from 'interact.js';
 import * as Actions from '../../actions/index';
-import {connect} from "react-redux";
+import {connectAdvanced} from "react-redux";
 import {bindActionCreators} from 'redux';
+import shallowEqual from 'shallowequal';
 
-class Widget extends React.Component{
+class Widget extends React.PureComponent{
+
+    constructor(props){
+        super(props);
+
+        var sw = this.props.reduxSettings.get("screenWidth"),
+            sh = this.props.reduxSettings.get("screenHeight"),
+            gc = this.props.reduxSettings.get("gridCols"),
+            gr = this.props.reduxSettings.get("gridRows"),
+            gridWidth = (sw - 40) / gc,
+            gridHeight = sh / gr;
+
+        this.state = {
+            tmpWidth: 0,
+            tmpHeight: 0,
+            tmpTop: 0,
+            tmpLeft: 0,
+            gridWidth: (sw - 40) / gc,
+            gridHeight: sh / gr,
+        }
+    }
+
     componentDidMount(){
 
         var self = this,
-            widget = self.refs.widgetRef;
+            widget = self.refs.widgetRef,
+            sw = self.props.reduxSettings.get("screenWidth"),
+            sh = self.props.reduxSettings.get("screenHeight"),
+            gc = self.props.reduxSettings.get("gridCols"),
+            gr = self.props.reduxSettings.get("gridRows"),
+            gridWidth = (sw - 40) / gc,
+            gridHeight = sh / gr;
 
         //Initialize Drag Module for Widget
         Interact(widget)
@@ -28,9 +57,9 @@ class Widget extends React.Component{
                 },
                 snap: {
                     targets: [
-                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight})
+                        Interact.createSnapGrid({x: gridWidth, y: gridHeight})
                     ],
-                    offset: { x: self.props.cellOffset, y: self.props.cellOffset },
+                    offset: { x: self.props.reduxSettings.get("cellOffset"), y: self.props.reduxSettings.get("cellOffset") },
                     range: Infinity,
                     endOnly: true,
                     relativePoints: [ { x: 0, y: 0 } ]
@@ -41,19 +70,20 @@ class Widget extends React.Component{
                     endOnly: true
                 },
                 onstart: function(event){
+                    Perf.start()
                     startDrag();
                 },
                 onmove: function(event){
-                    self.props.reduxActions.modifyAtLayout(self.props.id, {
-                        tmpLeft: (self.props.tmpLeft + event.dx),
-                        tmpTop: (self.props.tmpTop + event.dy)
+                    self.setState({
+                        tmpLeft: (self.state.tmpLeft + event.dx),
+                        tmpTop: (self.state.tmpTop + event.dy)
                     });
                 },
                 onend: function(){
                     endDrag();
                 },
                 oninertiastart: function(event){
-                    self.props.toggleGrid(false);
+                    self.props.reduxActions.modifyAtSession("gridVisible", false);
                 }
             })
             .resizable({
@@ -66,9 +96,9 @@ class Widget extends React.Component{
                 edges: { left: false, right: true, bottom: true, top: false },
                 snap: {
                     targets: [
-                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight })
+                        Interact.createSnapGrid({x: gridWidth, y: gridHeight})
                     ],
-                    offset: { x: self.props.cellOffset, y: self.props.cellOffset },
+                    offset: { x: self.props.reduxSettings.get("cellOffset"), y: self.props.reduxSettings.get("cellOffset") },
                     range: Infinity,
                     relativePoints: [ { x: 0, y: 0 } ],
                     endOnly: true
@@ -78,22 +108,25 @@ class Widget extends React.Component{
                     endOnly: true
                 },
                 onstart: function(event){
+                    Perf.start()
                     startDrag();
                 },
                 onmove: function(event){
                     var width = event.rect.width,
                         height = event.rect.height,
-                        gWidth = self.props.gridWidth,
-                        gHeight = self.props.gridHeight,
-                        offset = self.props.cellOffset * 2;
+                        offset = self.props.reduxSettings.get("cellOffset") * 2;
 
-                    if(width<=0) width = gWidth - offset;
-                    else if(width>self.props.maxWidth * gWidth - offset) width = self.props.maxWidth * gWidth - offset;
+                    if(width<=0) {
+                        width = gridWidth - offset;
+                    }
+                    else if(width>self.props.maxWidth * gridWidth - offset) {
+                        width = self.props.maxWidth * gridWidth - offset;
+                    }
 
-                    if(height<=0) height = gHeight - offset;
-                    else if(height>self.props.maxHeight * gHeight - offset) height = self.props.maxHeight * gHeight - offset;
+                    if(height<=0) height = gridHeight - offset;
+                    else if(height>self.props.maxHeight * gridHeight - offset) height = self.props.maxHeight * gridHeight - offset;
 
-                    self.props.reduxActions.modifyAtLayout(self.props.id,{
+                    self.setState({
                         tmpWidth: width,
                         tmpHeight: height,
                     });
@@ -102,7 +135,7 @@ class Widget extends React.Component{
                     endDrag();
                 },
                 oninertiastart: function(event){
-                    self.props.toggleGrid(false);
+                    self.props.reduxActions.modifyAtSession("gridVisible", false);
                 }
             })
             .actionChecker(function (pointer, event, action) {
@@ -130,149 +163,178 @@ class Widget extends React.Component{
 
         //Prep Layout/Widget for drag
         var startDrag = function(){
-            self.props.toggleGrid(true);
-            self.props.reduxActions.modifyAtLayout(self.props.id,{
+            self.setState({
                 dragging: true,
                 index: 10,
                 transition: 'transform 0s, width .0s, height .0s, box-shadow .5s'
             });
+            self.props.reduxActions.modifyAtSession("gridVisible", true);
         }
 
         //Clean up temp variables for drag
         var endDrag = function(){
 
-            var top = self.props.tmpTop,
-                left = self.props.tmpLeft,
-                width = self.props.tmpWidth,
-                height= self.props.tmpHeight;
+            var top = self.state.tmpTop,
+                left = self.state.tmpLeft,
+                width = self.state.tmpWidth,
+                height= self.state.tmpHeight;
 
             var home = {
-                top: self.props.refTop + Math.round(top/self.props.gridHeight),
-                left: self.props.refLeft + Math.round(left/self.props.gridWidth),
-                width: width==0 ?self.props.refWidth : Math.ceil(width/self.props.gridWidth),
-                height: height==0 ?self.props.refHeight : Math.ceil(height/self.props.gridHeight),
+                top: self.props.reduxLayout.get("refTop") + Math.round(top/gridHeight),
+                left: self.props.reduxLayout.get("refLeft") + Math.round(left/gridWidth),
+                width: width==0 ?self.props.reduxLayout.get("refWidth") : Math.ceil(width/gridWidth),
+                height: height==0 ?self.props.reduxLayout.get("refHeight") : Math.ceil(height/gridHeight),
             };
 
             if(self.props.validateHome(self.props.id, home)){
-                console.log("FOUND HOME:", home);
                 self.props.reduxActions.modifyAtLayout(self.props.id,{
-                    index: 1,
-                    transition: 'all .5s ease',
-                    dragging: false,
                     refTop: home.top,
                     refLeft: home.left,
                     refWidth: home.width,
                     refHeight: home.height,
-                    tmpLeft: 0,
-                    tmpTop: 0,
-                    tmpWidth: 0,
-                    tmpHeight: 0
-                }, false, self.props.solidifyWidgets);
+                });
             }
-            else{
-                self.props.reduxActions.modifyAtLayout(self.props.id,{
-                    index: 1,
-                    transition: 'all .5s ease',
-                    dragging: false,
-                    tmpLeft: 0,
-                    tmpTop: 0,
-                    tmpWidth: 0,
-                    tmpHeight: 0
-                }, false, self.props.solidifyWidgets);
-            }
+            self.setState({
+                tmpLeft: 0,
+                tmpTop: 0,
+                tmpWidth: 0,
+                tmpHeight: 0,
+                index: 1,
+                transition: 'all .5s ease',
+                dragging: false,
+            })
+            Perf.stop()
+            Perf.printInclusive(Perf.getLastMeasurements())
+            Perf.printWasted(Perf.getLastMeasurements())
+        }
+    }
+
+    shouldComponentUpdate(props, state){
+        var tmpUpdates = false;
+        if(this.state.tmpLeft != state.tmpLeft|| this.state.tmpTop != state.tmpTop){
+            this.setLocation();
+            tmpUpdates = true;
+        }
+        if(this.state.tmpWidth != state.tmpWidth || this.state.tmpHeight != state.tmpHeight){
+            this.setSize();tmpUpdates = true;
         }
 
+        if(tmpUpdates && state.tmpLeft==0 && state.tmpTop==0 &&
+            state.tmpWidth==0 && state.tmpHeight==0){
+            console.log("TMP UPDATE");
+            return true;
+        }
+        else if(tmpUpdates) {
+            console.log("TMP REFUSE:", tmpUpdates, state.tmpLeft, state.tmpTop, state.tmpWidth, state.tmpHeight);
+            return false;
+        }
+        else return true;
     }
 
     //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
-    componentDidUpdate(props){
-
-        if(this.props.tmpWidth != props.tmpWidth || this.props.tmpHeight != props.tmpHeight||
-            this.props.refWidth != props.refWidth || this.props.refHeight != props.refHeight) this.setSize();
-        if(this.props.minWidth!=props.minWidth || this.props.minHeight!=props.minHeight) this.setMinSize();
-        if(this.props.maxWidth!=props.maxWidth || this.props.maxHeight!=props.maxHeight)this.setMaxSize();
-        if(this.props.tmpLeft != props.tmpLeft|| this.props.tmpTop != props.tmpTop||
-            this.props.refLeft != props.refLeft|| this.props.refTop != props.refTop)this.setLocation();
-        if(this.props.transition!=props.transition)this.setTransition();
-        if(this.props.index!=props.index)this.setIndex();
-        if(this.props.opacity!=props.opacity)this.setOpacity()
-
+    componentDidUpdate(props, state){
+        if(this.state.tmpWidth != state.tmpWidth || this.state.tmpHeight != state.tmpHeight||
+            this.props.reduxLayout.get("refWidth") != props.reduxLayout.get("refWidth") || this.props.reduxLayout.get("refHeight") != props.reduxLayout.get("refHeight")){
+            this.setSize();
+        }
+        if(this.props.minWidth!=props.minWidth || this.props.minHeight!=props.minHeight){
+            this.setMinSize();
+        }
+        if(this.props.maxWidth!=props.maxWidth || this.props.maxHeight!=props.maxHeight){
+            this.setMaxSize();
+        }
+        if(this.state.tmpLeft != state.tmpLeft|| this.state.tmpTop != state.tmpTop||
+            this.props.reduxLayout.get("refLeft") != props.reduxLayout.get("refLeft")|| this.props.reduxLayout.get("refTop") != props.reduxLayout.get("refTop")){
+            this.setLocation();
+        }
+        if(this.state.transition!=state.transition){
+            this.setTransition();
+        }
+        if(this.state.index!=state.index){
+            this.setIndex();
+        }
+        if(this.props.reduxSettings.get("opacity")!=props.reduxSettings.get("opacity")){
+            this.setOpacity();
+        }
     }
 
     setSize(){
-
         var widget = this.refs.widgetRef,
-            width = this.props.refWidth * this.props.gridWidth - this.props.cellOffset * 2,
-            height = this.props.refHeight * this.props.gridHeight - this.props.cellOffset * 2;
+            width = this.props.reduxLayout.get("refWidth") * this.state.gridWidth - this.props.reduxSettings.get("cellOffset") * 2,
+            height = this.props.reduxLayout.get("refHeight") * this.state.gridHeight - this.props.reduxSettings.get("cellOffset") * 2;
 
-        if(this.props.tmpWidth != 0 || this.props.tmpHeight != 0){
-            width = this.props.tmpWidth;
-            height = this.props.tmpHeight;
+        if(this.state.tmpWidth != 0 || this.state.tmpHeight != 0){
+            width = this.state.tmpWidth;
+            height = this.state.tmpHeight;
         }
-
-        console.log(this.props.refWidth, this.props.gridWidth);
 
         widget.style.width = width + "px";
         widget.style.height = height + "px";
     }
 
     setMinSize(){
+
         var widget = this.refs.widgetRef;
-        widget.style.minWidth = this.props.minWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
-        widget.style.minHeight = this.props.minHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+        widget.style.minWidth = this.props.minWidth * this.state.gridWidth - this.props.reduxSettings.get("cellOffset") * 2 + "px";
+        widget.style.minHeight = this.props.minHeight * this.state.gridHeight - this.props.reduxSettings.get("cellOffset") * 2 + "px";
     }
 
     setMaxSize(){
+        var sw = this.props.reduxSettings.get("screenWidth"),
+            sh = this.props.reduxSettings.get("screenHeight"),
+            gc = this.props.reduxSettings.get("gridCols"),
+            gr = this.props.reduxSettings.get("gridRows"),
+            gridWidth = (sw - 40) / gc,
+            gridHeight = sh / gr;
+
         var widget = this.refs.widgetRef;
-        widget.style.maxWidth = this.props.maxWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
-        widget.style.maxHeight = this.props.maxHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+        widget.style.maxWidth = this.props.maxWidth * gridWidth - this.props.reduxSettings.get("cellOffset") * 2 + "px";
+        widget.style.maxHeight = this.props.maxHeight * gridHeight - this.props.reduxSettings.get("cellOffset") * 2 + "px";
     }
 
     setLocation(){
+
         var widget = this.refs.widgetRef,
-            x = this.props.refLeft * this.props.gridWidth + this.props.cellOffset,
-            y = this.props.refTop * this.props.gridHeight + this.props.cellOffset ;
-        if(this.props.tmpTop!=0 || this.props.tmpLeft!=0){
-            x += this.props.tmpLeft;
-            y += this.props.tmpTop;
+            x = this.props.reduxLayout.get("refLeft") * this.state.gridWidth + this.props.reduxSettings.get("cellOffset"),
+            y = this.props.reduxLayout.get("refTop") * this.state.gridHeight + this.props.reduxSettings.get("cellOffset") ;
+        if(this.state.tmpTop!=0 || this.state.tmpLeft!=0){
+            x += this.state.tmpLeft;
+            y += this.state.tmpTop;
         }
+
         widget.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
     }
 
     setTransition(){
         var widget = this.refs.widgetRef;
-        widget.style.transition = this.props.transition || 'all .5s ease';
+        widget.style.transition = this.state.transition || 'all .5s ease';
     }
 
     setIndex(){
         var widget = this.refs.widgetRef;
-        widget.style.zIndex = this.props.index;
+        widget.style.zIndex = this.state.index;
     }
 
     setOpacity(){
         var widget = this.refs.widgetRef;
-        widget.style.opacity = this.props.opacity * .01;
-    }
-
-    shouldComponentUpdate(props, state){
-        if(props===this.props && state===this.state){
-            console.log("SAME SAME!");
-            return false;
-        }
-        return true;
+        widget.style.opacity = this.props.reduxSettings.get("opacity") * .01;
     }
 
     render(){
+
+        console.log("Rendering Widget:", this.props.id);
+
         var Content = this.props.content,
             CustomToolbarElem = this.props.toolbar,
-            toolbar = "widgetToolbar themeSecondaryColor";
+            toolbarClass = "widgetToolbar themeSecondaryColor";
 
         if(CustomToolbarElem==null) CustomToolbarElem = EmptyToolbar;
-        if(!this.props.toolbar) toolbar = "widgetToolbar";
+        if(!this.props.reduxSettings.get("toolbarToggle")) toolbarClass = "widgetToolbar";
+
         return(
             <div className = 'widget widgetBackground'
                  ref = 'widgetRef'>
-                <div className = {toolbar}
+                <div className = {toolbarClass}
                      ref="widgetToolbarRef">
                     <CustomToolbarElem id = {this.props.id}/>
                     <button className="widgetToolbarButtons">1</button>
@@ -284,7 +346,6 @@ class Widget extends React.Component{
                 </div>
             </div>
         )
-
     }
 }
 
@@ -297,26 +358,20 @@ class EmptyToolbar extends React.Component {
     }
 }
 
-const mapStateToProps = (state, props) => ({
-    reduxState: state.layout.get(props.id.toString()),
-    refWidth: state.layout.get(props.id.toString()).get("refWidth"),
-    refHeight: state.layout.get(props.id.toString()).get("refHeight"),
-    refLeft: state.layout.get(props.id.toString()).get("refLeft"),
-    refTop: state.layout.get(props.id.toString()).get("refTop"),
-    tmpWidth: state.layout.get(props.id.toString()).get("tmpWidth"),
-    tmpHeight: state.layout.get(props.id.toString()).get("tmpHeight"),
-    tmpLeft: state.layout.get(props.id.toString()).get("tmpLeft"),
-    tmpTop: state.layout.get(props.id.toString()).get("tmpTop"),
-    transition: state.layout.get(props.id.toString()).get("transition"),
-    index: state.layout.get(props.id.toString()).get("index"),
-    opacity: state.settings.get("widgetOpacity"),
-    gridWidth: (state.settings.get("screenWidth") - 40 ) / state.settings.get("gridCols"),
-    gridHeight: state.settings.get("screenHeight") / state.settings.get("gridRows"),
-    cellOffset: state.settings.get("cellOffset")
-});
+function selectorFactory(dispatch, props) {
+    let state = {};
+    let ownProps = {};
+    let result = {};
+    const actions = bindActionCreators(Actions, dispatch);
+    return (nextState, nextOwnProps) => {
+        const nextResult = {reduxLayout: nextState.layout.get(nextOwnProps.id), reduxSettings: nextState.settings, reduxActions: actions, ...nextOwnProps};
+        state = nextState;
+        ownProps = nextOwnProps;
+        if (!shallowEqual(result,nextResult)){
+            result = nextResult;
+        }
+        return result
+    }
+}
 
-const mapDispatchToProps = (dispatch) => ({
-    reduxActions: bindActionCreators(Actions, dispatch)
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Widget);
+export default connectAdvanced(selectorFactory)(Widget);

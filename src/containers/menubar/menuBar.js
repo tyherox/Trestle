@@ -50,8 +50,7 @@ export default class MenuBar extends React.Component{
                 refWidth: 2,
                 refHeight: 2,
                 refLeft: 0,
-                refTop: 0,
-                state: []
+                refTop: 0
             }
         );
     }

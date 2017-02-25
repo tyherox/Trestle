@@ -11,7 +11,7 @@ import ReactDOM from 'react-dom';
 import RichEditorExample from './editor.js';
 import jetpack from 'fs-jetpack';
 
-class Hub extends React.Component {
+class Hub extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {}
@@ -59,7 +59,7 @@ class Hub extends React.Component {
     }
 }
 
-class Toolbar extends React.Component {
+class Toolbar extends React.PureComponent {
 
     constructor(props){
         super(props);

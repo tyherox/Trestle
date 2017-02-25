@@ -11,7 +11,7 @@ const DEFAULT_SETTINGS = Map({
     gridCols: 8,
     gridRows: 5,
     cellOffset: 4,
-    toolbar: true,
+    toolbarToggle: true,
     findButton: true,
     sentenceFocusButton: true,
     widgetOpacity: 100

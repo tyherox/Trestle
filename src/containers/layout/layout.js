@@ -12,11 +12,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MenuBar from '../menubar/menuBar';
 import * as Actions from '../../actions/index';
+import shallowEqual from 'shallowequal';
 
 var key = 1;
 
 //React component in charge of managing graphical layout
-export default class Layout extends React.Component{
+export default class Layout extends React.PureComponent{
 
     constructor(props){
         super(props);
@@ -27,23 +28,24 @@ export default class Layout extends React.Component{
     }
 
     toggleGrid(visibility){
+        console.log("TOGGLING GRID");
         this.setState({gridToggled: visibility});
     }
 
     findX(column){
-        return Math.round(column * this.props.gridWidth + this.props.cellOffset);
+        return Math.round(column * this.props.store.getState().settings.get("gridWidth") + this.props.store.settings.get("cellOffset"));
     }
 
     findY(row){
-        return Math.round(row * this.props.gridHeight + this.props.cellOffset);
+        return Math.round(row * this.props.store.getState().settings.get("gridHeight") + this.props.store.settings.get("cellOffset"));
     }
 
     findRow(y){
-        return Math.round(y/this.props.gridHeight);
+        return Math.round(y/this.props.store.getState().settings.get("gridHeight"));
     }
 
     findCol(x){
-        return Math.round(x/this.props.gridWidth);
+        return Math.round(x/this.props.store.getState().settings.get("gridWidth"));
     }
 
     findNearestRow(y){
@@ -57,27 +59,33 @@ export default class Layout extends React.Component{
     //Extract widget bounds
     prepRect(widget){
         return {
-            width: widget.refWidth,
-            height: widget.refHeight,
-            top: widget.refTop,
-            left: widget.refLeft,
+            width: widget.get("refWidth"),
+            height: widget.get("refHeight"),
+            top: widget.get("refTop"),
+            left: widget.get("refLeft")
         }
     }
 
     //Check to see if widget can be placed at current location
     isValidHome(id, rect){
-        for(var i = 0; i<this.props.layout.length; i ++){
-            if(this.props.layout[i].id != id){
-                var cRect = this.prepRect(this.props.layout[i]);
-                if(this.intersects(rect, cRect,0)) {
+        var self =  this;
+        var test = this.props.store.getState().layout.map(function(entry){
+            if(entry.get("id") != id){
+                var cRect = self.prepRect(entry);
+                if(self.intersects(rect, cRect,0)) {
+                    console.log("Checked home: FALSE 1")
+                    return false
+                }
+                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > self.props.screenWidth - 40 || rect.top + rect.height > self.props.screenHeight){
+                    console.log("Checked home: FALSE 2")
                     return false;
                 }
-                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > this.props.screenWidth - 40 || rect.top + rect.height > this.props.screenHeight){
-                    return false;
-                }
+                else return true;
             }
-        }
-        return true;
+        });
+
+        if(test.includes(false)) return false;
+        else return true;
     }
 
     /**
@@ -100,47 +108,20 @@ export default class Layout extends React.Component{
         return false;
     };
 
-    findAvailableSpace(id,w,h){
-        var currentLayout = this.props.layout,
-            newLayout = [],
-            self = this;
-
-        currentLayout.forEach(function(layout){
-            if(id==layout.id){
-
-            }
-            else newLayout.push({
-                id: layout.id,
-                refWidth: layout.state.refWidth,
-                refHeight: layout.state.refHeight,
-                refLeft: layout.state.refLeft,
-                refTop: layout.state.refTop,
-                state: layout.state
-            });
-        })
-        this.props.setLayout(newLayout);
-    }
-
-    generateMultiId(id){
-        id = id.replace(/"/g,"");
-        var offset = 1,
-            generated = id + "." + offset.toString();
-
-        while(this.props.layout.find(function(id){
-            return id==generated
-        })){
-            generated = id + "." + (++offset).toString();
-        }
-        return generated;
+    componentDidMount(){
+        var layout = this.refs.layoutRef;
+        layout.style.width = this.props.store.getState().settings.get("screenWidth") +'px';
+        layout.style.height = this.props.store.getState().settings.get("screenHeight") +'px';
+        layout.style.marginLeft = "40px";
     }
 
     render(){
 
+        console.log("Rendering: Layout");
+
         var self = this;
 
-        console.log("RENDERING: Layout");
-
-        var widgets = this.props.layout.valueSeq().map(function(widget, i){
+        var widgets = this.props.store.getState().layout.valueSeq().map(function(widget, i){
             var id = JSON.stringify(widget.get("id"));
 
             if(id.includes(".")) id = id.substring(0,id.indexOf("."));
@@ -149,7 +130,7 @@ export default class Layout extends React.Component{
             });
 
             return(
-                <Widget id = {widget.get("id")}
+                <Widget id = {widget.get("id").toString()}
                         key = {widget.get("id")}
                         content = {widgetRef.content}
                         toolbar = {widgetRef.toolbar}
@@ -166,15 +147,16 @@ export default class Layout extends React.Component{
         });
 
         return (
-            <div className='layout'
+
+            <div id='layout'
                  ref='layoutRef'>
-                <Grid gridCols={this.props.gridCols}
-                      gridRows={this.props.gridRows}
-                      screenWidth = {this.props.screenWidth}
-                      screenHeight = {this.props.screenHeight}
-                      widgets = {widgets}
+                <ConnectedGrid gridCols={self.props.store.getState().settings.get("gridCols")}
+                      gridRows={self.props.store.getState().settings.get("gridRows")}
+                      screenWidth = {self.props.store.getState().settings.get("screenWidth")}
+                      screenHeight = {self.props.store.getState().settings.get("screenHeight")}
                       visibility = {this.state.gridToggled}>
-                </Grid>
+                </ConnectedGrid>
+                {widgets}
             </div>
         );
     }
@@ -182,7 +164,7 @@ export default class Layout extends React.Component{
 
 
 //React component that draws the grid
-class Grid extends React.Component{
+class Grid extends React.PureComponent{
 
     componentDidMount(){
         var w = this.props.screenWidth - 40, h = this.props.screenHeight,
@@ -217,9 +199,10 @@ class Grid extends React.Component{
 
     componentDidUpdate(){
         var canvas = this.refs.gridRef,
-            visibility = this.props.visibility;
+            visibility = this.props.visible,
+            current = canvas.style.opacity == 1;
         if(visibility) {
-            canvas.style.opacity = '1';
+            canvas.style.opacity = '0';
         }
         else {
             canvas.style.opacity = '0';
@@ -227,6 +210,7 @@ class Grid extends React.Component{
     }
 
     render(){
+        console.log("Rendering: Grid");
         return (
             <div id = 'gridContainer'>
                 <canvas id = 'grid'
@@ -234,8 +218,15 @@ class Grid extends React.Component{
                         className = 'themeGridColor'
                         onClick = {this.props.exit}>
                 </canvas>
-                {this.props.widgets}
             </div>
         );
     }
 }
+
+const mapStateToProps = (state) => ({visible: state.session.get("gridVisible")});
+
+const mapDispatchToProps = (dispatch) => ({reduxActions: bindActionCreators(Actions, dispatch)});
+
+const areStatesEqual = (prev, next) => shallowEqual(prev.session.get("gridVisible"),next.session.get("gridVisible"));
+
+var ConnectedGrid = connect(mapStateToProps, mapDispatchToProps, null, {areStatesEqual: areStatesEqual})(Grid);

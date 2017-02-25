@@ -16,7 +16,7 @@ class SettingPane extends React.Component{
     }
 
     toggleToolbar(state){
-        this.props.reduxActions.modifyAtSetting({toolbar: !state})
+        this.props.reduxActions.modifyAtSetting({toolbarToggle: !state})
     }
 
     toggleFindButton(state){
@@ -33,7 +33,7 @@ class SettingPane extends React.Component{
     }
 
     reset(){
-        this.props.reduxActions.modifyAtSetting({toolbar: true, findButton: true, sentenceFocusButton: true, widgetOpacity: 100});
+        this.props.reduxActions.modifyAtSetting({toolbarToggle: true, findButton: true, sentenceFocusButton: true, widgetOpacity: 100});
     }
 
     render(){
@@ -42,9 +42,9 @@ class SettingPane extends React.Component{
             <div className = "subMenu">
                 <h2>Settings</h2>
                 <div className="subMenu-settings-attrGroup">
-                    <Input text="Show toolbar"
+                    <Input text="Show Sheet toolbars"
                            type="checkbox"
-                           checked={this.props.reduxState.get("toolbar")}
+                           checked={this.props.reduxState.get("toolbarToggle")}
                            changeValue={this.toggleToolbar.bind(this)} />
                     <Input text="Show find button"
                            type="checkbox"

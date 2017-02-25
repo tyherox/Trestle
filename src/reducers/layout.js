@@ -3,7 +3,7 @@
  */
 
 import * as types from '../constants/actionTypes';
-import Immutable, {Map, List, fromJS} from 'immutable';
+import {Map, fromJS} from 'immutable';
 
 const DEFAULT_LAYOUT = fromJS({
     "1": {
@@ -11,30 +11,34 @@ const DEFAULT_LAYOUT = fromJS({
         refWidth: 4,
         refHeight:5,
         refTop: 0,
-        refLeft: 4,
-        tmpWidth: 0,
-        tmpHeight: 0,
-        tmpTop: 0,
-        tmpLeft: 0
+        refLeft: 4
     },
     "1.1": {
         id: 1.1,
         refWidth: 4,
         refHeight:5,
         refTop: 0,
-        refLeft: 0,
-        tmpWidth: 0,
-        tmpHeight: 0,
-        tmpTop: 0,
-        tmpLeft: 0
+        refLeft: 0
     }
 });
+
+function intersects(cRect, iRect, offset){
+    if(((cRect.left>=iRect.left + offset&&cRect.left<iRect.left+iRect.width - offset)||
+        (iRect.left + offset>=cRect.left&&iRect.left + offset<cRect.left+cRect.width))&&
+        ((cRect.top>=iRect.top + offset &&cRect.top<iRect.top+iRect.height - offset)||
+        (iRect.top + offset>=cRect.top&&iRect.top + offset<cRect.top+cRect.height))){
+        return true;
+    }
+    return false;
+};
 
 function layout(state = DEFAULT_LAYOUT, action) {
 
     switch (action.type) {
+
         case types.MODIFY_AT_LAYOUT:
             return state.mergeDeepIn([action.payload.id.toString()], action.payload.layout);
+
         case types.SET_LAYOUT:
             return Map(action.payload);
 
