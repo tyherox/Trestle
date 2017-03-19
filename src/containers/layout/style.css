@@ -16,14 +16,16 @@
 
 #grid{
     display: block;
-    position:absolute;
+    position:relative;
     overflow:hidden;
 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-
     color: black;
-    -webkit-transition: all .5s ease;
+    transition: all 1s ease;
+
+    background-image: linear-gradient(to right, black 1px, transparent 1px), linear-gradient(to bottom, black 1px, transparent 1px);
+    background-size: 155px 160px;
 }

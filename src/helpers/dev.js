@@ -12,14 +12,18 @@ import Layout from '../containers/layout/layout.js';
 import MenuBar from '../containers/menubar/menuBar.js'
 import ReactDOM from 'react-dom';
 import Sheet from '../widgets/Sheet/main.js';
+import {createStore} from 'redux';
+import reducer from '../reducers/index';
+import * as Actions from '../actions/index';
+import {Provider} from 'react-redux';
+import fs from './fileSystem'
 import jetpack from 'fs-jetpack';
-import merge from 'deepmerge'
 
 export default function(){
-
-    var widgets = [Sheet],
+    let widgets = [Sheet],
         userData = "dev",
-        screenWidth =screen.width,
+        store = createStore(reducer),
+        screenWidth = screen.width,
         screenHeight = screen.height;
 
     class App extends Component{
@@ -38,16 +42,6 @@ export default function(){
                         sentenceFocusButton: true,
                         widgetOpacity: 100
                     },
-                    layout: [
-                        {
-                        id: 1,
-                        refWidth: 4,
-                        refHeight:5,
-                        refTop: 0,
-                        refLeft: 2,
-                        state: []
-                        }
-                    ],
                     savedThemes: [
                     ],
                     savedWidgets: [
@@ -58,20 +52,7 @@ export default function(){
                 }
             }
 
-            this.scanUserData = this.scanUserData.bind(this);
-            this.readWidgetStorage = this.readWidgetStorage.bind(this);
-            this.saveWidgetStorage = this.saveWidgetStorage.bind(this);
-            this.deleteWidgetStorage = this.deleteWidgetStorage.bind(this);
-            this.renameWidgetStorage = this.renameWidgetStorage.bind(this);
-            this.setSettings = this.setSettings.bind(this);
-            this.setLayout = this.setLayout.bind(this);
-            this.addLayout = this.addLayout.bind(this);
-            this.deleteLayout = this.deleteLayout.bind(this);
-            this.renameLayout = this.renameLayout.bind(this);
             this.addWidget = this.addWidget.bind(this);
-            this.updateWidgetState = this.updateWidgetState.bind(this);
-            this.getWidgetState = this.getWidgetState.bind(this);
-            this.saveStateToLocal = this.saveStateToLocal.bind(this);
         }
 
         componentWillMount(){
@@ -80,7 +61,7 @@ export default function(){
 
         scanUserData(){
            if(jetpack.exists(userData+'/layouts')){
-               console.log("SCANNING LAYOUTS");
+                   console.log("SCANNING LAYOUTS");
                var layouts = jetpack.list(userData+'/layouts');
                layouts = layouts.map(function(layout){
                    return({
@@ -94,189 +75,112 @@ export default function(){
             this.setState({savedWidgets: [Sheet]});
         }
 
-        readWidgetStorage(id, path, fun){
+        assignHome(widget){
+            var currentLayout = store.getState().layout,
+                widgets = this.state.savedWidgets,
+                row = store.getState().settings.get("gridRows"),
+                col = store.getState().settings.get("gridCols"),
+                range = [];
 
-            var widget = this.state.savedWidgets.find(function(elem){
-                return elem.id == id;
+            currentLayout.forEach(function(entry){
+                var top = entry.get("refTop"),
+                    left = entry.get("refLeft");
+                for(var h = top; h< top + entry.get("refHeight"); h++){
+                    for(var w = left; w< left + entry.get("refWidth"); w++){
+                       var num = col * h + w;
+                        range.push(num);
+                    }
+                }
             });
 
-            path = widget.storage + "/" + path;
+            var id = widget.id.toString();
+            if(id.includes(".")) id = id.substring(0,id.indexOf("."));
 
-            if(jetpack.exists(userData+'/widgets/' + path) && jetpack.inspect(userData+'/widgets/' + path).type == "dir"){
-                var data = jetpack.list(userData+'/widgets/' + path);
-                if(!fun) return data;
-                return data.map(fun);
-            }
-            else if(jetpack.exists(userData+'/widgets/' + path) && jetpack.inspect(userData+'/widgets/' + path).type == "file"){
-                var data = jetpack.read(userData+'/widgets/' + path);
-                if(!fun) return data;
-                return data.map(fun);
-            }
-            return false;
-        }
-
-        renameWidgetStorage(id, prevName, name){
-            var widget = this.findWidgetInSavedWidgets(id);
-            jetpack.rename(userData+"/widgets/"+ widget.storage + "/" + prevName, name);
-            this.scanUserData();
-        }
-
-        deleteWidgetStorage(id, path){
-            var widget = this.findWidgetInSavedWidgets(id);console.log("Deleting :" + userData+"/widgets/"+ widget.storage + "/" + path);
-            jetpack.remove(userData+"/widgets/"+ widget.storage + "/" + path);
-        }
-
-        saveWidgetStorage(id, data, path){
-            var widget = this.findWidgetInSavedWidgets(id);
-            var json = JSON.stringify(data, null, "\t");
-            console.log("SAVING");
-            jetpack.write(userData+"/widgets/"+ widget.storage + "/" + path, json);
-        }
-
-        setSettings(settingChanges){
-            var settings = this.state.settings;
-            for(var prop in settingChanges) {
-                settings[prop] = settingChanges[prop];
-            }
-            this.setState({settings:settings},function(){
-                this.saveStateToLocal();
+            var template = widgets.find(function(entry){
+                if(entry.id == id) return entry;
             });
-        }
 
-        setLayout(layout){
-            console.log("SETTING LAYOUT:", layout);
-            this.setState({layout: layout}, function(){
-                this.saveStateToLocal();
-            });
-        }
+            var width = template.minWidth,
+                height = template.minHeight,
+                top,
+                left,
+                grid = row * col;
 
-        addLayout(name){
-            var layout = JSON.stringify(this.state.layout, null, "\t");
-            jetpack.write(userData+"/layouts/"+name+".json",layout);
-            console.log("ADDED LAYOUT");
-            this.scanUserData();
-        }
-
-        deleteLayout(name){
-            jetpack.remove(userData+"/layouts/"+name+".json");
-            this.scanUserData();
-        }
-
-        renameLayout(prevName, name){
-            jetpack.rename(userData+"/layouts/"+prevName+".json", name+".json");
-            this.scanUserData();
-        }
-
-        updateWidgetState(id, state, permanent){
-
-           var widget = this.findWidgetInLayout(id);
-
-            switch(permanent){
-                case true:
-                    var result = merge(widget, state);
-                    var widgets = this.state.layout;
-                    widgets.forEach(function(widget){
-                        if(id==widget.id) {
-                            for(var props in result){
-                                widget[props] = result[props];
+            for(var i = 0; i<grid; i++){
+                if(range.indexOf(i)==-1){
+                    var coordinates = [];
+                    for(var r = 0; r < height; r++){
+                        var tempRow = null;
+                        for(var c = 0; c < width; c++){
+                            var num = i + c + r * col;
+                            if(tempRow==null) tempRow = Math.floor(num/col);
+                            if(range.indexOf(num)==-1 && num<=grid && tempRow == Math.floor(num/col)){
+                                coordinates.push(num);
                             }
                         }
-                    });
-                    this.setState({layout:widgets}, function(){
-                        this.saveStateToLocal();
-                    });
-                    break;
-                default :
-                    var result = merge(widget.state, state);
-                    var widgets = this.state.layout;
-                    widgets.forEach(function(widget){
-                        if(id==widget.id) {
-                            for(var props in result){
-                                widget.state[props] = result[props];
-                            }
-                        }
-                    });
-                    this.setState({layout:widgets});
-                    break;
+                    }
+                    if(coordinates.length==width * height) {
+                        var origin = coordinates[0];
+                        top = Math.floor(origin/col);
+                        left = origin - top * col;
+                        break;
+                    }
+                }
+            }
+            console.groupEnd();
+            if(top==undefined && left==undefined) return null;
+            return {id: parseFloat(widget.id), refWidth: width, refHeight: height, refTop: top, refLeft: left};
+        }
+
+        generateMultiId(id){
+            id = id.replace(/"/g,"");
+            var offset = 1,
+                generated = id + "." + offset.toString();
+
+            while(store.getState().layout.find(function(widget){
+                return widget.get("id")==generated;
+            })){
+                generated = id + "." + (offset++).toString();
             }
 
-        }
-
-        getWidgetState(id, state){
-            var widget = this.findWidgetInLayout(id);
-            return widget[state];
-        }
-
-        findWidgetInLayout(id){
-            var widget = this.state.layout.find(function(elem){
-                return elem.id == id;
-            });
-            return widget;
-        }
-
-        findWidgetInSavedWidgets(id){
-            var widget = this.state.savedWidgets.find(function(elem){
-                return elem.id == id;
-            });
-            return widget;
-        }
-
-        saveStateToLocal(){
-
-            var state = JSON.parse(JSON.stringify(this.state));
-            state.layout.forEach(function(widget){
-               widget.state = [];
-            });
-            state.savedLayouts = [];
-            state.savedThemes = [];
-            state.savedWidgets = [];
-
-            //console.log("1:", state, "2:", this.state);
-
-            jetpack.write(userData+"/state.json",state);
+            return generated;
         }
 
         addWidget(widget){
-            var layout = this.state.layout;
-            layout.push(widget);
-            this.setState({layout: layout})
-            console.log("STATE:", this.state);
+            var layout = store.getState().layout;
+
+            var id = JSON.stringify(widget.id);
+            if(id.includes("*")) {
+                id = this.generateMultiId(id.replace("*", ""));
+                widget = {id: parseFloat(id)};
+            }
+
+            widget = this.assignHome(widget);
+
+            if(widget!=null){
+                store.dispatch(Actions.modifyAtSession(id.toString(), {
+                    id: widget.id,
+                    content: {}
+                }));
+
+                store.dispatch(Actions.modifyAtLayout(id.toString(), widget));
+            }
+            else console.log("No Place Available");
         }
 
         render(){
-            return(
-                <div>
-                    <MenuBar settings={this.state.settings}
-                             setSettings={this.setSettings}
-                             layouts={this.state.savedLayouts}
-                             addLayout={this.addLayout}
-                             setLayout={this.setLayout}
-                             deleteLayout={this.deleteLayout}
-                             renameLayout={this.renameLayout}
-                             addWidget = {this.addWidget}
-                             readWidgetStorage = {this.readWidgetStorage}
-                             saveWidgetStorage = {this.saveWidgetStorage}
-                             widgets = {this.state.savedWidgets}/>
 
-                    <Layout gridCols = '8'
-                            gridRows = '5'
-                            screenWidth = {screenWidth}
-                            screenHeight ={screenHeight}
-                            gridHeight = {screenHeight/5}
-                            gridWidth = {(screenWidth - 40)/8}
-                            cellOffset = {4}
-                            settings = {this.state.settings}
-                            layout = {this.state.layout}
-                            setLayout = {this.setLayout}
-                            widgets = {this.state.savedWidgets}
-                            getWidgetState = {this.getWidgetState}
-                            readWidgetStorage = {this.readWidgetStorage}
-                            saveWidgetStorage = {this.saveWidgetStorage}
-                            deleteWidgetStorage = {this.deleteWidgetStorage}
-                            renameWidgetStorage = {this.renameWidgetStorage}
-                            updateWidgetState = {this.updateWidgetState}
-                            />
-                </div>
+            return(
+                <Provider store={store}>
+                    <div>
+                        <MenuBar addWidget = {this.addWidget}
+                                 widgets = {this.state.savedWidgets}/>
+
+                        <Layout setLayout = {this.setLayout}
+                                widgets = {this.state.savedWidgets}
+                        />
+                    </div>
+                </Provider>
             )
         }
     }

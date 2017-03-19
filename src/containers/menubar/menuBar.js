@@ -46,12 +46,7 @@ export default class MenuBar extends React.Component{
     addSheet(){
         this.props.addWidget(
             {
-                id: "1*",
-                refWidth: 2,
-                refHeight: 2,
-                refLeft: 0,
-                refTop: 0,
-                state: []
+                id: '1*'
             }
         );
     }
@@ -74,7 +69,6 @@ export default class MenuBar extends React.Component{
 
     render(){
 
-
         var subMenuContent = null,
             subMenu = null,
             openedMenu = this.state.subMenu,
@@ -83,14 +77,9 @@ export default class MenuBar extends React.Component{
 
         if(openedMenu!=null){
             switch(openedMenu){
-                case "setting" : subMenuContent = <Settings settings = {this.props.settings}
-                                                            setSettings = {this.props.setSettings}/>
+                case "setting" : subMenuContent = <Settings />
                     break;
-                case "display" : subMenuContent = <Display addLayout={this.props.addLayout}
-                                                           deleteLayout={this.props.deleteLayout}
-                                                           renameLayout={this.props.renameLayout}
-                                                           layouts={this.props.layouts}
-                                                           setLayout={this.props.setLayout}/>
+                case "display" : subMenuContent = <Display />
                     break;
                 case "file" : subMenuContent = <Files readWidgetStorage = {this.props.readWidgetStorage}
                                                       saveWidgetStorage = {this.props.saveWidgetStorage}/>
@@ -109,6 +98,7 @@ export default class MenuBar extends React.Component{
         }
 
         return(
+
             <div id = "menuBar" className = "themeSecondaryColor" ref="menu">
                 {overlay}
                 <div id ="menuBar-topButtonGroup">

@@ -7,105 +7,98 @@
  * means to be arranged upon the Layout module.
  */
 
-
 import React from 'react';
 import Interact from 'interact.js';
+import * as Actions from '../../actions/index';
+import {connectAdvanced} from "react-redux";
+import {bindActionCreators} from 'redux';
+import shallowEqual from 'shallowequal';
 
-export default class Widget extends React.Component{
+class Widget extends React.PureComponent{
 
     constructor(props){
         super(props);
+
+        var sw = this.props.reduxSettings.get("screenWidth"),
+            sh = this.props.reduxSettings.get("screenHeight"),
+            gc = this.props.reduxSettings.get("gridCols"),
+            gr = this.props.reduxSettings.get("gridRows"),
+            gridWidth = (sw - 40) / gc,
+            gridHeight = sh / gr;
+
+        this.state = {
+            mounted: true,
+            tmpWidth: 0,
+            tmpHeight: 0,
+            tmpTop: 0,
+            tmpLeft: 0,
+            gridWidth: (sw - 40) / gc,
+            gridHeight: sh / gr,
+        }
     }
 
     componentDidMount(){
 
-        var self = this, widget = self.refs.widgetRef;
+        var self = this,
+            widget = self.refs.widgetRef;
 
         //Initialize Drag Module for Widget
         Interact(widget)
+            .on('dragstart resizestart', function(event){
+                startDrag();
+            })
+            .on('dragend resizeend', function(event){
+                self.props.reduxActions.modifyAtSession("gridVisible", false);
+                console.groupEnd();
+                endDrag();
+                setTimeout(function(){
+                    if(self.state.mounted) self.setState({index: 1});
+                }, 500)
+            })
             .draggable({
-                inertia: {
-                    minSpeed: Infinity,
-                },
-                snap: {
-                    targets: [
-                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight})
-                    ],
-                    offset: { x: self.props.cellOffset, y: self.props.cellOffset },
-                    range: Infinity,
-                    endOnly: true,
-                    relativePoints: [ { x: 0, y: 0 } ]
-                },
                 restrict: {
                     restriction: 'parent',
                     elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
                     endOnly: true
-                },
-                onstart: function(event){
-                    startDrag();
-                },
-                onmove: function(event){
-                    self.props.updateWidgetState(self.props.id, {
-                        tmpLeft: (self.props.tmpLeft + event.dx),
-                        tmpTop: (self.props.tmpTop + event.dy)
-                    });
-                },
-                onend: function(){
-                    endDrag();
-                },
-                oninertiastart: function(event){
-                    self.props.toggleGrid(false);
                 }
+            })
+            .on('dragmove', function(event){
+
+                self.setState({
+                    tmpLeft: (self.state.tmpLeft + event.dx),
+                    tmpTop: (self.state.tmpTop + event.dy)
+                });
             })
             .resizable({
                 invert: 'none',
-                inertia: {
-                    minSpeed: Infinity
-                },
                 square: false,
                 preserveAspectRatio: false,
                 edges: { left: false, right: true, bottom: true, top: false },
-                snap: {
-                    targets: [
-                        Interact.createSnapGrid({ x: self.props.gridWidth , y: self.props.gridHeight})
-                    ],
-                    offset: { x: self.props.cellOffset, y: self.props.cellOffset},
-                    range: Infinity,
-                    relativePoints: [ { x: 0, y: 0 } ],
-                    endOnly: true
-                },
                 restrict: {
                     restriction: 'parent',
                     endOnly: true
-                },
-                onstart: function(event){
-                    startDrag();
-                },
-                onmove: function(event){
-                    var width = event.rect.width,
-                        height = event.rect.height,
-                        gWidth = self.props.gridWidth,
-                        gHeight = self.props.gridHeight,
-                        offset = self.props.cellOffset * 2;
-
-                    if(width<=0) width = gWidth - offset;
-                    else if(width>self.props.maxWidth * gWidth - offset) width = self.props.maxWidth * gWidth - offset;
-
-                    if(height<=0) height = gHeight - offset;
-                    else if(height>self.props.maxHeight * gHeight - offset) height = self.props.maxHeight * gHeight - offset;
-
-                    self.props.updateWidgetState(self.props.id,{
-                        tmpWidth: width,
-                        tmpHeight: height,
-                    });
-                    //self.props.collisionDetect(self.props.id);
-                },
-                onend: function(event){
-                    endDrag();
-                },
-                oninertiastart: function(event){
-                    self.props.toggleGrid(false);
                 }
+            })
+            .on('resizemove', function(event){
+                var width = event.rect.width,
+                    height = event.rect.height,
+                    offset = self.props.reduxSettings.get("cellOffset") * 2;
+
+                if(width<=self.props.minWidth) {
+                    width = self.state.gridWidth * self.props.minWidth - offset;
+                }
+                else if(width>self.props.maxWidth * self.state.gridWidth - offset) {
+                    width = self.props.maxWidth * self.state.gridWidth - offset;
+                }
+
+                if(height<=self.props.minWidth) height = self.state.gridHeight * self.props.gridHeight - offset;
+                else if(height>self.props.maxHeight * self.state.gridHeight - offset) height = self.props.maxHeight * self.state.gridHeight - offset;
+
+                self.setState({
+                    tmpWidth: width,
+                    tmpHeight: height,
+                });
+
             })
             .actionChecker(function (pointer, event, action) {
                 if(action.name=='drag'){
@@ -132,76 +125,112 @@ export default class Widget extends React.Component{
 
         //Prep Layout/Widget for drag
         var startDrag = function(){
-            self.props.toggleGrid(true);
-            self.props.updateWidgetState(self.props.id,{
+            self.setState({
                 dragging: true,
                 index: 10,
-                transition: 'transform 0s, width .0s, height .0s, box-shadow .5s'
+                transition: 'transform 0s, width .0s, height .0s'
             });
-        }
+            self.props.reduxActions.modifyAtSession("gridVisible", true);
+        };
 
         //Clean up temp variables for drag
         var endDrag = function(){
-            if(self.props.validateHome(self.props)){
-                var top = self.props.tmpTop,
-                    left = self.props.tmpLeft,
-                    width = self.props.tmpWidth,
-                    height= self.props.tmpHeight;
 
-                self.props.updateWidgetState(self.props.id,{
-                    index: 1,
-                    transition: 'all .5s ease',
-                    dragging: false,
-                    refTop: self.props.refTop + Math.round(top/self.props.gridHeight),
-                    refLeft: self.props.refLeft + Math.round(left/self.props.gridWidth),
-                    refWidth: width==0 ?self.props.refWidth : Math.ceil(width/self.props.gridWidth),
-                    refHeight: height==0 ?self.props.refHeight : Math.ceil(height/self.props.gridHeight),
+            var top = self.state.tmpTop,
+                left = self.state.tmpLeft,
+                width = self.state.tmpWidth,
+                height= self.state.tmpHeight;
+
+            var home = {
+                top: self.props.reduxLayout.get("refTop") + Math.round(top/self.state.gridHeight),
+                left: self.props.reduxLayout.get("refLeft") + Math.round(left/self.state.gridWidth),
+                width: width==0 ?self.props.reduxLayout.get("refWidth") : Math.round(width/self.state.gridWidth),
+                height: height==0 ?self.props.reduxLayout.get("refHeight") : Math.round(height/self.state.gridHeight),
+            };
+
+            console.log(home);
+
+            if(self.props.validateHome(self.props.id, home)){
+                self.props.reduxActions.modifyAtLayout(self.props.id,{
+                    refTop: home.top,
+                    refLeft: home.left,
+                    refWidth: home.width,
+                    refHeight: home.height,
+                });
+                self.setState({
                     tmpLeft: 0,
                     tmpTop: 0,
                     tmpWidth: 0,
-                    tmpHeight: 0
-                });
-            }
-            else{
-                self.props.updateWidgetState(self.props.id,{
-                    index: 1,
-                    transition: 'all .5s ease',
+                    tmpHeight: 0,
+                    transition: 'transform .5s, width .5s, height .5s',
                     dragging: false,
-                    tmpLeft: 0,
-                    tmpTop: 0,
-                    tmpWidth: 0,
-                    tmpHeight: 0
                 });
             }
-            self.props.solidifyWidgets();
+            else self.setState({
+                tmpLeft: 0,
+                tmpTop: 0,
+                tmpWidth: 0,
+                tmpHeight: 0,
+                transition: 'transform .5s, width .5s, height .5s',
+                dragging: false,
+            })
+        }
+    }
+
+    shouldComponentUpdate(props, state){
+        var tmpUpdates = false;
+        if(this.state.tmpLeft != state.tmpLeft|| this.state.tmpTop != state.tmpTop){
+            this.setLocation();
+            tmpUpdates = true;
         }
 
+        if(this.state.tmpWidth != state.tmpWidth || this.state.tmpHeight != state.tmpHeight){
+            this.setSize();
+            tmpUpdates = true;
+        }
+
+        if(tmpUpdates && state.tmpLeft==0 && state.tmpTop==0 &&
+            state.tmpWidth==0 && state.tmpHeight==0){
+            return true;
+        }
+        else return !tmpUpdates;
     }
 
     //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
-    componentDidUpdate(){
-
-        this.setSize();
-        this.setMinSize();
-        this.setMaxSize();
-        this.setLocation();
-        this.setTransition();
-        this.setIndex();
-        this.setOpacity()
-
+    componentDidUpdate(props, state){
+        if(this.state.transition!=state.transition){
+            this.setTransition();
+        }
+        if(this.state.tmpWidth != state.tmpWidth || this.state.tmpHeight != state.tmpHeight||
+            this.props.reduxLayout.get("refWidth") != props.reduxLayout.get("refWidth") || this.props.reduxLayout.get("refHeight") != props.reduxLayout.get("refHeight")){
+            this.setSize();
+        }
+        if(this.props.minWidth!=props.minWidth || this.props.minHeight!=props.minHeight){
+            this.setMinSize();
+        }
+        if(this.props.maxWidth!=props.maxWidth || this.props.maxHeight!=props.maxHeight){
+            this.setMaxSize();
+        }
+        if(this.state.tmpLeft != state.tmpLeft|| this.state.tmpTop != state.tmpTop||
+            this.props.reduxLayout.get("refLeft") != props.reduxLayout.get("refLeft")|| this.props.reduxLayout.get("refTop") != props.reduxLayout.get("refTop")){
+            this.setLocation();
+        }
+        if(this.state.index!=state.index){
+            this.setIndex();
+        }
+        if(this.props.reduxSettings.get("widgetOpacity")!=props.reduxSettings.get("widgetOpacity")){
+            this.setOpacity();
+        }
     }
 
     setSize(){
-
-        var self = this;
-
         var widget = this.refs.widgetRef,
-            width = this.props.refWidth * this.props.gridWidth - this.props.cellOffset * 2,
-            height = this.props.refHeight * this.props.gridHeight - this.props.cellOffset * 2;
+            width = this.props.reduxLayout.get("refWidth") * this.state.gridWidth - this.props.reduxSettings.get("cellOffset") * 2,
+            height = this.props.reduxLayout.get("refHeight") * this.state.gridHeight - this.props.reduxSettings.get("cellOffset") * 2;
 
-        if(this.props.tmpWidth != 0 || this.props.tmpHeight != 0){
-            width = this.props.tmpWidth;
-            height = this.props.tmpHeight;
+        if(this.state.tmpWidth != 0 || this.state.tmpHeight != 0){
+            width = this.state.tmpWidth;
+            height = this.state.tmpHeight;
         }
 
         widget.style.width = width + "px";
@@ -209,81 +238,77 @@ export default class Widget extends React.Component{
     }
 
     setMinSize(){
+
         var widget = this.refs.widgetRef;
-        widget.style.minWidth = this.props.minWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
-        widget.style.minHeight = this.props.minHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+        widget.style.minWidth = this.props.minWidth * this.state.gridWidth - this.props.reduxSettings.get("cellOffset") * 2 + "px";
+        widget.style.minHeight = this.props.minHeight * this.state.gridHeight - this.props.reduxSettings.get("cellOffset") * 2 + "px";
     }
 
     setMaxSize(){
         var widget = this.refs.widgetRef;
-        widget.style.maxWidth = this.props.maxWidth * this.props.gridWidth - this.props.cellOffset * 2 + "px";
-        widget.style.maxHeight = this.props.maxHeight * this.props.gridHeight - this.props.cellOffset * 2 + "px";
+        widget.style.maxWidth = this.props.maxWidth * this.state.gridWidth - this.props.reduxSettings.get("cellOffset") * 2 + "px";
+        widget.style.maxHeight = this.props.maxHeight * this.state.gridHeight - this.props.reduxSettings.get("cellOffset") * 2 + "px";
     }
 
     setLocation(){
+
         var widget = this.refs.widgetRef,
-            x = this.props.refLeft * this.props.gridWidth + this.props.cellOffset,
-            y = this.props.refTop * this.props.gridHeight + this.props.cellOffset ;
-        if(this.props.tmpTop!=0 || this.props.tmpLeft!=0){
-            x += this.props.tmpLeft;
-            y += this.props.tmpTop;
+            x = this.props.reduxLayout.get("refLeft") * this.state.gridWidth + this.props.reduxSettings.get("cellOffset"),
+            y = this.props.reduxLayout.get("refTop") * this.state.gridHeight + this.props.reduxSettings.get("cellOffset");
+
+        if(this.state.tmpTop!=0 || this.state.tmpLeft!=0){
+            x += this.state.tmpLeft;
+            y += this.state.tmpTop;
         }
+
         widget.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
     }
 
     setTransition(){
         var widget = this.refs.widgetRef;
-        widget.style.transition = this.props.transition;
+        widget.style.transition = this.state.transition || 'all .5s ease';
     }
 
     setIndex(){
         var widget = this.refs.widgetRef;
-        widget.style.zIndex = this.props.index;
+        widget.style.zIndex = this.state.index;
     }
 
     setOpacity(){
+        console.log();
         var widget = this.refs.widgetRef;
-        widget.style.opacity = this.props.settings.widgetOpacity * .01;
+        widget.style.opacity = this.props.reduxSettings.get("widgetOpacity") * .01;
+    }
+
+    remove(){
+        this.setState({mounted: false}, function(){
+            this.props.reduxActions.deleteAtLayout(this.props.id);
+        });
     }
 
     render(){
+
         var Content = this.props.content,
             CustomToolbarElem = this.props.toolbar,
-            toolbar = "widgetToolbar themeSecondaryColor";
+            toolbarClass = "widgetToolbar themeSecondaryColor";
 
         if(CustomToolbarElem==null) CustomToolbarElem = EmptyToolbar;
-        if(!this.props.settings.toolbar) toolbar = "widgetToolbar";
 
         return(
             <div className = 'widget widgetBackground'
                  ref = 'widgetRef'>
-                <div className = {toolbar}
+                <div className = "widgetToolbar"
                      ref="widgetToolbarRef">
-                    <CustomToolbarElem  id = {this.props.id}
-                                        updateWidgetState={this.props.updateWidgetState}
-                                        getWidgetState = {this.props.getWidgetState}
-                                        renameWidgetStorage = {this.props.renameWidgetStorage}
-                                        deleteWidgetStorage = {this.props.deleteWidgetStorage}
-                                        readStorage = {this.props.readStorage}
-                                        saveStorage = {this.props.saveStorage}/>
-                    <button className="widgetToolbarButtons">1</button>
-                    <button className="widgetToolbarButtons">2</button>
-                    <button className="widgetToolbarButtons">3</button>
+                    <CustomToolbarElem id = {this.props.id}/>
+                    <button className="widgetToolbarButtons" onClick = {this.remove.bind(this)}>E</button>
+                    <button className="widgetToolbarButtons">P</button>
+                    <button className="widgetToolbarButtons">M</button>
                 </div>
                 <div className = "widgetContainer" ref="widgetContainerRef">
-                    <Content refWidth = {this.props.refWidth}
-                             refHeight = {this.props.refHeight}
-                             id = {this.props.id}
-                             saveStorage = {this.props.saveStorage}
-                             readStorage = {this.props.readStorage}
-                             getWidgetState = {this.props.getWidgetState}
-                             renameWidgetStorage = {this.props.renameWidgetStorage}
-                             deleteWidgetStorage = {this.props.deleteWidgetStorage}
-                             updateWidgetState={this.props.updateWidgetState}/>
+                    <Content id = {this.props.id}/>
                 </div>
             </div>
         )
-
     }
 }
 
@@ -295,3 +320,22 @@ class EmptyToolbar extends React.Component {
         )
     }
 }
+
+function selectorFactory(dispatch) {
+    let result = {};
+    const actions = bindActionCreators(Actions, dispatch);
+    return (nextState, nextOwnProps) => {
+        const nextResult = {
+            reduxLayout: nextState.layout.get(nextOwnProps.id),
+            reduxSettings: nextState.settings,
+            reduxActions: actions,
+            ...nextOwnProps
+        };
+        if (!shallowEqual(result,nextResult)){
+            result = nextResult;
+        }
+        return result
+    }
+}
+
+export default connectAdvanced(selectorFactory)(Widget);

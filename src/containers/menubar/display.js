@@ -6,65 +6,66 @@ import React, {Component} from "react";
 import Collapsible from '../../components/collapsiblePane'
 import Scrollable from '../../components/scrollPane'
 import Button from '../../components/button'
-import jetpack from 'fs-jetpack';
+import * as Actions from '../../actions/index';
+import {connectAdvanced} from "react-redux";
+import {bindActionCreators} from 'redux';
+import shallowEqual from 'shallowequal';
+import fs from '../../helpers/fileSystem.js'
 
 var id = 0;
 
-export default class DisplayPane extends Component{
+class DisplayPane extends Component{
 
     constructor(props){
         super(props);
-        this.state={newLayout: false}
+        this.setLayout = this.setLayout.bind(this);
         this.addLayout = this.addLayout.bind(this);
+        this.deleteLayout = this.deleteLayout.bind(this);
+        this.renameLayout = this.renameLayout.bind(this);
     }
 
     setLayout(data){
-        console.log("SETTING:", data);
-        this.props.setLayout(data);
+        this.props.reduxActions.setLayout(data);
     }
 
     addLayout(name){
-        this.props.addLayout(name);
-        this.setState({newLayout: false})
+        name = "TEST";
+        var layout = {};
+        layout[name] = name;
+        this.props.reduxActions.addStoredLayout({
+            "Untitled": this.props.currentLayout
+        });
+
+        var add = function(a, b){
+            return a + b;
+        }
+        console.lg(add(1,2));
     }
 
     deleteLayout(name){
-        this.props.deleteLayout(name);
+        this.props.reduxActions.deleteStoredLayout(name);
     }
 
     renameLayout(prevName, name){
-        this.props.renameLayout(prevName, name);
-    }
-
-    initializeLayout(){
-        this.setState({newLayout: true})
-    }
-
-    cancelLayout(){
-        this.setState({newLayout: false})
+        this.props.reduxActions.renameStoredLayout(prevName, name);
     }
 
     render(){
-        var placeholder = this.state.newLayout,
-            layouts = this.props.layouts,
-            self = this;
-        if(placeholder){
-            console.log("PLACE");
-            placeholder = <InitializeLayout requestFocus
-                                            cancel={this.cancelLayout.bind(this)}
-                                            add={this.addLayout.bind(this)}/>;
-        }
+        var layouts = this.props.currentLayout, self = this;
 
-        if(layouts.length > 0) layouts = layouts.map(function(layout){
-            return(
-                <Layout key = {id++}
-                        layout = {layout.data}
-                        name = {layout.name.replace(".json","")}
-                        renameLayout = {self.renameLayout.bind(self)}
-                        deleteLayout = {self.deleteLayout.bind(self)}
-                        setLayout = {self.setLayout.bind(self)}/>
-            )
-        })
+        if(layouts.length > 0) {
+            layouts = layouts.map(function(layout){
+                return(
+                    <Layout key = {id++}
+                            layout = {layout.data || {}}
+                            name = {layout.name ? layout.name.replace(".json","") : "Untitled"}
+                            renameLayout = {self.renameLayout}
+                            deleteLayout = {self.deleteLayout}
+                            setLayout = {self.setLayout}/>
+                )
+            });
+        }
+        else layouts = null;
 
         return(
             <div className="subMenu">
@@ -72,12 +73,11 @@ export default class DisplayPane extends Component{
                 <Scrollable className="subMenu-displayScroll">
                     <Collapsible title = "Layouts">
                         {layouts}
-                        {placeholder}
                         <Button className="subMenu-display-layoutItem"
-                                onClick={this.initializeLayout.bind(this)}><h1>+</h1><br/> Save Current Layout</Button>
+                                onClick={this.addLayout}><h1>+</h1><br/> Save Current Layout</Button>
                     </Collapsible>
                     <Collapsible title = "Widgets">
-                        <Button className="subMenu-display-widgetItem">TEST 1</Button>
+                        <Button className="subMenu-display-widgetItem">TEST WIDGET LOCATION</Button>
                     </Collapsible>
                 </Scrollable>
             </div>
@@ -85,41 +85,21 @@ export default class DisplayPane extends Component{
     }
 }
 
-class InitializeLayout extends Component{
+class Layout extends Component{
 
     componentDidMount(){
-        if(this.props.requestFocus){
-            this.refs.input.focus();
-        }
+        this.refs.input.focus();
     }
-
-    addLayout(){
-        this.props.add(this.refs.input.value);
-    }
-
-    render(){
-        return(
-            <div className = "subMenu-display-layoutItem subMenu-display-initializeLayout">
-                <input className="subMenu-display-layoutTitle"
-                       placeholder="Name me!"
-                       ref = "input"/>
-                <button className="subMenu-display-confirmLayout"
-                        onClick={this.addLayout.bind(this)}>Confirm</button>
-                <button className="subMenu-display-confirmLayout"
-                        onClick={this.props.cancel}>Cancel</button>
-            </div>
-        )
-    }
-}
-
-class Layout extends Component{
 
     setLayout(){
         this.props.setLayout(this.props.layout);
     }
 
     renameLayout(){
-        this.props.renameLayout(this.props.name, this.refs.input.value);
+        if(event.target.value==""){
+            this.deleteLayout();
+        }
+        else this.props.renameLayout(this.props.name, this.refs.input.value);
     }
 
     deleteLayout(){
@@ -143,3 +123,26 @@ class Layout extends Component{
         )
     }
 }
+
+function selectorFactory(dispatch) {
+    let state = {};
+    let ownProps = {};
+    let result = {};
+    const actions = bindActionCreators(Actions, dispatch);
+    return (nextState, nextOwnProps) => {
+        const nextResult = {
+            currentLayout: nextState.layout,
+            layouts: nextState.session.get("availLayouts"),
+            reduxActions: actions,
+            ...nextOwnProps
+        };
+        state = nextState;
+        ownProps = nextOwnProps;
+        if (!shallowEqual(result,nextResult)){
+            result = nextResult;
+        }
+        return result
+    }
+}
+
+export default connectAdvanced(selectorFactory)(DisplayPane);

@@ -7,6 +7,7 @@ var jetpack = require('fs-jetpack');
 var bundle = require('./bundle');
 var utils = require('./utils');
 var concat = require('gulp-concat')
+var process = require('gulp-util')
 
 var projectDir = jetpack;
 var srcDir = jetpack.cwd('./src');
@@ -24,11 +25,15 @@ gulp.task('css', function
     return gulp.src('src/**/*.css')
         .pipe(concat('style.css'))
         .pipe(gulp.dest(destDir.path('themes'), {overwrite: true}))
-})
+});
 
 gulp.task('environment', function () {
     var configFile = 'config/env_' + utils.getEnvName() + '.json';
     projectDir.copy(configFile, destDir.path('env.json'), { overwrite: true });
+});
+
+gulp.task('apply-prod-environment', function() {
+    process.env.NODE_ENV = 'production';
 });
 
 gulp.task('watch', function () {
@@ -49,4 +54,4 @@ gulp.task('watch', function () {
     }));
 });
 
-gulp.task('build', ['css','bundle', 'environment']);
+gulp.task('build', ['apply-prod-environment', 'css','bundle', 'environment']);

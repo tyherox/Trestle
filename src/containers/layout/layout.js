@@ -8,94 +8,50 @@
 
 import React from 'react';
 import Widget from '../widget/widget';
-import MenuBar from '../menubar/menuBar';
+import {connectAdvanced} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import shallowEqual from 'shallowequal';
+import Grid from './grid.jsx';
+import * as Actions from '../../actions/index';
 
 var key = 1;
 
 //React component in charge of managing graphical layout
-export default class Layout extends React.Component{
+class Layout extends React.Component{
 
     constructor(props){
         super(props);
-
-        this.state = {
-            gridToggled: false
-        };
-    }
-
-    //Clean temporary props of Widgets. Used for dragging (Interact.js)
-    solidifyWidgets(){
-        var currentLayout = this.props.layout,
-            newLayout = [],
-            self = this;
-
-        currentLayout.forEach(function(layout){
-            console.log("!!!", layout.state);
-            newLayout.push({
-                id: layout.id,
-                refWidth: layout.state.refWidth,
-                refHeight: layout.state.refHeight,
-                refLeft: layout.state.refLeft,
-                refTop: layout.state.refTop,
-                state: layout.state
-            });
-        });
-        this.props.setLayout(newLayout);
-    }
-
-    toggleGrid(visibility){
-        this.setState({gridToggled: visibility});
-    }
-
-    findX(column){
-        return Math.round(column * this.props.gridWidth + this.props.cellOffset);
-    }
-
-    findY(row){
-        return Math.round(row * this.props.gridHeight + this.props.cellOffset);
-    }
-
-    findRow(y){
-        return Math.round(y/this.props.gridHeight);
-    }
-
-    findCol(x){
-        return Math.round(x/this.props.gridWidth);
-    }
-
-    findNearestRow(y){
-        return this.findY(this.findRow(y));
-    }
-
-    findNearestCol(x){
-        return this.findX(this.findCol(x));
     }
 
     //Extract widget bounds
     prepRect(widget){
         return {
-            width: widget.refWidth,
-            height: widget.refHeight,
-            top: widget.refTop,
-            left: widget.refLeft,
+            width: widget.get("refWidth"),
+            height: widget.get("refHeight"),
+            top: widget.get("refTop"),
+            left: widget.get("refLeft")
         }
     }
 
     //Check to see if widget can be placed at current location
-    isValidHome(widget){
-        var rect = this.prepRect(widget);
-        for(var i = 0; i<this.props.widgets.length; i ++){
-            if(this.props.widgets[i].id != widget.id){
-                var cRect = this.prepRect(this.props.widgets[i]);
-                if(this.intersects(rect, cRect,50)) {
+    isValidHome(id, rect){
+        var self =  this;
+        var test = this.props.layout.map(function(entry){
+            if(entry.get("id") != id){
+                var cRect = self.prepRect(entry);
+                if(self.intersects(rect, cRect,0)) {
+                    console.log("Checked home: FALSE 1");
+                    return false
+                }
+                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > self.props.screenWidth - 40 || rect.top + rect.height > self.props.screenHeight){
+                    console.log("Checked home: FALSE 2");
                     return false;
                 }
-                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > this.props.screenWidth - 40 || rect.top + rect.height > this.props.screenHeight){
-                    return false;
-                }
+                else return true;
             }
-        }
-        return true;
+        });
+        if(test.includes(false)) return false;
+        else return true;
     }
 
     /**
@@ -109,176 +65,84 @@ export default class Layout extends React.Component{
      * @returns {boolean}: true for intersect, false for non-intersect
      */
     intersects(cRect, iRect, offset){
-        if(((cRect.left>=iRect.left + offset&&cRect.left<=iRect.left+iRect.width - offset)||
-            (iRect.left + offset>=cRect.left&&iRect.left + offset<=cRect.left+cRect.width))&&
-            ((cRect.top>=iRect.top + offset &&cRect.top<=iRect.top+iRect.height - offset)||
-            (iRect.top + offset>=cRect.top&&iRect.top + offset<=cRect.top+cRect.height))){
+        if(((cRect.left>=iRect.left + offset&&cRect.left<iRect.left+iRect.width - offset)||
+            (iRect.left + offset>=cRect.left&&iRect.left + offset<cRect.left+cRect.width))&&
+            ((cRect.top>=iRect.top + offset &&cRect.top<iRect.top+iRect.height - offset)||
+            (iRect.top + offset>=cRect.top&&iRect.top + offset<cRect.top+cRect.height))){
             return true;
         }
         return false;
     };
 
-    generateMultiId(id){
-        var offset = 1,
-            generated = id + "." + offset;
-
-        while(this.props.layout.find(function(id){
-            return id==generated
-        })){
-            generated = id + "." + ++offset;
-        }
-
-        return generated;
-    }
-
-    findAvailableSpace(id,w,h){
-        var currentLayout = this.props.layout,
-            newLayout = [],
-            self = this;
-
-        currentLayout.forEach(function(layout){
-            if(id==layout.id){
-
-            }
-            else newLayout.push({
-                id: layout.id,
-                refWidth: layout.state.refWidth,
-                refHeight: layout.state.refHeight,
-                refLeft: layout.state.refLeft,
-                refTop: layout.state.refTop,
-                state: layout.state
-            });
-        })
-        console.log("Preping layout:", newLayout);
-        this.props.setLayout(newLayout);
+    componentDidMount(){
+        var layout = this.refs.layoutRef;
+        layout.style.width = this.props.screenWidth - 40 +'px';
+        layout.style.height = this.props.screenHeight +'px';
+        layout.style.marginLeft = "40px";
     }
 
     render(){
 
         var self = this;
-        var widgets = this.props.layout.map(function(widget, i){
 
-            var id = JSON.stringify(widget.id);
-            if(id.includes(".")) id = id.substring(0,id.indexOf("."));
+        var widgets = this.props.layout.valueSeq().map(function(widget, i){
+            var refined = JSON.stringify(widget.get("id")),
+                id = JSON.stringify(widget.get("id"));
+
+            if(refined.includes(".")) refined = refined.substring(0,refined.indexOf("."));
             var widgetRef = self.props.widgets.find(function(elem){
-                return elem["id"]==id;
+                return elem["id"]==refined;
             });
-            console.log("WIDGET:", id);
 
-            var width = widget["refWidth"],
-                height = widget["refHeight"],
-                top = widget["refTop"],
-                left = widget["refLeft"],
-                state = widgetRef.state;
+            if(widgetRef.hasOwnProperty("refWidth")) self.assignHome(widgetRef);
+
             return(
-                <Widget id = {widget.id}
-                        key = {widget.id}
+                <Widget id = {widget.get("id").toString()}
+                        key = {widget.get("id")}
                         content = {widgetRef.content}
                         toolbar = {widgetRef.toolbar}
-                        dragging = {false}
-                        pushed = {false}
-                        solidifyWidgets = {self.solidifyWidgets.bind(self)}
-                        tmpWidth = {(widget.state && widget.state.tmpWidth) || 0}
-                        tmpHeight = {(widget.state && widget.state.tmpHeight) || 0}
-                        tmpLeft = {(widget.state && widget.state.tmpLeft) || 0}
-                        tmpTop = {(widget.state && widget.state.tmpTop)|| 0}
-                        refWidth = {width}
-                        refHeight = {height}
-                        refLeft = {left}
-                        refTop = {top}
                         minWidth = {widgetRef.minWidth}
                         minHeight = {widgetRef.minHeight}
                         maxWidth = {widgetRef.maxWidth}
                         maxHeight = {widgetRef.maxHeight}
-                        gridWidth = {self.props.gridWidth}
-                        gridHeight = {self.props.gridHeight}
-                        cellOffset = {self.props.cellOffset}
-                        saveStorage = {self.props.saveWidgetStorage}
-                        readStorage = {self.props.readWidgetStorage}
-                        index = {(widget.state && widget.state.index) || 0}
-                        transition = {(widget.state && widget.state.transition) || 'all .5s ease'}
-                        toggleGrid = {self.toggleGrid.bind(self)}
-                        validateHome = {self.isValidHome.bind(self)}
-                        settings = {self.props.settings}
-                        getWidgetState = {self.props.getWidgetState}
-                        renameWidgetStorage = {self.props.renameWidgetStorage}
-                        deleteWidgetStorage = {self.props.deleteWidgetStorage}
-                        updateWidgetState={self.props.updateWidgetState}>
+                        validateHome = {self.isValidHome.bind(self)}>
                 </Widget>
             )
         });
 
         return (
-            <div className='layout'
+
+            <div id='layout'
                  ref='layoutRef'>
-                <Grid gridCols={this.props.gridCols}
-                      gridRows={this.props.gridRows}
-                      screenWidth = {this.props.screenWidth}
-                      screenHeight = {this.props.screenHeight}
-                      widgets = {widgets}
-                      visibility = {this.state.gridToggled}>
-                </Grid>
+                <Grid />
+                {widgets}
             </div>
         );
     }
 };
 
-
-//React component that draws the grid
-class Grid extends React.Component{
-
-    componentDidMount(){
-        var w = this.props.screenWidth - 40, h = this.props.screenHeight,
-            wOffs = w/this.props.gridCols,
-            hOffs = h/this.props.gridRows,
-            canvas = this.refs.gridRef,
-            ctx = canvas.getContext('2d');
-
-        ctx.canvas.width  = w;
-        ctx.canvas.height = h;
-        ctx.strokeStyle = getComputedStyle(canvas).getPropertyValue('border-color');
-        //ctx.setLineDash([1, 8]);
-        ctx.lineWidth=1;
-        ctx.stroke();
-        for (let x=0;x<=w;x+=wOffs) {
-            for (let y=0;y<=h;y+=hOffs) {
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, h);
-                ctx.stroke();
-                ctx.moveTo(0, y);
-                ctx.lineTo(w, y);
-                ctx.stroke();
-            }
+function layoutSelector(dispatch) {
+    let state = {};
+    let ownProps = {};
+    let result = {};
+    const actions = bindActionCreators(Actions, dispatch);
+    return (nextState, nextOwnProps) => {
+        const nextResult = {
+            layout: nextState.layout,
+            gridCols: nextState.settings.get("gridCols"),
+            gridRows: nextState.settings.get("gridRows"),
+            screenWidth: nextState.settings.get("screenWidth"),
+            screenHeight: nextState.settings.get("screenHeight"),
+            reduxActions: actions,
+            ...nextOwnProps
+        };
+        state = nextState;
+        ownProps = nextOwnProps;
+        if (!shallowEqual(result,nextResult)){
+            result = nextResult;
         }
-
-        var grid = document.getElementById('gridContainer');
-        grid.style.minHeight = h + 'px';
-        grid.style.minWidth = w + 'px';
-
-        this.forceUpdate();
-    }
-
-    componentDidUpdate(){
-        var canvas = this.refs.gridRef,
-            visibility = this.props.visibility;
-        if(visibility) {
-            canvas.style.opacity = '1';
-        }
-        else {
-            canvas.style.opacity = '0';
-        }
-    }
-
-    render(){
-        return (
-            <div id = 'gridContainer'>
-                <canvas id = 'grid'
-                        ref = 'gridRef'
-                        className = 'themeGridColor'
-                        onClick = {this.props.exit}>
-                </canvas>
-                {this.props.widgets}
-            </div>
-        );
+        return result
     }
 }
+
+export default connectAdvanced(layoutSelector)(Layout);
