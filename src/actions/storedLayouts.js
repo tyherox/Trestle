@@ -21,9 +21,9 @@ export const renameStoredLayout = (prevName, newName) => {
     }
 };
 
-export const deleteStoredLayout = (layout) => {
+export const deleteStoredLayout = (id) => {
     return {
         type: types.DELETE_STORED_LAYOUTS,
-        payload: layout
+        payload: id
     }
 };

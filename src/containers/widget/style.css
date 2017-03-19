@@ -7,7 +7,7 @@
     border-radius: 1px;
 
     transform: translate(0px, 0px);
-    transition: all .5s ease;
+    transition: transform .5s, width .5s, height .5s ease;
 
     color: #424242;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);

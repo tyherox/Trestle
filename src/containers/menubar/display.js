@@ -7,8 +7,10 @@ import Collapsible from '../../components/collapsiblePane'
 import Scrollable from '../../components/scrollPane'
 import Button from '../../components/button'
 import * as Actions from '../../actions/index';
-import {connect} from "react-redux";
+import {connectAdvanced} from "react-redux";
 import {bindActionCreators} from 'redux';
+import shallowEqual from 'shallowequal';
+import fs from '../../helpers/fileSystem.js'
 
 var id = 0;
 
@@ -30,7 +32,14 @@ class DisplayPane extends Component{
         name = "TEST";
         var layout = {};
         layout[name] = name;
-        this.props.reduxActions.addStoredLayout({name:"NOW"});
+        this.props.reduxActions.addStoredLayout({
+            "Untitled": this.props.currentLayout
+        });
+
+        var add = function(a, b){
+            return a + b;
+        }
+        console.lg(add(1,2));
     }
 
     deleteLayout(name){
@@ -42,8 +51,7 @@ class DisplayPane extends Component{
     }
 
     render(){
-
-        var layouts = this.props.reduxState, self = this;
+        var layouts = this.props.currentLayout, self = this;
 
         if(layouts.length > 0) {
             layouts = layouts.map(function(layout){
@@ -116,12 +124,25 @@ class Layout extends Component{
     }
 }
 
-const mapStateToProps = (state) => ({
-    reduxState: state.storedLayouts.toArray(),
-});
+function selectorFactory(dispatch) {
+    let state = {};
+    let ownProps = {};
+    let result = {};
+    const actions = bindActionCreators(Actions, dispatch);
+    return (nextState, nextOwnProps) => {
+        const nextResult = {
+            currentLayout: nextState.layout,
+            layouts: nextState.session.get("availLayouts"),
+            reduxActions: actions,
+            ...nextOwnProps
+        };
+        state = nextState;
+        ownProps = nextOwnProps;
+        if (!shallowEqual(result,nextResult)){
+            result = nextResult;
+        }
+        return result
+    }
+}
 
-const mapDispatchToProps = (dispatch) => ({
-    reduxActions: bindActionCreators(Actions, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(DisplayPane);
+export default connectAdvanced(selectorFactory)(DisplayPane);

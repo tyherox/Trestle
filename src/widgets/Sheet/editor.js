@@ -10,12 +10,12 @@ export default class MyEditor extends React.Component {
     constructor(props) {
         super(props);
 
-        var editorState = this.props.editorState;
+        var editorState = EditorState.createEmpty();
         if(editorState){
-            editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(editorState)));
+            //editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(editorState)));
         }
         else{
-            editorState = EditorState.createEmpty()
+            //editorState = EditorState.createEmpty()
         }
 
         this.state = {editorState: editorState};
@@ -24,12 +24,13 @@ export default class MyEditor extends React.Component {
             if(editorState.getCurrentContent() != self.state.editorState.getCurrentContent()){
                 var content = editorState.getCurrentContent();
                 var raw = convertToRaw(content);
-                self.props.save(raw);
+                //self.props.save(raw);
             }
             this.setState({editorState: editorState});
         };
         this.focus = () => this.refs.editor.focus();
     }
+
     render() {
 
         const {editorState} = this.state;

@@ -46,11 +46,7 @@ export default class MenuBar extends React.Component{
     addSheet(){
         this.props.addWidget(
             {
-                id: '1*',
-                refWidth: 2,
-                refHeight: 2,
-                refLeft: 0,
-                refTop: 0
+                id: '1*'
             }
         );
     }
@@ -73,14 +69,11 @@ export default class MenuBar extends React.Component{
 
     render(){
 
-
         var subMenuContent = null,
             subMenu = null,
             openedMenu = this.state.subMenu,
             self = this,
             overlay = null;
-
-        console.log("RENDERING: Menubar");
 
         if(openedMenu!=null){
             switch(openedMenu){

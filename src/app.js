@@ -5,14 +5,12 @@
 import React from 'react-dom';
 import { remote } from 'electron';
 import jetpack from 'fs-jetpack';
-import layout from './containers/layout/layout.js';
 import decor from './helpers/decor.js';
 import dev from './helpers/dev.js';
 
 //Path to user's data based on Electron's Method
 var usrPath = remote.app.getPath('userData');
 
-console.log("PATH: " + usrPath);
 //Package search directory based on usrPath
 var widgetDir = usrPath+'/widgets',
     layoutDir = usrPath+'/layouts',

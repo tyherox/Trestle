@@ -8,29 +8,19 @@ import {Map, fromJS} from 'immutable';
 const DEFAULT_LAYOUT = fromJS({
     "1": {
         id: 1,
-        refWidth: 4,
-        refHeight:5,
-        refTop: 0,
-        refLeft: 4
+        refWidth: 2,
+        refHeight:2,
+        refTop: 1,
+        refLeft: 0
     },
     "1.1": {
         id: 1.1,
-        refWidth: 4,
-        refHeight:5,
-        refTop: 0,
-        refLeft: 0
+        refWidth: 2,
+        refHeight:2,
+        refTop: 1,
+        refLeft: 2
     }
 });
-
-function intersects(cRect, iRect, offset){
-    if(((cRect.left>=iRect.left + offset&&cRect.left<iRect.left+iRect.width - offset)||
-        (iRect.left + offset>=cRect.left&&iRect.left + offset<cRect.left+cRect.width))&&
-        ((cRect.top>=iRect.top + offset &&cRect.top<iRect.top+iRect.height - offset)||
-        (iRect.top + offset>=cRect.top&&iRect.top + offset<cRect.top+cRect.height))){
-        return true;
-    }
-    return false;
-};
 
 function layout(state = DEFAULT_LAYOUT, action) {
 

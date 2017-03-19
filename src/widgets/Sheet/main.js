@@ -7,82 +7,8 @@
  */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import RichEditorExample from './editor.js';
-import jetpack from 'fs-jetpack';
-
-class Hub extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {}
-
-    }
-
-    componentWillMount(){
-        /*
-        var title = this.props.getWidgetState(this.props.id,"title"),
-            files =  this.props.readStorage(1, "docs");
-
-        console.log("title of sheet:", title);
-
-        if(!title || title==="") {
-            this.props.updateWidgetState(this.props.id, {title: "Untitled"}, true);
-            title = "Untitled";
-            console.log("new title of sheet:", title);
-        }
-
-        if(files){
-            var file = files.find(function(file){
-                return file = title;
-            })
-            var content = this.props.readStorage(1, "docs/" + title);
-
-            if(content) this.setState({content: content})
-            else if(content!="Untitled" && content!=null) {
-                this.props.deleteWidgetStorage(1, "doc/" + title);
-                this.props.updateWidgetState(this.props.id, {title: "Untitled"}, true);
-            }
-        }
-        */
-    }
-
-    save(data){
-        //this.props.updateWidgetState(this.props.id, {text: data}, true);
-        //this.setState({text: data});
-        //this.props.saveStorage(1, data, "docs/" + this.props.getWidgetState(this.props.id,"title"));
-    }
-
-    render() {
-        return(
-            <RichEditorExample save={this.save.bind(this)} editorState={this.state.content}/>
-        )
-    }
-}
-
-class Toolbar extends React.PureComponent {
-
-    constructor(props){
-        super(props);
-        this.state = {}
-    }
-
-    saveTitle(event){
-        //var title = this.props.getWidgetState(this.props.id,"title");
-        //if(this.props.readStorage(1, "docs/" + title)) this.props.renameWidgetStorage(1, "docs/" + title, event.target.value);
-        //this.props.updateWidgetState(this.props.id, {title: event.target.value}, true);
-    }
-
-    render(){
-
-        return(
-            <input className = "sheet-title"
-                   type="text"
-                   value = {""}
-                   onChange={this.saveTitle.bind(this)}/>
-        )
-    }
-
-}
+import Toolbar from './toolbar.jsx';
+import Editor from './editor.js';
 
  export default {
      id:1,
@@ -93,5 +19,5 @@ class Toolbar extends React.PureComponent {
      maxHeight: 10,
      storage: "1-sheets",
      toolbar: Toolbar,
-     content: Hub
+     content: Editor
  };

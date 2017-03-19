@@ -3,9 +3,16 @@
  */
 
 import * as types from '../constants/actionTypes';
-import {Map, List} from 'immutable';
+import {Map, fromJS} from 'immutable';
+import fs from '../helpers/fileSystem';
 
-const DEFAULT_STORED_LAYOUTS = Map();
+var storage = new fs();
+
+const DEFAULT_STORED_LAYOUTS = fromJS([]);
+
+function scanLayouts(){
+
+}
 
 function storedLayouts(state = DEFAULT_STORED_LAYOUTS, action) {
     switch (action.type) {
