@@ -604,6 +604,38 @@ input[type="number"]::-webkit-inner-spin-button {
 
 }
 
+#layout{
+    height: 100%;
+    width: 100%;
+}
+
+#gridContainer{
+    display: block;
+    position:absolute;
+
+    top: 0;
+    left: 40px;
+    width: calc(100% - 80px);
+    height: 100%;
+    color: ghostwhite;
+}
+
+#grid{
+    display: block;
+    position:relative;
+    overflow:hidden;
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: black;
+    transition: all 1s ease;
+
+    background-image: linear-gradient(to right, black 1px, transparent 1px), linear-gradient(to bottom, black 1px, transparent 1px);
+    background-size: 155px 160px;
+}
+
 #menuBar{
     z-index: 10;
     display: block;
@@ -621,7 +653,6 @@ input[type="number"]::-webkit-inner-spin-button {
     top:0;
     left:0;
     background-color: transparent;
-    overflow: visible;
     width: 100vw;
     height: 100vh;
 }
@@ -645,127 +676,11 @@ input[type="number"]::-webkit-inner-spin-button {
     background-color: #E0E0E0;
 }
 
-.subMenu{
+#subMenu{
     position: relative;
-    margin: 5px;
-    margin-top: 10px;
+    margin: 10px 5px 5px;
     width:calc(100% - 10px);
-    height: calc(100% - 20px);
-}
-
-.subMenu-settings-attrGroup{
-    display: block;
-    padding: 15px 15px 0;
-}
-
-.subMenu-displayScroll{
-    position: relative;
-    margin-top: 15px;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: calc(100% - 50px);
-    overflow: scroll;
-}
-
-.subMenu-display-layout{
-    margin-bottom: 20px;
-}
-
-.subMenu-display-layoutItem{
-    position: relative;
-    display: block;
-    margin-left: 10px;
-    margin-right: 10px;
-    border-radius: 5px;
-    background: white;
-    width: calc(100% - 20px);
-    height: 160px;
-}
-
-.subMenu-display-layoutTitle{
-    margin: 10px;
-    outline: none;
-    border: none;
-    border-bottom-style: solid;
-    border-bottom-color: #2D98E0;
-    background-color: transparent;
-    text-align: center;
-    width: calc(100% - 20px);
-}
-
-.subMenu-display-initializeLayout{
-    width: calc(100% - 20px);
-    height: auto;
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-.subMenu-display-confirmLayout{
-    position: relative;
-    display: block;
-    margin: 10px;
-    padding: 5px;
-    outline: none;
-    border-radius: 5px;
-    text-align: center;
-    background-color: white;
-    width: calc(100% - 20px);
-}
-
-.subMenu-display-layoutDelete{
-    position: relative;
-    float:right;
-    width: 25px;
-    height: 25px;
-    border-radius: 25px;
-    background-color: red;
-}
-
-.subMenu-files{
-    position: relative;
-    margin-top: 15px;
-    width:100%;
-    height: calc(100% - 100px);
-    overflow: scroll;
-}
-
-.subMenu-filesScroll{
-    position: relative;
-    margin-top: 15px;
-    width:100%;
-    height: calc(100% - 50px);
-    overflow: scroll;
-}
-
-.subMenu-files-toolbar{
-    padding-left: 1px;
-    margin-bottom: 15px;
-    overflow: visible;
-}
-
-.exampleFile{
-    width:100%;
-    height:25px;
-    line-height: 25px;
-    background: snow;
-    margin-bottom: 5px;
-    padding-left: 5px;
-}
-
-.subMenu-botToolGroup-item{
-    position: relative;
-    right: 0;
-    width: 50px;
-    height: 50px;
-    margin-left: 5px;
-}
-
-.subMenu-botToolGroup{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 10px;
+    height: calc(100% - 15px);
 }
 
 .widget {
@@ -777,7 +692,7 @@ input[type="number"]::-webkit-inner-spin-button {
     border-radius: 1px;
 
     transform: translate(0px, 0px);
-    transition: transform .5s, width .5s, height .5s ease;
+    transition: transform .5s, width .5s, height .5s, z-index .5s .5s;
 
     color: #424242;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
@@ -824,36 +739,31 @@ input[type="number"]::-webkit-inner-spin-button {
     background-color: rgba(39, 49, 138, 0.46);
 }
 
-#layout{
-    height: 100%;
-    width: 100%;
+.example-enter {
+    opacity: 0.01!important;
 }
 
-#gridContainer{
-    display: block;
-    position:absolute;
-
-    top: 0;
-    left: 40px;
-    width: calc(100% - 80px);
-    height: 100%;
-    color: ghostwhite;
+.example-enter.example-enter-active {
+    opacity: 1!important;;
+    transition: opacity .5s ease-in;
 }
 
-#grid{
-    display: block;
-    position:relative;
-    overflow:hidden;
+.example-leave {
+    opacity: 1!important;;
+}
 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    color: black;
-    transition: all 1s ease;
+.example-leave.example-leave-active {
+    opacity: 0.01!important;;
+    transition: opacity .5s ease-in;
+}
 
-    background-image: linear-gradient(to right, black 1px, transparent 1px), linear-gradient(to bottom, black 1px, transparent 1px);
-    background-size: 155px 160px;
+.example-appear {
+    opacity: 0.01!important;;
+}
+
+.example-appear.example-appear-active {
+    opacity: 1!important;;
+    transition: opacity .5s ease-in;
 }
 
 /**
@@ -927,4 +837,154 @@ input[type="number"]::-webkit-inner-spin-button {
     border-left-color: red;
     background-color: white;
     color: black;
+}
+
+.displayScroll{
+    position: relative;
+    margin-top: 15px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 50px);
+    overflow: scroll;
+}
+
+.display-layout{
+    position: relative;
+}
+
+.display-layoutItem{
+    position: relative;
+    display: block;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    background: white;
+    width: calc(100% - 20px);
+    height: 160px;
+    top: -25px;
+    z-index: 2;
+}
+
+.display-layoutTitle{
+    position: relative;
+    margin: 10px;
+    outline: none;
+    border: none;
+    border-bottom-style: solid;
+    border-bottom-color: #2D98E0;
+    background-color: transparent;
+    text-align: center;
+    width: calc(100% - 20px);
+    top: -25px;
+}
+
+.display-layoutDelete{
+    position: relative;
+    float:right;
+    width: 25px;
+    height: 25px;
+    border-radius: 25px;
+    background-color: red;
+    z-index: 3;
+}
+
+.display-addLayoutItem{
+    position: relative;
+    display: block;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    background: white;
+    width: calc(100% - 20px);
+    height: 160px;
+    z-index: 2;
+}
+
+.fileList-container {
+    position: relative;
+    margin-top: 15px;
+    width:100%;
+    height: calc(100% - 100px);
+    overflow: scroll;
+}
+
+.fileList-scroll {
+    position: relative;
+    margin-top: 15px;
+    width:100%;
+    height: calc(100% - 50px);
+    overflow: scroll;
+}
+
+.fileList-toolbar {
+    padding-left: 1px;
+    margin-bottom: 15px;
+    overflow: visible;
+}
+
+.fileList-file-default {
+    position: relative;
+    width: calc(100% - 5px);
+    height:25px;
+    line-height: 25px;
+    background: snow;
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+
+.fileList-file-default:hover{
+    cursor: default;
+}
+
+.fileList-file-selected{
+    width:calc(100% - 10px);
+    height:25px;
+    line-height: 25px;
+    background: snow;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    border-left: red solid 5px;
+}
+
+.fileList-file-selected:hover{
+    cursor: default;
+}
+
+.fileList-file-showOption{
+    transition: all .5s;
+    height: calc(100% - 4px);
+    opacity: 100;
+    background: transparent;
+    outline: none;
+    border: none;
+    float: right;
+}
+
+.fileList-file-hideOption{
+    transition: all .5s;
+    height: calc(100% - 4px);
+    opacity: 0;
+    outline: none;
+    border: none;
+    float: right;
+}
+
+.settings-attrGroup{
+    display: block;
+    padding: 15px 15px 0;
+}
+
+.botToolGroup-item{
+    position: relative;
+    padding: 10px;
+    right: 0;
+    height: 50px;
+    margin-left: 5px;
+}
+
+.botToolGroup{
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }

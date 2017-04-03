@@ -3,26 +3,40 @@
  */
 
 import * as types from '../constants/actionTypes';
-import {Map, List} from 'immutable';
+import {Map, fromJS} from 'immutable';
+import fs from '../helpers/fileSystem';
 
-const DEFAULT_STORED_LAYOUTS = Map();
+var storage = new fs("widgets");
 
-function storedLayouts(state = DEFAULT_STORED_LAYOUTS, action) {
+const DEFAULT_STORED_WIDGETS = fromJS(scanLayouts());
+
+function scanLayouts(){
+    var defaultStore = {};
+    if(storage.list()!=undefined) {
+        storage.list().forEach(function(elem){
+            defaultStore[elem.replace(".json","")] = storage.cwd(storage.path(elem));
+        });
+    }
+    defaultStore["Sheet"] = process.cwd() + "widgets/Sheet/main.js";
+    return defaultStore;
+}
+
+function storedWidgets(state = DEFAULT_STORED_WIDGETS, action) {
     switch (action.type) {
-        case types.ADD_STORED_LAYOUTS:
-            return state.merge(Map(action.payload));
 
-        case types.DELETE_STORED_LAYOUTS:
+        case types.ADD_STORED_WIDGETS:
+            var path = action.payload.name + ".json";
+            storage.save(path, action.payload.layout);
+            var newState = state.set(action.payload.name, path);
+            return newState;
+
+        case types.DELETE_STORED_WIDGETS:
+            storage.remove(action.payload + ".json");
             return state.delete(action.payload);
 
-        case types.RENAME_STORED_LAYOUTS:
-            if(state.has(action.payload.prevName)){
-                console.log("!!!");
-                return state.delete(action.payload.prevName).set(action.payload.newName,state.get(action.payload.prevName));
-            }
         default:
             return state;
     }
 }
 
-export default storedLayouts;
+export default storedWidgets;

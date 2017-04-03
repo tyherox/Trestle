@@ -7,19 +7,10 @@ import {Map, fromJS} from 'immutable';
 
 const DEFAULT_SESSION = fromJS({
     gridVisible: false,
-    "1": {
-        id: 1,
-        content: {
-
-        }
-    },
-    "1.1": {
-        id: 1.1,
-        content: {
-
-        }
-    }
+    pinMode: false
 });
+
+
 
 function sessionReducer(state = DEFAULT_SESSION, action) {
     switch (action.type) {

@@ -51,13 +51,10 @@ class Widget extends React.PureComponent{
                 self.props.reduxActions.modifyAtSession("gridVisible", false);
                 console.groupEnd();
                 endDrag();
-                setTimeout(function(){
-                    if(self.state.mounted) self.setState({index: 1});
-                }, 500)
             })
             .draggable({
                 restrict: {
-                    restriction: 'parent',
+                    restriction: document.getElementById("layout"),
                     elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
                     endOnly: true
                 }
@@ -75,7 +72,7 @@ class Widget extends React.PureComponent{
                 preserveAspectRatio: false,
                 edges: { left: false, right: true, bottom: true, top: false },
                 restrict: {
-                    restriction: 'parent',
+                    restriction: document.getElementById("layout"),
                     endOnly: true
                 }
             })
@@ -128,7 +125,7 @@ class Widget extends React.PureComponent{
             self.setState({
                 dragging: true,
                 index: 10,
-                transition: 'transform 0s, width .0s, height .0s'
+                transition: 'transform 0s, width .0s, height .0s, z-index .0s .0s'
             });
             self.props.reduxActions.modifyAtSession("gridVisible", true);
         };
@@ -148,8 +145,6 @@ class Widget extends React.PureComponent{
                 height: height==0 ?self.props.reduxLayout.get("refHeight") : Math.round(height/self.state.gridHeight),
             };
 
-            console.log(home);
-
             if(self.props.validateHome(self.props.id, home)){
                 self.props.reduxActions.modifyAtLayout(self.props.id,{
                     refTop: home.top,
@@ -158,20 +153,22 @@ class Widget extends React.PureComponent{
                     refHeight: home.height,
                 });
                 self.setState({
+                    index: 1,
                     tmpLeft: 0,
                     tmpTop: 0,
                     tmpWidth: 0,
                     tmpHeight: 0,
-                    transition: 'transform .5s, width .5s, height .5s',
+                    transition: 'transform .5s, width .5s, height .5s, z-index .5s .5s,  opacity .5s',
                     dragging: false,
                 });
             }
             else self.setState({
+                index: 1,
                 tmpLeft: 0,
                 tmpTop: 0,
                 tmpWidth: 0,
                 tmpHeight: 0,
-                transition: 'transform .5s, width .5s, height .5s',
+                transition: 'transform .5s, width .5s, height .5s, z-index .5s .5s,  opacity .5s',
                 dragging: false,
             })
         }
@@ -218,7 +215,9 @@ class Widget extends React.PureComponent{
         if(this.state.index!=state.index){
             this.setIndex();
         }
-        if(this.props.reduxSettings.get("widgetOpacity")!=props.reduxSettings.get("widgetOpacity")){
+        if(this.props.reduxSettings.get("widgetOpacity")!=props.reduxSettings.get("widgetOpacity") ||
+            this.props.reduxPinMode != props.reduxPinMode ||
+            this.props.reduxPinMode && (this.props.reduxLayout.get("pinned") != props.reduxLayout.get("pinned"))){
             this.setOpacity();
         }
     }
@@ -266,7 +265,7 @@ class Widget extends React.PureComponent{
 
     setTransition(){
         var widget = this.refs.widgetRef;
-        widget.style.transition = this.state.transition || 'all .5s ease';
+        widget.style.transition = this.state.transition || 'transform .5s, width .5s, height .5s, z-index .5s .5s, opacity .5s';
     }
 
     setIndex(){
@@ -275,9 +274,12 @@ class Widget extends React.PureComponent{
     }
 
     setOpacity(){
-        console.log();
-        var widget = this.refs.widgetRef;
-        widget.style.opacity = this.props.reduxSettings.get("widgetOpacity") * .01;
+        var widget = this.refs.widgetRef,
+            opacity = this.props.reduxSettings.get("widgetOpacity");
+        if(this.props.reduxPinMode && !this.props.reduxLayout.get("pinned")) {
+            opacity = 0;
+        }
+        widget.style.opacity = opacity * .01;
     }
 
     remove(){
@@ -286,8 +288,13 @@ class Widget extends React.PureComponent{
         });
     }
 
+    setPin(){
+        this.props.reduxActions.modifyAtLayout(this.props.id, {pinned: !this.props.reduxLayout.get("pinned")});
+    }
+
     render(){
 
+        console.log("RENDERING WIDGET:", this.props.id);
         var Content = this.props.content,
             CustomToolbarElem = this.props.toolbar,
             toolbarClass = "widgetToolbar themeSecondaryColor";
@@ -301,7 +308,7 @@ class Widget extends React.PureComponent{
                      ref="widgetToolbarRef">
                     <CustomToolbarElem id = {this.props.id}/>
                     <button className="widgetToolbarButtons" onClick = {this.remove.bind(this)}>E</button>
-                    <button className="widgetToolbarButtons">P</button>
+                    <button className="widgetToolbarButtons" onClick = {this.setPin.bind(this)}>P</button>
                     <button className="widgetToolbarButtons">M</button>
                 </div>
                 <div className = "widgetContainer" ref="widgetContainerRef">
@@ -325,12 +332,16 @@ function selectorFactory(dispatch) {
     let result = {};
     const actions = bindActionCreators(Actions, dispatch);
     return (nextState, nextOwnProps) => {
+
+        var layout =  nextState.layout.get(nextOwnProps.id) ? nextState.layout.get(nextOwnProps.id).delete("content") : null
         const nextResult = {
-            reduxLayout: nextState.layout.get(nextOwnProps.id),
+            reduxLayout: layout,
+            reduxPinMode: nextState.session.get("pinMode"),
             reduxSettings: nextState.settings,
             reduxActions: actions,
             ...nextOwnProps
         };
+        if(nextResult.reduxLayout==undefined) return result;
         if (!shallowEqual(result,nextResult)){
             result = nextResult;
         }

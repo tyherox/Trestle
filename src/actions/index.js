@@ -6,4 +6,5 @@ export * from './layout';
 export * from './session';
 export * from './settings';
 export * from './storedLayouts';
+export * from './storedWidgets';
 

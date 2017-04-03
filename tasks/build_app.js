@@ -49,6 +49,9 @@ gulp.task('watch', function () {
     watch('src/**/*.js', batch(function (events, done) {
         gulp.start('bundle', beepOnError(done));
     }));
+    watch('src/**/*.jsx', batch(function (events, done) {
+        gulp.start('bundle', beepOnError(done));
+    }));
     watch('src/**/*.css', batch(function (events, done) {
         gulp.start('css', beepOnError(done));
     }));

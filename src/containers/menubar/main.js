@@ -4,28 +4,24 @@
 
 import React from "react";
 import Button from "../../components/button";
-import Input from "../../components/input"
-import Collapsible from '../../components/collapsiblePane'
-import Scrollable from '../../components/scrollPane'
-import Settings from './settings'
-import Display from './display'
-import Files from './files'
+import Settings from './settings/settings'
+import Display from './display/display'
+import Files from './files/files'
+import * as Actions from '../../actions/index';
+import {connectAdvanced} from "react-redux";
+import {bindActionCreators} from 'redux';
+import shallowEqual from 'shallowequal';
 
-export default class MenuBar extends React.Component{
+class MenuBar extends React.Component{
 
     constructor(props){
         super(props);
         this.state = {subMenu: null}
     }
 
-    componentDidMount(){
-
-    }
-
     exit(){
         window.close();
     }
-
 
     openSetting(){
         this.toggleSub("setting");
@@ -39,16 +35,12 @@ export default class MenuBar extends React.Component{
         this.toggleSub("file");
     }
 
-    hide(){
-
-    }
-
     addSheet(){
-        this.props.addWidget(
-            {
-                id: '1*'
-            }
-        );
+        this.props.addWidget({
+                id: '1*',
+                pinned: true,
+                content: {}
+        });
     }
 
     closeSubMenu(){
@@ -67,6 +59,10 @@ export default class MenuBar extends React.Component{
 
     }
 
+    setPinnedMode(){
+        this.props.reduxActions.modifyAtSession("pinMode", !this.props.reduxSession.get('pinMode'));
+    }
+
     render(){
 
         var subMenuContent = null,
@@ -81,25 +77,26 @@ export default class MenuBar extends React.Component{
                     break;
                 case "display" : subMenuContent = <Display />
                     break;
-                case "file" : subMenuContent = <Files readWidgetStorage = {this.props.readWidgetStorage}
-                                                      saveWidgetStorage = {this.props.saveWidgetStorage}/>
+                case "file" : subMenuContent = <Files addWidget = {this.props.addWidget}/>
                     break;
                 default : console.log("Unregistered Pane!");
                     break;
             }
-            subMenu = <div id ="menuBar-subMenu" ref="subMenu">
-                {subMenuContent}
-            </div>
+            subMenu =
+                <div id ="menuBar-subMenu" ref="subMenu">
+                    {subMenuContent}
+                </div>
 
-            overlay = <div id = "menuBar-overlay"
+            overlay =
+                <div id = "menuBar-overlay"
                            onClick = {self.closeSubMenu.bind(self)}
                            ref="overlay">
-            </div>
+                </div>
         }
 
         return(
 
-            <div id = "menuBar" className = "themeSecondaryColor" ref="menu">
+            <div id = "menuBar" ref="menu">
                 {overlay}
                 <div id ="menuBar-topButtonGroup">
                     <Button onClick={self.exit.bind(self)} type="square">E</Button>
@@ -108,7 +105,7 @@ export default class MenuBar extends React.Component{
                     <Button onClick={self.openFiles.bind(self)} type="square">F</Button>
                 </div>
                 <div id ="menuBar-botButtonGroup">
-                    <Button type="square">F</Button>
+                    <Button type="square" onClick = {this.setPinnedMode.bind(this)}>H</Button>
                     <Button type="square" onClick = {this.addSheet.bind(this)}>+</Button>
                 </div>
                 {subMenu}
@@ -116,3 +113,21 @@ export default class MenuBar extends React.Component{
         )
     }
 }
+
+function selectorFactory(dispatch) {
+    let result = {};
+    const actions = bindActionCreators(Actions, dispatch);
+    return (nextState, nextOwnProps) => {
+        const nextResult = {
+            reduxSession: nextState.session,
+            reduxActions: actions,
+            ...nextOwnProps
+        };
+        if (!shallowEqual(result,nextResult)){
+            result = nextResult;
+        }
+        return result
+    }
+}
+
+export default connectAdvanced(selectorFactory)(MenuBar);

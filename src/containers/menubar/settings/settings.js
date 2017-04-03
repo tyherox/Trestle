@@ -3,9 +3,9 @@
  */
 
 import React from "react";
-import Button from "../../components/button";
-import Input from "../../components/input";
-import * as Actions from '../../actions/index';
+import Button from "../../../components/button";
+import Input from "../../../components/input";
+import * as Actions from '../../../actions/index';
 import {connect} from "react-redux";
 import {bindActionCreators} from 'redux';
 
@@ -39,9 +39,9 @@ class SettingPane extends React.Component{
     render(){
 
         return(
-            <div className = "subMenu">
+            <div id = "subMenu">
                 <h2>Settings</h2>
-                <div className="subMenu-settings-attrGroup">
+                <div className="settings-attrGroup">
                     <Input text="Show Sheet toolbars"
                            type="checkbox"
                            checked={this.props.reduxState.get("toolbarToggle")}
@@ -55,7 +55,7 @@ class SettingPane extends React.Component{
                            checked={this.props.reduxState.get("sentenceFocusButton")}
                            changeValue={this.toggleFocusButton.bind(this)}/>
                 </div>
-                <div className="subMenu-settings-attrGroup">
+                <div className="settings-attrGroup">
                     <Input text="Widget opacity"
                            type="number"
                            max="100"
@@ -68,9 +68,10 @@ class SettingPane extends React.Component{
                            value={this.props.reduxState.get("widgetOpacity")}
                            changeValue={this.setWidgetOpacity.bind(this)}/>
                 </div>
-                <div className = 'subMenu-botToolGroup'>
+                <div className = 'botToolGroup'>
                     <Button height="50"
                             width="150"
+                            className = 'botToolGroup-item'
                             onClick={this.reset.bind(this)}> Default </Button>
                 </div>
             </div>

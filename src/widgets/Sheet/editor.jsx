@@ -4,31 +4,52 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {connectAdvanced} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import shallowEqual from 'shallowequal';
+import * as Actions from '../../actions/index';
 import {Editor, EditorState, convertFromRaw, convertToRaw,} from 'draft-js';
+import {storage} from "./main";
 
-export default class MyEditor extends React.Component {
+class EditorComponent extends React.Component {
     constructor(props) {
-        super(props);
 
-        var editorState = EditorState.createEmpty();
-        if(editorState){
-            //editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(editorState)));
+        super(props);
+        var editorState = storage.read(this.props.reduxPath);
+
+        if(editorState != undefined){
+            editorState = storage.read(this.props.reduxPath);
+            editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(editorState)));
         }
         else{
-            //editorState = EditorState.createEmpty()
+            editorState = EditorState.createEmpty()
         }
 
         this.state = {editorState: editorState};
+
         var self = this;
         this.onChange = (editorState) => {
             if(editorState.getCurrentContent() != self.state.editorState.getCurrentContent()){
                 var content = editorState.getCurrentContent();
                 var raw = convertToRaw(content);
-                //self.props.save(raw);
+                storage.save(self.props.reduxPath, raw);
             }
             this.setState({editorState: editorState});
         };
         this.focus = () => this.refs.editor.focus();
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(nextProps.reduxPath != this.props.reduxPath){
+            var editorState = nextProps.reduxPath;
+            if(editorState != undefined){
+                editorState = storage.read(editorState);
+                if(editorState) {
+                    editorState = EditorState.createWithContent(convertFromRaw(JSON.parse(editorState)));
+                    this.setState({editorState: editorState});
+                }
+            }
+        }
     }
 
     render() {
@@ -40,16 +61,16 @@ export default class MyEditor extends React.Component {
                 <div className="editorContent"
                      onClick={this.focus}>
                     <Editor ref="editor"
-                            placeholder="Tell a story..."
-                            blockStyleFn={getBlockStyle}
-                            customStyleMap={styleMap}
-                            editorState={editorState}
-                            handleKeyCommand={this.handleKeyCommand}
-                            onChange={this.onChange}
-                            onTab={this.onTab}
-                            onFocus={()=>this.setState({focused: true})}
-                            onBlur={()=>this.setState({focused: false})}
-                            spellCheck={true}
+                                     placeholder="Tell a story..."
+                                     blockStyleFn={getBlockStyle}
+                                     customStyleMap={styleMap}
+                                     editorState={editorState}
+                                     handleKeyCommand={this.handleKeyCommand}
+                                     onChange={this.onChange}
+                                     onTab={this.onTab}
+                                     onFocus={()=>this.setState({focused: true})}
+                                     onBlur={()=>this.setState({focused: false})}
+                                     spellCheck={true}
                     />
                 </div>
             </div>
@@ -155,3 +176,25 @@ const InlineStyleControls = (props) => {
         </div>
     );
 };
+
+function layoutSelector(dispatch) {
+    let state = {};
+    let ownProps = {};
+    let result = {};
+    const actions = bindActionCreators(Actions, dispatch);
+    return (nextState, nextOwnProps) => {
+        if(!nextState.layout.get(nextOwnProps.id)) return result;
+        const nextResult = {
+            reduxPath: nextState.layout.get(nextOwnProps.id).get("content").get("title"),
+            ...nextOwnProps
+        };
+        state = nextState;
+        ownProps = nextOwnProps;
+        if (!shallowEqual(result,nextResult)){
+            result = nextResult;
+        }
+        return result
+    }
+}
+
+export default connectAdvanced(layoutSelector)(EditorComponent);

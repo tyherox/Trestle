@@ -6,6 +6,7 @@
 *
 */
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import React from 'react';
 import Widget from '../widget/widget';
 import {connectAdvanced} from 'react-redux';
@@ -17,7 +18,7 @@ import * as Actions from '../../actions/index';
 var key = 1;
 
 //React component in charge of managing graphical layout
-class Layout extends React.Component{
+class Layout extends React.PureComponent{
 
     constructor(props){
         super(props);
@@ -36,21 +37,19 @@ class Layout extends React.Component{
     //Check to see if widget can be placed at current location
     isValidHome(id, rect){
         var self =  this;
-        var test = this.props.layout.map(function(entry){
+        var iteration = this.props.reduxLayout.map(function(entry){
             if(entry.get("id") != id){
                 var cRect = self.prepRect(entry);
                 if(self.intersects(rect, cRect,0)) {
-                    console.log("Checked home: FALSE 1");
                     return false
                 }
-                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > self.props.screenWidth - 40 || rect.top + rect.height > self.props.screenHeight){
-                    console.log("Checked home: FALSE 2");
+                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > self.props.reduxScreenWidth - 40 || rect.top + rect.height > self.props.reduxScreenHeight){
                     return false;
                 }
                 else return true;
             }
         });
-        if(test.includes(false)) return false;
+        if(iteration.includes(false)) return false;
         else return true;
     }
 
@@ -76,8 +75,8 @@ class Layout extends React.Component{
 
     componentDidMount(){
         var layout = this.refs.layoutRef;
-        layout.style.width = this.props.screenWidth - 40 +'px';
-        layout.style.height = this.props.screenHeight +'px';
+        layout.style.width = this.props.reduxScreenWidth - 40 +'px';
+        layout.style.height = this.props.reduxScreenHeight +'px';
         layout.style.marginLeft = "40px";
     }
 
@@ -85,7 +84,9 @@ class Layout extends React.Component{
 
         var self = this;
 
-        var widgets = this.props.layout.valueSeq().map(function(widget, i){
+        console.log("RENDERING LAYOUT");
+
+        var widgets = this.props.reduxLayout.valueSeq().map(function(widget, i){
             var refined = JSON.stringify(widget.get("id")),
                 id = JSON.stringify(widget.get("id"));
 
@@ -115,7 +116,14 @@ class Layout extends React.Component{
             <div id='layout'
                  ref='layoutRef'>
                 <Grid />
-                {widgets}
+                <ReactCSSTransitionGroup
+                    transitionName="example"
+                    transitionAppear={true}
+                    transitionAppearTimeout={500}
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={500}>
+                    {widgets}
+                </ReactCSSTransitionGroup>
             </div>
         );
     }
@@ -128,11 +136,9 @@ function layoutSelector(dispatch) {
     const actions = bindActionCreators(Actions, dispatch);
     return (nextState, nextOwnProps) => {
         const nextResult = {
-            layout: nextState.layout,
-            gridCols: nextState.settings.get("gridCols"),
-            gridRows: nextState.settings.get("gridRows"),
-            screenWidth: nextState.settings.get("screenWidth"),
-            screenHeight: nextState.settings.get("screenHeight"),
+            reduxLayout: nextState.layout,
+            reduxScreenWidth: nextState.settings.get("screenWidth"),
+            reduxScreenHeight: nextState.settings.get("screenHeight"),
             reduxActions: actions,
             ...nextOwnProps
         };

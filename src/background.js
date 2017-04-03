@@ -33,7 +33,6 @@ app.on('ready', function () {
     setApplicationMenu();
 
     var mainWindow =  new BrowserWindow({width: 800, height: 600, fullscreen: true, frame: false, titleBarStyle: 'hidden'});
-
     mainWindow.loadURL('file://' + __dirname + '/app.html');
 
     if (env.name === 'development') {

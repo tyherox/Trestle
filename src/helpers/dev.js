@@ -9,7 +9,7 @@
 
 import React, {Component} from 'react';
 import Layout from '../containers/layout/layout.js';
-import MenuBar from '../containers/menubar/menuBar.js'
+import MenuBar from '../containers/menubar/main.js'
 import ReactDOM from 'react-dom';
 import Sheet from '../widgets/Sheet/main.js';
 import {createStore} from 'redux';
@@ -18,6 +18,7 @@ import * as Actions from '../actions/index';
 import {Provider} from 'react-redux';
 import fs from './fileSystem'
 import jetpack from 'fs-jetpack';
+import idGen from '../helpers/idGenerator';
 
 export default function(){
     let widgets = [Sheet],
@@ -31,48 +32,13 @@ export default function(){
         constructor(props){
             super(props);
 
-            if(jetpack.exists(userData+'/state.json')){
-                this.state = jetpack.read(userData+'/state.json','json');
-            }
-            else{
-                this.state = {
-                    settings: {
-                        toolbar: true,
-                        findButton: true,
-                        sentenceFocusButton: true,
-                        widgetOpacity: 100
-                    },
-                    savedThemes: [
-                    ],
-                    savedWidgets: [
-                        Sheet
-                    ],
-                    savedLayouts: [
-                    ]
-                }
-            }
+            this.state = {
+                savedWidgets: [
+                    Sheet
+                ]
+            };
 
             this.addWidget = this.addWidget.bind(this);
-        }
-
-        componentWillMount(){
-            this.scanUserData();
-        }
-
-        scanUserData(){
-           if(jetpack.exists(userData+'/layouts')){
-                   console.log("SCANNING LAYOUTS");
-               var layouts = jetpack.list(userData+'/layouts');
-               layouts = layouts.map(function(layout){
-                   return({
-                       name: layout,
-                       data: jetpack.read(userData+'/layouts/'+layout, "json")
-                   })
-               });
-               this.setState({savedLayouts: layouts});
-           }
-
-            this.setState({savedWidgets: [Sheet]});
         }
 
         assignHome(widget){
@@ -102,9 +68,7 @@ export default function(){
 
             var width = template.minWidth,
                 height = template.minHeight,
-                top,
-                left,
-                grid = row * col;
+                top, left, grid = row * col;
 
             for(var i = 0; i<grid; i++){
                 if(range.indexOf(i)==-1){
@@ -127,45 +91,36 @@ export default function(){
                     }
                 }
             }
-            console.groupEnd();
+
             if(top==undefined && left==undefined) return null;
-            return {id: parseFloat(widget.id), refWidth: width, refHeight: height, refTop: top, refLeft: left};
-        }
-
-        generateMultiId(id){
-            id = id.replace(/"/g,"");
-            var offset = 1,
-                generated = id + "." + offset.toString();
-
-            while(store.getState().layout.find(function(widget){
-                return widget.get("id")==generated;
-            })){
-                generated = id + "." + (offset++).toString();
-            }
-
-            return generated;
+            return {
+                id: parseFloat(widget.id),
+                refWidth: width,
+                refHeight: height,
+                refTop: top,
+                refLeft: left,
+                pinned: true,
+                content: widget.content};
         }
 
         addWidget(widget){
             var layout = store.getState().layout;
 
             var id = JSON.stringify(widget.id);
+
             if(id.includes("*")) {
-                id = this.generateMultiId(id.replace("*", ""));
-                widget = {id: parseFloat(id)};
+                id = idGen(parseInt(id.replace("*","").replace(/['"]+/g, '')), store.getState().layout.map(function (elem) {
+                    return elem.get('id');
+                }).toArray());
+                console.log("ID:", id);
+                widget["id"] = parseFloat(id);
             }
 
             widget = this.assignHome(widget);
 
             if(widget!=null){
-                store.dispatch(Actions.modifyAtSession(id.toString(), {
-                    id: widget.id,
-                    content: {}
-                }));
-
                 store.dispatch(Actions.modifyAtLayout(id.toString(), widget));
             }
-            else console.log("No Place Available");
         }
 
         render(){

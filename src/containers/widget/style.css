@@ -7,7 +7,7 @@
     border-radius: 1px;
 
     transform: translate(0px, 0px);
-    transition: transform .5s, width .5s, height .5s ease;
+    transition: transform .5s, width .5s, height .5s, z-index .5s .5s;
 
     color: #424242;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
@@ -52,4 +52,31 @@
 
 .widgetToolbarButtons:active{
     background-color: rgba(39, 49, 138, 0.46);
+}
+
+.example-enter {
+    opacity: 0.01!important;
+}
+
+.example-enter.example-enter-active {
+    opacity: 1!important;;
+    transition: opacity .5s ease-in;
+}
+
+.example-leave {
+    opacity: 1!important;;
+}
+
+.example-leave.example-leave-active {
+    opacity: 0.01!important;;
+    transition: opacity .5s ease-in;
+}
+
+.example-appear {
+    opacity: 0.01!important;;
+}
+
+.example-appear.example-appear-active {
+    opacity: 1!important;;
+    transition: opacity .5s ease-in;
 }

@@ -1,0 +1,18 @@
+.settings-attrGroup{
+    display: block;
+    padding: 15px 15px 0;
+}
+
+.botToolGroup-item{
+    position: relative;
+    padding: 10px;
+    right: 0;
+    height: 50px;
+    margin-left: 5px;
+}
+
+.botToolGroup{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}

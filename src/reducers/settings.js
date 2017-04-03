@@ -3,9 +3,9 @@
  */
 
 import * as types from '../constants/actionTypes';
-import {Map, List} from 'immutable';
+import {Map, fromJS} from 'immutable';
 
-const DEFAULT_SETTINGS = Map({
+const DEFAULT_SETTINGS = fromJS({
     screenWidth: screen.width,
     screenHeight: screen.height,
     gridCols: 8,

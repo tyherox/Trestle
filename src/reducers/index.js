@@ -7,13 +7,15 @@ import layout from './layout';
 import session from './session';
 import settings from './settings';
 import storedLayouts from './storedLayouts';
+import storedWidgets from "./storedWidgets";
 
 
 const reducers = combineReducers({
     session,
     layout,
     settings,
-    storedLayouts
+    storedLayouts,
+    storedWidgets
 });
 
 export default reducers;

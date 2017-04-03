@@ -11,16 +11,6 @@ export const addStoredWidget = (widget) => {
     }
 };
 
-export const renameStoredWidget = (prevName, newName) => {
-    return {
-        type: types.RENAME_STORED_LAYOUTS,
-        payload: {
-            prevName: prevName,
-            newName: newName
-        }
-    }
-};
-
 export const deleteStoredWidget = (layout) => {
     return {
         type: types.DELETE_AT_LAYOUT,
