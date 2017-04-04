@@ -56,6 +56,8 @@ class DisplayPane extends Component{
         this.props.reduxActions.renameStoredLayout(prevName, name);
     }
 
+
+
     render(){
         var id = 0;
         var self = this,
@@ -81,7 +83,13 @@ class DisplayPane extends Component{
                         </Button>
                     </Collapsible>
                     <Collapsible title = "Widgets">
-                        <Button className="display-widgetItem">TEST WIDGET LOCATION</Button>
+                        <Button className="display-widgetItem"
+                                onClick={()=> this.props.addWidget({
+                                    id: 2,
+                                    pinned: true,
+                                    content: {title: this.props.name}
+                                })}><h1>TIME</h1><br/>
+                        </Button>
                     </Collapsible>
                 </Scrollable>
             </div>
@@ -145,6 +153,7 @@ function selectorFactory(dispatch) {
     return (nextState, nextOwnProps) => {
         const nextResult = {
             currentLayout: nextState.layout,
+            widgets: nextState.storedWidgets,
             session: nextState.session,
             layouts: nextState.storedLayouts,
             reduxActions: actions,

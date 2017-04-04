@@ -503,13 +503,13 @@ template {
 
 .rye-button{
     background-color: white;
-    border: transparent;
+    border: 2px transparent;
     outline: none;
     margin: 2px;
 }
 
 .rye-button:active{
-    border: thin solid #2D98E0;
+    border: 2px solid #2D98E0;
 }
 
 .rye-collapsiblePane{
@@ -602,6 +602,17 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .rye-scrollPane-container{
 
+}
+
+.vCenter-outer{
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.vCenter-inner{
+    display: table-cell;
+    vertical-align: middle;
 }
 
 #layout{
@@ -839,6 +850,51 @@ input[type="number"]::-webkit-inner-spin-button {
     color: black;
 }
 
+#timeWidget{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#timeWidget-toolbar{
+    position: relative;
+    height: 25px;
+    width: 100%;
+}
+
+#timeWidget-time{
+    vertical-align: middle;
+    position: relative;
+    height: calc((100% - 25px) / 2);
+    width: 100%;
+    font-size: 250%;
+}
+
+#timeWidget-date{
+    vertical-align: middle;
+    position: relative;
+    height: calc((100% - 55px) / 2);
+    width: calc(100% - 20px);
+    text-align: right;
+    margin: 10px;
+    margin-bottom: 15px;
+}
+
+#timeWidget-date-content{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.timeWidget-icon{
+    width: 22px;
+    height: 22px;
+    background: gainsboro;
+    margin-left: calc((50% - 25px) / 2);
+    margin-right: calc((50% - 25px) / 2);
+    border-radius: 22px;
+}
+
 .displayScroll{
     position: relative;
     margin-top: 15px;
@@ -890,6 +946,18 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .display-addLayoutItem{
+    position: relative;
+    display: block;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    background: white;
+    width: calc(100% - 20px);
+    height: 160px;
+    z-index: 2;
+}
+
+.display-widgetItem{
     position: relative;
     display: block;
     margin-left: 10px;

@@ -81,16 +81,20 @@ class Widget extends React.PureComponent{
                     height = event.rect.height,
                     offset = self.props.reduxSettings.get("cellOffset") * 2;
 
-                if(width<=self.props.minWidth) {
+                if(width<=self.props.minWidth * self.state.gridWidth - offset) {
                     width = self.state.gridWidth * self.props.minWidth - offset;
                 }
                 else if(width>self.props.maxWidth * self.state.gridWidth - offset) {
                     width = self.props.maxWidth * self.state.gridWidth - offset;
                 }
 
-                if(height<=self.props.minWidth) height = self.state.gridHeight * self.props.gridHeight - offset;
-                else if(height>self.props.maxHeight * self.state.gridHeight - offset) height = self.props.maxHeight * self.state.gridHeight - offset;
-
+                if(height<=self.props.minHeight * self.state.gridHeight - offset){
+                    height = self.state.gridHeight * self.props.minHeight - offset;
+                    console.log("1:",height);
+                }
+                else if(height>self.props.maxHeight * self.state.gridHeight - offset){
+                    height = self.props.maxHeight * self.state.gridHeight - offset;
+                }
                 self.setState({
                     tmpWidth: width,
                     tmpHeight: height,

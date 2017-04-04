@@ -17,7 +17,8 @@ function scanLayouts(){
             defaultStore[elem.replace(".json","")] = storage.cwd(storage.path(elem));
         });
     }
-    defaultStore["Sheet"] = process.cwd() + "widgets/Sheet/main.js";
+    defaultStore["Sheet"] = process.cwd() + "/src/widgets/Sheet/main.js";
+    defaultStore["Time"] = process.cwd() + "/src/widgets/Time/main.js";
     return defaultStore;
 }
 

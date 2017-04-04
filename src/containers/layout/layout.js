@@ -84,7 +84,7 @@ class Layout extends React.PureComponent{
 
         var self = this;
 
-        console.log("RENDERING LAYOUT");
+        console.log("RENDERING LAYOUT:", this.props.widgets);
 
         var widgets = this.props.reduxLayout.valueSeq().map(function(widget, i){
             var refined = JSON.stringify(widget.get("id")),

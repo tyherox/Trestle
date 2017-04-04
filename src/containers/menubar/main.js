@@ -75,7 +75,7 @@ class MenuBar extends React.Component{
             switch(openedMenu){
                 case "setting" : subMenuContent = <Settings />
                     break;
-                case "display" : subMenuContent = <Display />
+                case "display" : subMenuContent = <Display addWidget = {this.props.addWidget} />
                     break;
                 case "file" : subMenuContent = <Files addWidget = {this.props.addWidget}/>
                     break;

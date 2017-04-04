@@ -12,6 +12,7 @@ import Layout from '../containers/layout/layout.js';
 import MenuBar from '../containers/menubar/main.js'
 import ReactDOM from 'react-dom';
 import Sheet from '../widgets/Sheet/main.js';
+import Time from '../widgets/Time/main.js';
 import {createStore} from 'redux';
 import reducer from '../reducers/index';
 import * as Actions from '../actions/index';
@@ -34,7 +35,8 @@ export default function(){
 
             this.state = {
                 savedWidgets: [
-                    Sheet
+                    Sheet,
+                    Time
                 ]
             };
 
@@ -124,7 +126,7 @@ export default function(){
         }
 
         render(){
-
+            console.log(store.getState().storedWidgets);
             return(
                 <Provider store={store}>
                     <div>

@@ -59,3 +59,15 @@
     height: 160px;
     z-index: 2;
 }
+
+.display-widgetItem{
+    position: relative;
+    display: block;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    background: white;
+    width: calc(100% - 20px);
+    height: 160px;
+    z-index: 2;
+}

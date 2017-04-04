@@ -1,10 +1,10 @@
 .rye-button{
     background-color: white;
-    border: transparent;
+    border: 2px transparent;
     outline: none;
     margin: 2px;
 }
 
 .rye-button:active{
-    border: thin solid #2D98E0;
+    border: 2px solid #2D98E0;
 }
