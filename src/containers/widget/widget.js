@@ -9,6 +9,7 @@
 
 import React from 'react';
 import Interact from 'interact.js';
+import Button from '../../components/button'
 import * as Actions from '../../actions/index';
 import {connectAdvanced} from "react-redux";
 import {bindActionCreators} from 'redux';
@@ -23,7 +24,7 @@ class Widget extends React.PureComponent{
             sh = this.props.reduxSettings.get("screenHeight"),
             gc = this.props.reduxSettings.get("gridCols"),
             gr = this.props.reduxSettings.get("gridRows"),
-            gridWidth = (sw - 40) / gc,
+            gridWidth = (sw) / gc,
             gridHeight = sh / gr;
 
         this.state = {
@@ -32,7 +33,7 @@ class Widget extends React.PureComponent{
             tmpHeight: 0,
             tmpTop: 0,
             tmpLeft: 0,
-            gridWidth: (sw - 40) / gc,
+            gridWidth: (sw) / gc,
             gridHeight: sh / gr,
         }
     }
@@ -48,7 +49,7 @@ class Widget extends React.PureComponent{
                 startDrag();
             })
             .on('dragend resizeend', function(event){
-                self.props.reduxActions.modifyAtSession("gridVisible", false);
+                self.props.reduxActions.modifyAtSession({gridVisible: false});
                 console.groupEnd();
                 endDrag();
             })
@@ -90,7 +91,6 @@ class Widget extends React.PureComponent{
 
                 if(height<=self.props.minHeight * self.state.gridHeight - offset){
                     height = self.state.gridHeight * self.props.minHeight - offset;
-                    console.log("1:",height);
                 }
                 else if(height>self.props.maxHeight * self.state.gridHeight - offset){
                     height = self.props.maxHeight * self.state.gridHeight - offset;
@@ -104,7 +104,7 @@ class Widget extends React.PureComponent{
             .actionChecker(function (pointer, event, action) {
                 if(action.name=='drag'){
                     //Invalidate actions for widget content drag (users can only drag by using the toolbar)
-                    if(event.target.className.includes("widgetToolbar") || event.target.className.includes("sheet-title")){
+                    if((event.target.className.includes("widgetToolbar") || event.target.className.includes("sheet-title"))){
                         action.name = 'drag';
                     }
                     else{
@@ -115,7 +115,7 @@ class Widget extends React.PureComponent{
             })
             .origin('parent');
 
-        //Initialize widget props for Layout
+        //Initialize widget props for LibraryProjects
         this.setSize();
         this.setMinSize();
         this.setMaxSize();
@@ -124,14 +124,19 @@ class Widget extends React.PureComponent{
         this.setIndex();
         this.setOpacity();
 
-        //Prep Layout/Widget for drag
+        if(this.props.reduxLayout.get("pinned")){
+            this.refs.pinButton.style.opacity = "1";
+        }
+        else this.refs.pinButton.style.opacity = ".3";
+
+        //Prep LibraryProjects/Widget for drag
         var startDrag = function(){
             self.setState({
                 dragging: true,
                 index: 10,
                 transition: 'transform 0s, width .0s, height .0s, z-index .0s .0s'
             });
-            self.props.reduxActions.modifyAtSession("gridVisible", true);
+            self.props.reduxActions.modifyAtSession({gridVisible: true});
         };
 
         //Clean up temp variables for drag
@@ -179,22 +184,7 @@ class Widget extends React.PureComponent{
     }
 
     shouldComponentUpdate(props, state){
-        var tmpUpdates = false;
-        if(this.state.tmpLeft != state.tmpLeft|| this.state.tmpTop != state.tmpTop){
-            this.setLocation();
-            tmpUpdates = true;
-        }
-
-        if(this.state.tmpWidth != state.tmpWidth || this.state.tmpHeight != state.tmpHeight){
-            this.setSize();
-            tmpUpdates = true;
-        }
-
-        if(tmpUpdates && state.tmpLeft==0 && state.tmpTop==0 &&
-            state.tmpWidth==0 && state.tmpHeight==0){
-            return true;
-        }
-        else return !tmpUpdates;
+        return true;
     }
 
     //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
@@ -294,11 +284,14 @@ class Widget extends React.PureComponent{
 
     setPin(){
         this.props.reduxActions.modifyAtLayout(this.props.id, {pinned: !this.props.reduxLayout.get("pinned")});
+        if(this.props.reduxLayout.get("pinned")){
+            this.refs.pinButton.style.opacity = ".3";
+        }
+        else this.refs.pinButton.style.opacity = "1";
     }
 
     render(){
-
-        console.log("RENDERING WIDGET:", this.props.id);
+        console.log("rendering widget:", this.props.id);
         var Content = this.props.content,
             CustomToolbarElem = this.props.toolbar,
             toolbarClass = "widgetToolbar themeSecondaryColor";
@@ -311,9 +304,17 @@ class Widget extends React.PureComponent{
                 <div className = "widgetToolbar"
                      ref="widgetToolbarRef">
                     <CustomToolbarElem id = {this.props.id}/>
-                    <button className="widgetToolbarButtons" onClick = {this.remove.bind(this)}>E</button>
-                    <button className="widgetToolbarButtons" onClick = {this.setPin.bind(this)}>P</button>
-                    <button className="widgetToolbarButtons">M</button>
+                    <Button className="widgetToolbarButtons"
+                            size = "small"
+                            icon = "remove.png"
+                            onClick = {this.remove.bind(this)}/>
+                    <span ref="pinButton">
+                        <Button className="widgetToolbarButtons"
+                                size = "small"
+                                icon = "pin.png"
+                                onClick = {this.setPin.bind(this)}/>
+                    </span>
+                    {/*<button className="widgetToolbarButtons">M</button>*/}
                 </div>
                 <div className = "widgetContainer" ref="widgetContainerRef">
                     <Content id = {this.props.id}/>
@@ -336,7 +337,6 @@ function selectorFactory(dispatch) {
     let result = {};
     const actions = bindActionCreators(Actions, dispatch);
     return (nextState, nextOwnProps) => {
-
         var layout =  nextState.layout.get(nextOwnProps.id) ? nextState.layout.get(nextOwnProps.id).delete("content") : null
         const nextResult = {
             reduxLayout: layout,
@@ -346,7 +346,9 @@ function selectorFactory(dispatch) {
             ...nextOwnProps
         };
         if(nextResult.reduxLayout==undefined) return result;
-        if (!shallowEqual(result,nextResult)){
+        if (!nextResult.reduxSettings.equals(result.reduxSettings) ||
+            !nextResult.reduxLayout.equals(result.reduxLayout) ||
+            !nextResult.reduxPinMode == result.reduxPinMode){
             result = nextResult;
         }
         return result

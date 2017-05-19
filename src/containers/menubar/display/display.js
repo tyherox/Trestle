@@ -13,7 +13,7 @@ import shallowEqual from 'shallowequal';
 import fs from '../../../helpers/fileSystem.js';
 
 var storage = new fs("layouts");
-
+var id = 0;
 class DisplayPane extends Component{
 
     constructor(props){
@@ -49,6 +49,7 @@ class DisplayPane extends Component{
     }
 
     deleteLayout(name){
+        console.log("Deleting:", name);
         this.props.reduxActions.deleteStoredLayout(name);
     }
 
@@ -56,10 +57,7 @@ class DisplayPane extends Component{
         this.props.reduxActions.renameStoredLayout(prevName, name);
     }
 
-
-
     render(){
-        var id = 0;
         var self = this,
             layouts = this.props.layouts.entrySeq().map(function(data){
                 return(<ConnectedLayout key = {id++}
@@ -73,18 +71,11 @@ class DisplayPane extends Component{
 
         return(
             <div id="subMenu">
-                <h2>Display</h2>
+                <h2 className="subMenu-title">Display</h2>
                 <Scrollable className="displayScroll">
-                    <Collapsible title = "Layouts">
-                        {layouts}
-                        <Button className="display-addLayoutItem"
-                                onClick={this.addLayout}><h1>+</h1><br/>
-                            Save Current Layout
-                        </Button>
-                    </Collapsible>
                     <Collapsible title = "Widgets">
                         <Button className="display-widgetItem"
-                                onClick={()=> this.props.addWidget({
+                                onClick={()=> this.props.addSheet({
                                     id: 2,
                                     pinned: true,
                                     content: {title: this.props.name}
@@ -114,7 +105,7 @@ class Layout extends Component{
         if(event.target.value==""){
             this.deleteLayout();
         }
-        else if(event.target.value!=this.props.name) this.props.renameLayout(this.props.name, event.target.value);
+        else if(event.target.value!=this.props.name) this.props.renameProject(this.props.name, event.target.value);
     }
 
     deleteLayout(){

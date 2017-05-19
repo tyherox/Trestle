@@ -4,14 +4,11 @@
 
 import * as types from '../constants/actionTypes';
 
-export const modifyAtSession = (id, layout) => {
+export const modifyAtSession = (session) => {
 
     return {
         type: types.MODIFY_AT_SESSION,
-        payload: {
-            id: id,
-            layout: layout
-        }
+        payload: session
     }
 };
 

@@ -14,15 +14,14 @@
 }
 
 .widgetContainer {
-    width:calc(100% - 2px);
-    height: calc(100% - 31px);
-    margin-right: 1px;
-    margin-left: 1px;
-    margin-bot: 1px;
+    position: relative;
+    width: 100%;
+    height: calc(100% - 30px);
     overflow: visible;
 }
 
 .widgetToolbar {
+    position: relative;
     width:100%;
     height:30px;
     display: block;

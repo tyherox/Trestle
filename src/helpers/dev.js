@@ -22,11 +22,7 @@ import jetpack from 'fs-jetpack';
 import idGen from '../helpers/idGenerator';
 
 export default function(){
-    let widgets = [Sheet],
-        userData = "dev",
-        store = createStore(reducer),
-        screenWidth = screen.width,
-        screenHeight = screen.height;
+    var store = createStore(reducer);
 
     class App extends Component{
 
@@ -34,6 +30,7 @@ export default function(){
             super(props);
 
             this.state = {
+                showMenu: false,
                 savedWidgets: [
                     Sheet,
                     Time
@@ -41,6 +38,29 @@ export default function(){
             };
 
             this.addWidget = this.addWidget.bind(this);
+            this.toggleMenu = this.toggleMenu.bind(this);
+        }
+
+        componentDidMount(){
+            var app = this.refs.app,
+                menu = this.refs.menu,
+                self = this;
+
+            var callMenu = null;
+
+            app.addEventListener('mousemove', function(event){
+                if(event.clientX == 0 && callMenu == null){
+                    callMenu = setTimeout(() => self.setState({showMenu: true}), 250);
+                }
+                else if(self.state.showMenu && event.clientX > parseInt(ReactDOM.findDOMNode(menu).getBoundingClientRect().width) + 50) {
+                    self.setState({showMenu: false});
+                }
+                else if(callMenu && event.clientX > parseInt(ReactDOM.findDOMNode(menu).getBoundingClientRect().width)) {
+                    self.setState({showMenu: false});
+                    clearTimeout(callMenu);
+                    callMenu = null;
+                }
+            });
         }
 
         assignHome(widget){
@@ -125,14 +145,20 @@ export default function(){
             }
         }
 
+        toggleMenu(state){
+            this.setState({showMenu: state});
+        }
+
         render(){
-            console.log(store.getState().storedWidgets);
+            console.log("RENDERING APP");
             return(
                 <Provider store={store}>
-                    <div>
+                    <div ref="app">
                         <MenuBar addWidget = {this.addWidget}
-                                 widgets = {this.state.savedWidgets}/>
-
+                                 ref = "menu"
+                                 widgets = {this.state.savedWidgets}
+                                 toggleMenu = {this.toggleMenu}
+                                 visible = {this.state.showMenu}/>
                         <Layout setLayout = {this.setLayout}
                                 widgets = {this.state.savedWidgets}
                         />

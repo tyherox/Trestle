@@ -38,9 +38,9 @@ export default function(path){
         list: function(path, sort){
             var searchPath = path ? "./" + path : "./";
             var sortList = dir.inspectTree(dir.path(searchPath), {times: true});
-
+            if(sort==undefined) sort = "Name";
             switch(sort){
-                case undefined || "Name":
+                case "Name":
                     return dir.list(dir.path(searchPath));
 
                 case "Recently Opened" :

@@ -76,7 +76,6 @@ function searchThemes(){
 //Function to enable found packages
 function loadScript(path, type){
     var returnData ={};
-    console.log("Searching:",path);
     switch(type){
         case "widget":
             if(jetpack.find(path,{matching: '*main.js*', directories: false})) {

@@ -29,12 +29,11 @@ function scanLayout(){
 }
 
 function layout(state = DEFAULT_LAYOUT, action) {
-
-    console.log("DOING ACTION:", action.type);
     switch (action.type) {
 
         case types.MODIFY_AT_LAYOUT:
             var newState = state.mergeDeepIn([action.payload.id.toString()], action.payload.layout);
+            console.log(action.payload.id.toString(), action.payload.layout);
             storage.save("prevState.json", newState);
             return newState;
 

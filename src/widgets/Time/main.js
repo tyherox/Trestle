@@ -22,16 +22,23 @@ class Time extends React.Component {
         this.getDate();
     }
 
+    componentWillUnmount(){
+        clearInterval(this.timeInterval);
+        clearInterval(this.dateInterval);
+    }
+
     getTime(){
-        var today = new Date();
-        var h = today.getHours();
-        var m = today.getMinutes();
-        var s = today.getSeconds();
-        m = this.formatTime(m);
-        s = this.formatTime(s);
-        var time = h + ":" + m;
-        this.setState({time: time});
-        setTimeout(this.getTime, 500);
+        var self = this;
+        this.timeInterval = setInterval(function(){
+            var today = new Date();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = self.formatTime(m);
+            s = self.formatTime(s);
+            var time = h + ":" + m;
+            self.setState({time: time});
+        }, 500);
     }
 
     formatTime(i) {
@@ -43,6 +50,8 @@ class Time extends React.Component {
 
     getDate(){
 
+        var self = this;
+
         this.monthNames = [
             "January", "February", "March",
             "April", "May", "June", "July",
@@ -52,17 +61,18 @@ class Time extends React.Component {
 
         this.dayNames = [
             'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-        ]
+        ];
 
-        var rawDate = new Date();
+        this.dateInterval = setInterval(function(){
+            var rawDate = new Date();
 
-        var wDay = this.dayNames[rawDate.getDay()];
-        var day = rawDate.getDate();
-        var month = this.monthNames[rawDate.getMonth()];
-        var year = rawDate.getFullYear();
+            var wDay = self.dayNames[rawDate.getDay()];
+            var day = rawDate.getDate();
+            var month = self.monthNames[rawDate.getMonth()];
+            var year = rawDate.getFullYear();
 
-        this.setState({date: [wDay, day  + " " + month +", " + year]});
-        setTimeout(this.getDate, 500);
+            self.setState({date: [wDay, day  + " " + month +", " + year]});
+        }, 500);
     }
 
     render() {

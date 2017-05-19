@@ -43,7 +43,7 @@ class Layout extends React.PureComponent{
                 if(self.intersects(rect, cRect,0)) {
                     return false
                 }
-                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > self.props.reduxScreenWidth - 40 || rect.top + rect.height > self.props.reduxScreenHeight){
+                else if(rect.left<0 || rect.top<0 || rect.left + rect.width > self.props.reduxScreenWidth || rect.top + rect.height > self.props.reduxScreenHeight){
                     return false;
                 }
                 else return true;
@@ -54,7 +54,7 @@ class Layout extends React.PureComponent{
     }
 
     /**
-     * Layout.intersects
+     * LibraryProjects.intersects
      *
      * Check to see if two rects/Widgets intersect
      *
@@ -73,19 +73,9 @@ class Layout extends React.PureComponent{
         return false;
     };
 
-    componentDidMount(){
-        var layout = this.refs.layoutRef;
-        layout.style.width = this.props.reduxScreenWidth - 40 +'px';
-        layout.style.height = this.props.reduxScreenHeight +'px';
-        layout.style.marginLeft = "40px";
-    }
-
     render(){
 
         var self = this;
-
-        console.log("RENDERING LAYOUT:", this.props.widgets);
-
         var widgets = this.props.reduxLayout.valueSeq().map(function(widget, i){
             var refined = JSON.stringify(widget.get("id")),
                 id = JSON.stringify(widget.get("id"));
@@ -110,12 +100,10 @@ class Layout extends React.PureComponent{
                 </Widget>
             )
         });
-
         return (
 
             <div id='layout'
                  ref='layoutRef'>
-                <Grid />
                 <ReactCSSTransitionGroup
                     transitionName="example"
                     transitionAppear={true}
@@ -124,6 +112,9 @@ class Layout extends React.PureComponent{
                     transitionLeaveTimeout={500}>
                     {widgets}
                 </ReactCSSTransitionGroup>
+                <Grid>
+
+                </Grid>
             </div>
         );
     }

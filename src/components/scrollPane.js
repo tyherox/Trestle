@@ -12,8 +12,8 @@ export default class ScrollPane extends React.Component{
     }
 
     componentDidUpdate(){
-    }
 
+    }
 
     render(){
         return(

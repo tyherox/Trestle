@@ -22,12 +22,17 @@ export default class Input extends React.Component{
         switch(type){
             case "checkbox" : value = this.props.checked;
                 break;
-            case "number" : value = this.refs.input.value;
+            case "number" :
+                if(this.props.min <= value && this.props.max >= value){
+                    value = parseInt(this.refs.input.value);
+                }
                 break;
-            case "range" : value = this.refs.input.value;
+            case "range" :
+                if(this.props.min <= value && this.props.max >= value){
+                    value = parseInt(this.refs.input.value);
+                }
                 break;
         }
-        console.log("INPUT VALUE:", value);
         this.props.changeValue(value);
     }
 

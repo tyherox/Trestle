@@ -40,8 +40,8 @@ class SettingPane extends React.Component{
 
         return(
             <div id = "subMenu">
-                <h2>Settings</h2>
-                <div className="settings-attrGroup">
+                <h1 className = "subMenu-title">Settings</h1>
+                {/*<div className="settings-attrGroup">
                     <Input text="Show Sheet toolbars"
                            type="checkbox"
                            checked={this.props.reduxState.get("toolbarToggle")}
@@ -54,8 +54,12 @@ class SettingPane extends React.Component{
                            type="checkbox"
                            checked={this.props.reduxState.get("sentenceFocusButton")}
                            changeValue={this.toggleFocusButton.bind(this)}/>
-                </div>
+                </div>*/}
                 <div className="settings-attrGroup">
+                    <Input text="Toggle Sheet Toolbar"
+                           type="checkbox"
+                           checked={this.props.reduxState.get("toolbarToggle")}
+                           changeValue={this.toggleToolbar.bind(this)} />
                     <Input text="Widget opacity"
                            type="number"
                            max="100"
@@ -69,8 +73,7 @@ class SettingPane extends React.Component{
                            changeValue={this.setWidgetOpacity.bind(this)}/>
                 </div>
                 <div className = 'botToolGroup'>
-                    <Button height="50"
-                            width="150"
+                    <Button bColor = "#CCCCCC"
                             className = 'botToolGroup-item'
                             onClick={this.reset.bind(this)}> Default </Button>
                 </div>

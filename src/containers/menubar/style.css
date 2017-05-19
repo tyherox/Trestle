@@ -1,13 +1,15 @@
 #menuBar{
     z-index: 10;
     display: block;
-    position:absolute;
+    position: absolute;
     top: 0;
-    left: 0px;
-    width: 40px;
+    left: 0;
+    min-width: 40px;
+    width: auto;
     height: 100%;
-    background-color: #E0E0E0;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
+    background-color: black;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.3), 0 0px 2px 0 rgba(0, 0, 0, 0.2);
+    transition: transform .5s
 }
 
 #menuBar-overlay{
@@ -20,11 +22,13 @@
 }
 
 #menuBar-topButtonGroup{
+    width: 40px;
     position: absolute;
     top: 0;
 }
 
 #menuBar-botButtonGroup{
+    width: 40px;
     position: absolute;
     bottom: 0;
 }
@@ -35,12 +39,40 @@
     left:40px;
     height: 100%;
     width: 240px;
-    background-color: #E0E0E0;
+    background-color: white;
 }
 
 #subMenu{
     position: relative;
-    margin: 10px 5px 5px;
-    width:calc(100% - 10px);
-    height: calc(100% - 15px);
+    width: 100%;
+    height: 100%;
+}
+
+.subMenu-title{
+    display: inline-block;
+    font-size: 150%;
+    font-weight: 700;
+    text-align: left;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    color: black;
+}
+
+.subMenu-title-tools{
+    float: right;
+    padding: 5px;
+}
+
+.botToolGroup-item{
+    position: relative;
+    padding: 10px 20px;
+    right: 0;
+    margin: 5px;
+}
+
+.botToolGroup{
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }

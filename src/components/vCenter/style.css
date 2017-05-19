@@ -1,6 +1,5 @@
 .vCenter-outer{
-    display: table;
-    width: 100%;
+    display: inline-table;
     height: 100%;
 }
 

@@ -13,6 +13,7 @@ const DEFAULT_STORED_LAYOUTS = fromJS(scanLayouts());
 function scanLayouts(){
     var defaultStore = {};
     if(storage.list()!=undefined) storage.list().forEach(function(elem){
+        console.log("SCANNED LAYOUT");
         defaultStore[elem.replace(".json","")] = storage.cwd(storage.path(elem));
     });
     return defaultStore;

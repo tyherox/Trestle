@@ -6,7 +6,7 @@ import React from "react";
 import Button from "../../components/button";
 import Settings from './settings/settings'
 import Display from './display/display'
-import Files from './files/files'
+import Files from './library/library'
 import * as Actions from '../../actions/index';
 import {connectAdvanced} from "react-redux";
 import {bindActionCreators} from 'redux';
@@ -17,6 +17,11 @@ class MenuBar extends React.Component{
     constructor(props){
         super(props);
         this.state = {subMenu: null}
+    }
+
+    componentDidMount(){
+        this.refs.menu.style.transform = "translate( -40px, 0px)";
+        this.refs.hideButton.style.opacity = ".3";
     }
 
     exit(){
@@ -36,7 +41,7 @@ class MenuBar extends React.Component{
     }
 
     addSheet(){
-        this.props.addWidget({
+        this.props.addSheet({
                 id: '1*',
                 pinned: true,
                 content: {}
@@ -51,16 +56,32 @@ class MenuBar extends React.Component{
         var overlay = this.refs.overlay;
 
         if(pane==null || this.state.subMenu==pane){
+            this.refs.menu.style.width = "40px";
             this.setState({subMenu:null})
         }
         else if(this.state.subMenu==null || this.state.subMenu!=pane){
+            this.refs.menu.style.width = "280px";
             this.setState({subMenu:pane})
         }
 
     }
 
     setPinnedMode(){
-        this.props.reduxActions.modifyAtSession("pinMode", !this.props.reduxSession.get('pinMode'));
+        this.props.reduxActions.modifyAtSession({pinMode: !this.props.reduxSession.get('pinMode')});
+        if(this.props.reduxSession.get("pinMode")){
+            this.refs.hideButton.style.opacity = ".3"
+        }
+        else this.refs.hideButton.style.opacity = "1"
+    }
+
+    componentDidUpdate(){
+        if(this.props.visible){
+            this.refs.menu.style.transform = "translate( 0px, 0px)";
+            console.log("SHOWING");
+        }
+        else{
+            this.refs.menu.style.transform = "translate( -40px, 0px)";
+        }
     }
 
     render(){
@@ -94,19 +115,37 @@ class MenuBar extends React.Component{
                 </div>
         }
 
-        return(
+        console.log("openedMenu:", openedMenu == "setting");
 
+        return(
             <div id = "menuBar" ref="menu">
                 {overlay}
                 <div id ="menuBar-topButtonGroup">
-                    <Button onClick={self.exit.bind(self)} type="square">E</Button>
-                    <Button onClick={self.openSetting.bind(self)} type="square">S</Button>
-                    <Button onClick={self.openDisplay.bind(self)} type="square">D</Button>
-                    <Button onClick={self.openFiles.bind(self)} type="square">F</Button>
+                    <Button onClick={self.exit.bind(self)}
+                            type="square"
+                            icon = "window.png"/>
+                    <Button onClick={self.openFiles.bind(self)}
+                            type="square"
+                            icon = {openedMenu == "file" ? "fileBrowserInverse.png" : "fileBrowser.png"}
+                            inverse = {openedMenu == "file"}/>
+                    <Button onClick={self.openDisplay.bind(self)}
+                            type="square"
+                            icon = {openedMenu == "display" ? "displayInverse.png" : "display.png"}
+                            inverse = {openedMenu == "display"}/>
+                    <Button onClick={self.openSetting.bind(self)}
+                            type="square"
+                            icon = {openedMenu == "setting" ? "settingsInverse.png" : "settings.png"}
+                            inverse = {openedMenu == "setting"}/>
                 </div>
                 <div id ="menuBar-botButtonGroup">
-                    <Button type="square" onClick = {this.setPinnedMode.bind(this)}>H</Button>
-                    <Button type="square" onClick = {this.addSheet.bind(this)}>+</Button>
+                    <span ref="hideButton">
+                        <Button type="square"
+                                onClick = {this.setPinnedMode.bind(this)}
+                                icon="hideToggle.png"/>
+                    </span>
+                    <Button type="square"
+                            onClick = {this.addSheet.bind(this)}
+                            icon="newSheet.png"/>
                 </div>
                 {subMenu}
             </div>

@@ -29,19 +29,19 @@ export default class Collapsible extends React.Component{
             this.setState({collapse: false});
         }
         else{
-            pane.style.height = this.props.height || '25px';
+            pane.style.height = this.props.height || '35px';
             this.setState({collapse: true});
         }
     }
 
     render(){
         return(
-            <div className="rye-collapsiblePane" ref="cPane">
+            <div className="rye-collapsiblePane"
+                 ref="cPane">
                 <div className="rye-collapsiblePane-topBar">
                     <div className="rye-collapsiblePane-topBar-title" onClick={()=>this.setCollapse()}>{this.props.title}</div>
-                    <button className="rye-collapsiblePane-topBar-icon" onClick={()=>this.setCollapse()}>*</button>
                 </div>
-                {this.props.children}
+                {this.state.collapse ? null : this.props.children}
             </div>
         )
     }

@@ -10,7 +10,7 @@ import {connectAdvanced} from 'react-redux';
 class Grid extends React.PureComponent{
 
     componentDidMount(){
-        var w = this.props.screenWidth - 40,
+        var w = this.props.screenWidth,
             h = this.props.screenHeight,
             wOffs = w/this.props.gridCols,
             hOffs = h/this.props.gridRows,
@@ -18,8 +18,8 @@ class Grid extends React.PureComponent{
 
         canvas.style.width = w + 'px';
         canvas.style.height = h + 'px';
-        canvas.backgroundSize = w + "px " + h + "px";
         canvas.style.opacity = '0';
+        canvas.style.backgroundSize = wOffs + "px " + hOffs + "px";
         this.forceUpdate();
     }
 
@@ -38,11 +38,11 @@ class Grid extends React.PureComponent{
 
     render(){
         return (
-            <div id = 'gridContainer'>
+            <div id = 'gridContainer'
+                 ref = "grid">
                 <div id = 'grid'
                      ref = 'gridRef'
-                     className = 'themeGridColor'
-                     onClick = {this.props.exit}>
+                     className = 'themeGridColor'>
                 </div>
             </div>
         );
@@ -59,7 +59,8 @@ function gridSelector(dispatch) {
             gridCols: nextState.settings.get("gridCols"),
             gridRows: nextState.settings.get("gridRows"),
             screenWidth: nextState.settings.get("screenWidth"),
-            screenHeight: nextState.settings.get("screenHeight")
+            screenHeight: nextState.settings.get("screenHeight"),
+            ...nextOwnProps
         };
         state = nextState;
         ownProps = nextOwnProps;

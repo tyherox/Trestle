@@ -1,17 +1,30 @@
+.editor-container{
+    position: relative;
+    overflow: visible;
+    height: 100%;
+    width: 100%;
+}
+
+#editor-toolbar{
+    opacity: .1;
+    transition: opacity .5s
+}
+
 .editorContainer{
     position: relative;
     text-align: left;
     overflow: scroll;
-    height: calc(100% - 5px);
+    height: calc(100% - 55px);
     margin-right: 10px;
     margin-left: 10px;
     margin-bottom: 5px;
     background: white;
-    font-size: 110%;
     line-height: 1.5em;
+    z-index: 1;
 }
 
 .editorContent{
+    position: relative;
     text-align: left;
     height: auto;
     min-height: calc(100% - 35px);
@@ -29,11 +42,6 @@
 .public-DraftEditorPlaceholder-root{
     color: #d6d6d6;
     position: absolute;
-}
-
-
-.public-DraftStyleDefault-block{
-    margin-bottom: 1em;
 }
 
 .sheet-title{
