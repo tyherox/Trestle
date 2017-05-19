@@ -3,12 +3,13 @@
  */
 import FS from 'fs';
 import fs from 'fs-jetpack';
+import { remote } from 'electron';
 
-var dev = process.cwd();
+var dev = remote.app.getPath('userData');
 
 export default function(path){
 
-    var dir = fs.cwd(dev+"/dev/"+path);
+    var dir = fs.cwd(dev+"/"+path);
 
     return({
         cwd: ()=> dir.cwd(),

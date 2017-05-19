@@ -39,7 +39,7 @@ export default class Button extends Component{
         if(this.props.height) button.style.height = this.props.height + "px";
         if(this.props.bColor) button.style.backgroundColor = this.props.bColor;
         if(this.props.icon){
-            button.style.backgroundImage = "url("+ __dirname + "/assets/" + this.props.icon + ")";
+            button.style.backgroundImage = "url(assets/" + this.props.icon + ")";
             button.style.backgroundSize = "60%";
             if(this.props.size == "small") button.style.backgroundSize = "50%";
             button.style.backgroundRepeat = "no-repeat";

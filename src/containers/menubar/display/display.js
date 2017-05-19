@@ -75,7 +75,7 @@ class DisplayPane extends Component{
                 <Scrollable className="displayScroll">
                     <Collapsible title = "Widgets">
                         <Button className="display-widgetItem"
-                                onClick={()=> this.props.addSheet({
+                                onClick={()=> this.props.addWidget({
                                     id: 2,
                                     pinned: true,
                                     content: {title: this.props.name}

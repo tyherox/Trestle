@@ -35,10 +35,11 @@ function searchWidgets(){
     });*/
 
     //Serach for downloaded widgets
-    jetpack.list(widgetDir).forEach(function(file){
+    /*jetpack.list(widgetDir).forEach(function(file){
         var filePath = __dirname + "/widgets/" + file;
+        console.log(filePath);
         if(jetpack.inspect(filePath).type!='file') widgets.push(loadScript(filePath,"widget"));
-    });
+    });*/
 }
 
 function searchLayouts(){

@@ -18,6 +18,7 @@ class LibraryPane extends Component{
 
     constructor(props) {
         super(props);
+        this.state = {searchValue: ""}
         this.handleListChange = this.handleListChange.bind(this);
         this.addProject = this.addProject.bind(this);
         this.setLayout = this.setLayout.bind(this);
@@ -101,6 +102,7 @@ class LibraryPane extends Component{
         if(category == "files"){
             list = fileStorage.list(null, sortValue);
             if(list) list = list.map(function(file){
+                if((self.state.searchValue!="" && file.includes(self.state.searchValue) || self.state.searchValue==""))
                 return(
                     <ConnectedLibraryFile name = {file}
                                  key = {file}
@@ -115,14 +117,15 @@ class LibraryPane extends Component{
             list = projectStorage.list(null, sortValue);
             if(list) list = list.map(function(file){
                 file = file.replace(".json","");
-                console.log("TESTING PATH:", self.props.reduxProjects.get(file));
-                return(<ConnectedLibraryProject key = {file}
-                                                path = {self.props.reduxProjects.get(file)}
-                                                name = {file}
-                                                selected = {file == self.props.currentProject}
-                                                renameLayout = {self.renameLayout}
-                                                deleteLayout = {self.deleteLayout}
-                                                setLayout = {self.setLayout}/>
+                if((self.state.searchValue!="" && file.includes(self.state.searchValue) || self.state.searchValue==""))
+                return(
+                <ConnectedLibraryProject key = {file}
+                                            path = {self.props.reduxProjects.get(file)}
+                                            name = {file}
+                                            selected = {file == self.props.currentProject}
+                                            renameLayout = {self.renameLayout}
+                                            deleteLayout = {self.deleteLayout}
+                                            setLayout = {self.setLayout}/>
                 )
             });
         }
@@ -149,7 +152,9 @@ class LibraryPane extends Component{
                                 type="half">Projects</Button>
                     </div>
                     <div className="library-toolbar-transparent">
-                        <input className="library-toolbar-search" />
+                        <input className="library-toolbar-search"
+                               onChange={(event)=>this.setState({searchValue: event.target.value})}
+                               defaultValue=""/>
                         <div className="dropdown">
                             <Button onClick={this.activateDropdown.bind(this)}
                                     className="dropbtn"

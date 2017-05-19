@@ -24,9 +24,12 @@ var setApplicationMenu = function () {
 // Save userData in separate folders for each environment.
 // Thanks to this you can use production and development versions of the app
 // on same machine like those are two separate apps.
-if (env.name !== 'production') {
+if (env.name == 'production') {
     var userDataPath = app.getPath('userData');
     app.setPath('userData', userDataPath + ' (' + env.name + ')');
+}
+else{
+    app.setPath('userData', process.cwd() + ' (' + env.name + ')');
 }
 
 app.on('ready', function () {
@@ -34,7 +37,6 @@ app.on('ready', function () {
 
     var mainWindow =  new BrowserWindow({width: 800, height: 600, fullscreen: true, frame: false, titleBarStyle: 'hidden'});
     mainWindow.loadURL('file://' + __dirname + '/app.html');
-
     if (env.name === 'development') {
         mainWindow.openDevTools();
     }

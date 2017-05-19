@@ -57,4 +57,4 @@ gulp.task('watch', function () {
     }));
 });
 
-gulp.task('build', ['apply-prod-environment', 'css','bundle', 'environment']);
+gulp.task('build', ['css','bundle', 'environment']);
