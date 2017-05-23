@@ -884,6 +884,7 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-bottom: 5px;
     background: white;
     line-height: 1.5em;
+    cursor: e-resize;
     z-index: 1;
 }
 
@@ -924,12 +925,14 @@ input[type="number"]::-webkit-inner-spin-button {
     border-left-color: transparent;
     color: #b3b3b3;
     transition: all .5s;
+    cursor: move;
 }
 
 .sheet-title:focus{
     border-left-color: red;
     background-color: white;
     color: black;
+    cursor: text;
 }
 
 #timeWidget{
@@ -1061,7 +1064,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .library-scroll {
     position: relative;
     width:100%;
-    height: calc(100% - 165px);
+    height: calc(100% - 170px);
     overflow: scroll;
 }
 

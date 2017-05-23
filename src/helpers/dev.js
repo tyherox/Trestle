@@ -50,13 +50,13 @@ export default function(){
 
             app.addEventListener('mousemove', function(event){
                 if(event.clientX == 0 && callMenu == null){
-                    callMenu = setTimeout(() => self.setState({showMenu: true}), 250);
+                    callMenu = setTimeout(() => store.dispatch(Actions.modifyAtSession({menuBar: true})), 250);
                 }
                 else if(self.state.showMenu && event.clientX > parseInt(ReactDOM.findDOMNode(menu).getBoundingClientRect().width) + 50) {
-                    self.setState({showMenu: false});
+                    store.dispatch(Actions.modifyAtSession({menuBar: false}))
                 }
                 else if(callMenu && event.clientX > parseInt(ReactDOM.findDOMNode(menu).getBoundingClientRect().width)) {
-                    self.setState({showMenu: false});
+                    store.dispatch(Actions.modifyAtSession({menuBar: false}))
                     clearTimeout(callMenu);
                     callMenu = null;
                 }

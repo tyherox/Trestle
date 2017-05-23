@@ -8,7 +8,7 @@
 .library-scroll {
     position: relative;
     width:100%;
-    height: calc(100% - 165px);
+    height: calc(100% - 170px);
     overflow: scroll;
 }
 

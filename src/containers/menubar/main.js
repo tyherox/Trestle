@@ -41,7 +41,7 @@ class MenuBar extends React.Component{
     }
 
     addSheet(){
-        this.props.addSheet({
+        this.props.addWidget({
                 id: '1*',
                 pinned: true,
                 content: {}
@@ -67,21 +67,24 @@ class MenuBar extends React.Component{
     }
 
     setPinnedMode(){
-        this.props.reduxActions.modifyAtSession({pinMode: !this.props.reduxSession.get('pinMode')});
-        if(this.props.reduxSession.get("pinMode")){
+        this.props.reduxActions.modifyAtSession({pinMode: !this.props.reduxPinMode});
+        if(this.props.reduxPinMode){
             this.refs.hideButton.style.opacity = ".3"
         }
         else this.refs.hideButton.style.opacity = "1"
     }
 
-    componentDidUpdate(){
-        if(this.props.visible){
-            this.refs.menu.style.transform = "translate( 0px, 0px)";
-            console.log("SHOWING");
+    componentDidUpdate(prevProps){
+        if(this.props.reduxMenuBar != prevProps.reduxMenuBar){
+            if(this.props.reduxMenuBar){
+                this.refs.menu.style.transform = "translate( 0px, 0px)";
+            }
+            else{
+                this.refs.menu.style.transform = "translate( -40px, 0px)";
+                this.closeSubMenu();
+            }
         }
-        else{
-            this.refs.menu.style.transform = "translate( -40px, 0px)";
-        }
+
     }
 
     render(){
@@ -115,8 +118,6 @@ class MenuBar extends React.Component{
                 </div>
         }
 
-        console.log("openedMenu:", openedMenu == "setting");
-
         return(
             <div id = "menuBar" ref="menu">
                 {overlay}
@@ -128,10 +129,10 @@ class MenuBar extends React.Component{
                             type="square"
                             icon = {openedMenu == "file" ? "fileBrowserInverse.png" : "fileBrowser.png"}
                             inverse = {openedMenu == "file"}/>
-                    <Button onClick={self.openDisplay.bind(self)}
+                    {/*<Button onClick={self.openDisplay.bind(self)}
                             type="square"
                             icon = {openedMenu == "display" ? "displayInverse.png" : "display.png"}
-                            inverse = {openedMenu == "display"}/>
+                            inverse = {openedMenu == "display"}/>*/}
                     <Button onClick={self.openSetting.bind(self)}
                             type="square"
                             icon = {openedMenu == "setting" ? "settingsInverse.png" : "settings.png"}
@@ -158,7 +159,8 @@ function selectorFactory(dispatch) {
     const actions = bindActionCreators(Actions, dispatch);
     return (nextState, nextOwnProps) => {
         const nextResult = {
-            reduxSession: nextState.session,
+            reduxPinMode: nextState.session.get("pinMode"),
+            reduxMenuBar: nextState.session.get("menuBar"),
             reduxActions: actions,
             ...nextOwnProps
         };

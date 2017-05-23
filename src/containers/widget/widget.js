@@ -102,6 +102,7 @@ class Widget extends React.PureComponent{
 
             })
             .actionChecker(function (pointer, event, action) {
+                console.log("CHECKING...");
                 if(action.name=='drag'){
                     //Invalidate actions for widget content drag (users can only drag by using the toolbar)
                     if((event.target.className.includes("widgetToolbar") || event.target.className.includes("sheet-title"))){
@@ -180,6 +181,15 @@ class Widget extends React.PureComponent{
                 transition: 'transform .5s, width .5s, height .5s, z-index .5s .5s,  opacity .5s',
                 dragging: false,
             })
+
+            if(self.props.reduxSettings.get("project")!=""){
+                console.log("MODIFYING PROJECT:", self.props.reduxSettings.get("project"));
+                var layout = self.props.layout.map(function(elem){
+                    return elem;
+                });
+                console.log("layout:", layout);
+                self.props.reduxActions.addStoredLayout(self.props.reduxSettings.get("project").toString(), layout);
+            }
         }
     }
 
@@ -339,6 +349,7 @@ function selectorFactory(dispatch) {
     return (nextState, nextOwnProps) => {
         var layout =  nextState.layout.get(nextOwnProps.id) ? nextState.layout.get(nextOwnProps.id).delete("content") : null
         const nextResult = {
+            layout: nextState.layout,
             reduxLayout: layout,
             reduxPinMode: nextState.session.get("pinMode"),
             reduxSettings: nextState.settings,

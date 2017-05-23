@@ -4,10 +4,21 @@
 
 import * as types from '../constants/actionTypes';
 
+export const modifyAtStoredLayout = (name, layout) => {
+
+    return {
+        type: types.ADD_STORED_LAYOUTS,
+        payload: {
+            name: name,
+            layout: layout
+        }
+    }
+};
+
 export const addStoredLayout = (name, layout) => {
 
     return {
-        type: types.ADD_STORED_WIDGETS,
+        type: types.ADD_STORED_LAYOUTS,
         payload: {
             name: name,
             layout: layout

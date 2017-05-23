@@ -13,18 +13,26 @@ const DEFAULT_STORED_LAYOUTS = fromJS(scanLayouts());
 function scanLayouts(){
     var defaultStore = {};
     if(storage.list()!=undefined) storage.list().forEach(function(elem){
-        console.log("SCANNED LAYOUT");
         defaultStore[elem.replace(".json","")] = storage.cwd(storage.path(elem));
     });
     return defaultStore;
 }
 
 function storedLayouts(state = DEFAULT_STORED_LAYOUTS, action) {
+
+    if(action.payload  && action.payload.layout) console.log("!!!!", action.payload.name, + ":::" + action.payload.layout);
     switch (action.type) {
-        case types.ADD_STORED_WIDGETS:
+
+        case types.MODIFY_AT_STORED_LAYOUTS:
             var path = action.payload.name + ".json";
             storage.save(path, action.payload.layout);
-            var newState = state.set(action.payload.name, path);
+            var newState = state.setIn(action.payload.name.toString(), path);
+            return newState;
+
+        case types.ADD_STORED_LAYOUTS:
+            var path = action.payload.name + ".json";
+            storage.save(path, action.payload.layout);
+            var newState = state.set(action.payload.name.toString(), path);
             return newState;
 
         case types.DELETE_AT_STORED_LAYOUTS:

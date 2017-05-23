@@ -20,6 +20,7 @@
     margin-bottom: 5px;
     background: white;
     line-height: 1.5em;
+    cursor: e-resize;
     z-index: 1;
 }
 
@@ -60,10 +61,12 @@
     border-left-color: transparent;
     color: #b3b3b3;
     transition: all .5s;
+    cursor: move;
 }
 
 .sheet-title:focus{
     border-left-color: red;
     background-color: white;
     color: black;
+    cursor: text;
 }

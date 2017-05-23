@@ -16,7 +16,6 @@ const DEFAULT_SESSION = fromJS({
 function sessionReducer(state = DEFAULT_SESSION, action) {
     switch (action.type) {
         case types.MODIFY_AT_SESSION:
-            console.log("DOING SESSION STUFF:", action.payload);
             return state.merge(action.payload);
         case types.SET_SESSION:
             return Map(action.payload);

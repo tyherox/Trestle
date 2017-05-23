@@ -20,6 +20,7 @@ class LibraryPane extends Component{
         super(props);
         this.state = {searchValue: ""}
         this.handleListChange = this.handleListChange.bind(this);
+        this.deleteLayout = this.deleteLayout.bind(this);
         this.addProject = this.addProject.bind(this);
         this.setLayout = this.setLayout.bind(this);
     }
@@ -45,6 +46,7 @@ class LibraryPane extends Component{
     }
 
     setLayout(data){
+        console.log(data);
         this.props.reduxActions.setLayout(data);
     }
 
@@ -209,9 +211,9 @@ class LibraryProject extends Component{
         this.props.reduxActions.modifyAtSetting({project: this.props.name});
     }
 
-    deleteFile(event){
-        this.props.deleteFile();
-        event.preventDefault();
+    deleteProject(event){
+        event.stopPropagation();
+        this.props.deleteLayout(this.props.name);
     }
 
     showOptions(){
@@ -265,7 +267,7 @@ class LibraryProject extends Component{
                        onKeyPress={this.keyPress.bind(this)}
                        onBlur={this.renameProject.bind(this)}/>
                 <Button className={options}
-                        onClick={()=>this.deleteFile()}
+                        onClick={this.deleteProject.bind(this)}
                         icon = "delete.png"/>
             </div>
         )
@@ -279,13 +281,15 @@ class LibraryFile extends Component{
         this.state = {showOptions: false, edit: false};
 
         this.addSheet = this.addSheet.bind(this);
+        this.deleteFile = this.deleteFile.bind(this);
         this.removeSheet = this.removeSheet.bind(this);
         this.showOptions = this.showOptions.bind(this);
         this.hideOptions = this.hideOptions.bind(this);
         this.renameItem = this.renameItem.bind(this);
     }
 
-    removeSheet(){
+    removeSheet(event){
+        event.stopPropagation();
         var self = this;
         this.props.reduxLayout.forEach(function(elem){
             var id = elem.get("id");
@@ -304,6 +308,7 @@ class LibraryFile extends Component{
     }
 
     addSheet(event){
+        console.log("ADDING");
         if(!this.props.selected) this.props.addSheet({
             id: '1*',
             pinned: true,
@@ -313,8 +318,8 @@ class LibraryFile extends Component{
     }
 
     deleteFile(event){
-        this.props.deleteFile();
-        event.preventDefault();
+        event.stopPropagation();
+        this.props.deleteFile(this.props.name);
     }
 
     showOptions(){
@@ -375,7 +380,7 @@ class LibraryFile extends Component{
                        onBlur={this.renameFile.bind(this)}/>
                 <Button className={options}
                         icon = {this.props.selected ? "recall.png" : "delete.png"}
-                        onClick={this.props.selected ? this.removeSheet : ()=> this.deleteFile()}>
+                        onClick={this.props.selected ? this.removeSheet : this.deleteFile}>
                 </Button>
             </div>
         )
