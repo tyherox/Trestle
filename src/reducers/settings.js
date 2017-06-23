@@ -14,7 +14,7 @@ function scanSettings() {
     var prevState = storage.read("settings.json");
     if(prevState == undefined) return({
         screenWidth: screen.width,
-        screenHeight: screen.height,
+        screenHeight: screen.height - 35,
         gridCols: 8,
         gridRows: 5,
         cellOffset: 4,
@@ -33,7 +33,6 @@ function settings(state = DEFAULT_SETTINGS, action) {
 
     switch (action.type) {
         case types.MODIFY_AT_SETTING:
-            console.log(action.payload);
             var newState = state.merge(action.payload);
             storage.save("settings.json", newState);
             return newState;

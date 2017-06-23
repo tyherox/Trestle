@@ -8,6 +8,19 @@ import jetpack from 'fs-jetpack';
 import decor from './helpers/decor.js';
 import dev from './helpers/dev.js';
 
+import {SpellCheckHandler, ContextMenuListener, ContextMenuBuilder} from 'electron-spellchecker';
+
+window.spellCheckHandler = new SpellCheckHandler();
+window.spellCheckHandler.attachToInput();
+
+// Start off as US English, America #1 (lol)
+window.spellCheckHandler.switchLanguage('en-US');
+
+let contextMenuBuilder = new ContextMenuBuilder(window.spellCheckHandler);
+let contextMenuListener = new ContextMenuListener((info) => {
+    contextMenuBuilder.showPopupMenu(info);
+});
+
 //Path to user's data based on Electron's Method
 var usrPath = remote.app.getPath('userData');
 

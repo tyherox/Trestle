@@ -137,12 +137,6 @@ class LibraryPane extends Component{
             <div id = "subMenu">
                 <h2 className="subMenu-title">Library</h2>
                 <div className="library-container">
-                    <div className="library-display">
-                        <h4 className="library-display-title">Current Project</h4>
-                        <p className="library-display-content">{currentProject}</p>
-                        <Button className="library-display-button"
-                                onClick = {() => self.props.reduxActions.modifyAtSetting({project: ""})}> Clear </Button>
-                    </div>
                     <div className="library-toolbar">
                         <Button className = {this.props.category == "files"
                             ? "library-toolbar-selectButton-selected" : "library-toolbar-selectButton"}
@@ -202,6 +196,8 @@ class LibraryProject extends Component{
         this.showOptions = this.showOptions.bind(this);
         this.hideOptions = this.hideOptions.bind(this);
         this.setLayout = this.setLayout.bind(this);
+        this.deleteProject = this.deleteProject.bind(this);
+        this.removeProject = this.removeProject.bind(this);
         this.enableRename = this.enableRename.bind(this);
     }
 
@@ -211,8 +207,18 @@ class LibraryProject extends Component{
         this.props.reduxActions.modifyAtSetting({project: this.props.name});
     }
 
+    removeProject(event){
+        event.stopPropagation();
+        if(this.props.name == this.props.currentProject){
+            this.props.reduxActions.modifyAtSetting({project: ""});
+        }
+    }
+
     deleteProject(event){
         event.stopPropagation();
+        if(this.props.name == this.props.currentProject){
+            this.props.reduxActions.modifyAtSetting({project: ""});
+        }
         this.props.deleteLayout(this.props.name);
     }
 
@@ -267,8 +273,8 @@ class LibraryProject extends Component{
                        onKeyPress={this.keyPress.bind(this)}
                        onBlur={this.renameProject.bind(this)}/>
                 <Button className={options}
-                        onClick={this.deleteProject.bind(this)}
-                        icon = "delete.png"/>
+                        icon = {this.props.selected ? "recall.png" : "delete.png"}
+                        onClick={this.props.selected ? this.removeProject : this.deleteProject}/>
             </div>
         )
     }
@@ -379,6 +385,7 @@ class LibraryFile extends Component{
                        onKeyPress={this.keyPress.bind(this)}
                        onBlur={this.renameFile.bind(this)}/>
                 <Button className={options}
+                        size={this.props.selected ? "small" : ""}
                         icon = {this.props.selected ? "recall.png" : "delete.png"}
                         onClick={this.props.selected ? this.removeSheet : this.deleteFile}>
                 </Button>

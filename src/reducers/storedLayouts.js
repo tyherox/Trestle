@@ -20,7 +20,6 @@ function scanLayouts(){
 
 function storedLayouts(state = DEFAULT_STORED_LAYOUTS, action) {
 
-    if(action.payload  && action.payload.layout) console.log("!!!!", action.payload.name, + ":::" + action.payload.layout);
     switch (action.type) {
 
         case types.MODIFY_AT_STORED_LAYOUTS:

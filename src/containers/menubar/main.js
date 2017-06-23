@@ -3,6 +3,7 @@
  */
 
 import React from "react";
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Button from "../../components/button";
 import Settings from './settings/settings'
 import Display from './display/display'
@@ -16,28 +17,15 @@ class MenuBar extends React.Component{
 
     constructor(props){
         super(props);
-        this.state = {subMenu: null}
+        this.state = {subMenu: null, visible: false}
     }
 
     componentDidMount(){
-        this.refs.menu.style.transform = "translate( -40px, 0px)";
-        this.refs.hideButton.style.opacity = ".3";
+        this.refs.hideButton.style.opacity = ".3"
     }
 
     exit(){
         window.close();
-    }
-
-    openSetting(){
-        this.toggleSub("setting");
-    }
-
-    openDisplay(){
-        this.toggleSub("display");
-    }
-
-    openFiles(){
-        this.toggleSub("file");
     }
 
     addSheet(){
@@ -53,8 +41,6 @@ class MenuBar extends React.Component{
     }
 
     toggleSub(pane){
-        var overlay = this.refs.overlay;
-
         if(pane==null || this.state.subMenu==pane){
             this.refs.menu.style.width = "40px";
             this.setState({subMenu:null})
@@ -74,82 +60,57 @@ class MenuBar extends React.Component{
         else this.refs.hideButton.style.opacity = "1"
     }
 
-    componentDidUpdate(prevProps){
-        if(this.props.reduxMenuBar != prevProps.reduxMenuBar){
-            if(this.props.reduxMenuBar){
-                this.refs.menu.style.transform = "translate( 0px, 0px)";
-            }
-            else{
-                this.refs.menu.style.transform = "translate( -40px, 0px)";
-                this.closeSubMenu();
-            }
-        }
-
-    }
-
     render(){
 
-        var subMenuContent = null,
-            subMenu = null,
-            openedMenu = this.state.subMenu,
-            self = this,
-            overlay = null;
+        var subMenu = this.state.subMenu,
+            openedMenu = this.state.visible,
+            currentProject = this.props.rCurrentProject != "" ? this.props.rCurrentProject : "none";
 
-        if(openedMenu!=null){
-            switch(openedMenu){
-                case "setting" : subMenuContent = <Settings />
-                    break;
-                case "display" : subMenuContent = <Display addWidget = {this.props.addWidget} />
-                    break;
-                case "file" : subMenuContent = <Files addWidget = {this.props.addWidget}/>
-                    break;
-                default : console.log("Unregistered Pane!");
-                    break;
-            }
+        if(openedMenu){
             subMenu =
                 <div id ="menuBar-subMenu" ref="subMenu">
-                    {subMenuContent}
-                </div>
-
-            overlay =
-                <div id = "menuBar-overlay"
-                           onClick = {self.closeSubMenu.bind(self)}
-                           ref="overlay">
+                    { <Files addWidget = {this.props.addWidget}/>}
                 </div>
         }
 
         return(
-            <div id = "menuBar" ref="menu">
-                {overlay}
-                <div id ="menuBar-topButtonGroup">
-                    <Button onClick={self.exit.bind(self)}
-                            type="square"
-                            icon = "window.png"/>
-                    <Button onClick={self.openFiles.bind(self)}
-                            type="square"
-                            icon = {openedMenu == "file" ? "fileBrowserInverse.png" : "fileBrowser.png"}
-                            inverse = {openedMenu == "file"}/>
-                    {/*<Button onClick={self.openDisplay.bind(self)}
-                            type="square"
-                            icon = {openedMenu == "display" ? "displayInverse.png" : "display.png"}
-                            inverse = {openedMenu == "display"}/>*/}
-                    <Button onClick={self.openSetting.bind(self)}
-                            type="square"
-                            icon = {openedMenu == "setting" ? "settingsInverse.png" : "settings.png"}
-                            inverse = {openedMenu == "setting"}/>
-                </div>
-                <div id ="menuBar-botButtonGroup">
+            <div>
+                <div id = "menuBar">
+                    <div style={{visibility: this.state.visible ? "visible" : "hidden"}}
+                         onClick={()=>this.setState({visible: false})}
+                         id="overlay"/>
+                    <button className={this.state.visible ? "hamburger hamburger--spring is-active" : "hamburger hamburger--spring"}
+                            type="button"
+                            onClick={()=>this.setState({visible: !this.state.visible})}>
+                        <span className="hamburger-box">
+                            <span className="hamburger-inner"/>
+                        </span>
+                    </button>
+                    <button id="menuBar-currentProject" ><span style={{color: "gray"}}>Current Project: </span>{currentProject}</button>
+                    <button className="menuBar-actionButtons" onClick={this.addSheet.bind(this)}>+</button>
                     <span ref="hideButton">
-                        <Button type="square"
-                                onClick = {this.setPinnedMode.bind(this)}
-                                icon="hideToggle.png"/>
+                        <button className="menuBar-actionButtons"
+                                onClick = {this.setPinnedMode.bind(this)}>
+                            <img style={{
+                                filter: "brightness(10%)",
+                                height: "50%",
+                                marginBottom: "5px",
+                                marginLeft: "10px",
+                                verticalAlign: "middle"
+                            }}src="assets/hideToggle.png"/>
+                        </button>
                     </span>
-                    <Button type="square"
-                            onClick = {this.addSheet.bind(this)}
-                            icon="newSheet.png"/>
                 </div>
-                {subMenu}
+                <ReactCSSTransitionGroup
+                    transitionName="subMenu"
+                    transitionAppear={true}
+                    transitionAppearTimeout={500}
+                    transitionEnterTimeout={500}
+                    transitionLeaveTimeout={500}>
+                    {subMenu}
+                </ReactCSSTransitionGroup>
             </div>
+
         )
     }
 }
@@ -161,6 +122,7 @@ function selectorFactory(dispatch) {
         const nextResult = {
             reduxPinMode: nextState.session.get("pinMode"),
             reduxMenuBar: nextState.session.get("menuBar"),
+            rCurrentProject: nextState.settings.get("project"),
             reduxActions: actions,
             ...nextOwnProps
         };

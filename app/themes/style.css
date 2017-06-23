@@ -39,6 +39,10 @@ body{
     box-shadow: 0 0 5px #536DFE;
 }
 
+.cursor {
+    transition: 150ms cubic-bezier(.03,1.71,.33,.97);
+}
+
 /*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */
 
 /**
@@ -601,6 +605,82 @@ input[type="number"]::-webkit-inner-spin-button {
 
 }
 
+/*!
+ * Hamburgers
+ * @description Tasty CSS-animated hamburgers
+ * @author Jonathan Suh @jonsuh
+ * @site https://jonsuh.com/hamburgers
+ * @link https://github.com/jonsuh/hamburgers
+ */
+.hamburger {
+    padding: 5px;
+    display: inline-block;
+    cursor: pointer;
+    transition-property: opacity, filter;
+    transition-duration: 0.15s;
+    transition-timing-function: linear;
+    font: inherit;
+    color: inherit;
+    text-transform: none;
+    background-color: transparent;
+    border: 0;
+    margin: 0;
+    overflow: visible;
+    outline: none}
+.hamburger:hover {
+    opacity: 0.7; }
+
+.hamburger-box {
+    width: 30px;
+    height: 18px;
+    display: inline-block;
+    position: relative; }
+
+.hamburger-inner {
+    display: block;
+    top: 50%;
+    margin-top: -2px; }
+.hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
+    width: 30px;
+    height: 3px;
+    background-color: #000;
+    border-radius: 3px;
+    position: absolute;
+    transition-property: transform;
+    transition-duration: 0.15s;
+    transition-timing-function: ease; }
+.hamburger-inner::before, .hamburger-inner::after {
+    content: "";
+    display: block; }
+.hamburger-inner::before {
+    top: -7px; }
+.hamburger-inner::after {
+    bottom: -7px; }
+
+
+/*Spring*/
+.hamburger--spring .hamburger-inner {
+    top: 1px;
+    transition: background-color 0s 0.13s linear; }
+.hamburger--spring .hamburger-inner::before {
+    top: 7px;
+    transition: top 0.1s 0.2s cubic-bezier(0.33333, 0.66667, 0.66667, 1), transform 0.13s cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+.hamburger--spring .hamburger-inner::after {
+    top: 15px;
+    transition: top 0.2s 0.2s cubic-bezier(0.33333, 0.66667, 0.66667, 1), transform 0.13s cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+
+.hamburger--spring.is-active .hamburger-inner {
+    transition-delay: 0.22s;
+    background-color: transparent; }
+.hamburger--spring.is-active .hamburger-inner::before {
+    top: 0;
+    transition: top 0.1s 0.15s cubic-bezier(0.33333, 0, 0.66667, 0.33333), transform 0.13s 0.22s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 7px, 0) rotate(45deg); }
+.hamburger--spring.is-active .hamburger-inner::after {
+    top: 0;
+    transition: top 0.2s cubic-bezier(0.33333, 0, 0.66667, 0.33333), transform 0.13s 0.22s cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 7px, 0) rotate(-45deg); }
+
 .popover-overlay-show{
     width: 100vh;
 }
@@ -624,8 +704,10 @@ input[type="number"]::-webkit-inner-spin-button {
 
 #layout{
     position: relative;
-    height: 100%;
+    height: calc(100%- 35px);
+    padding-top: 35px;
     width: 100%;
+    cursor: default;
 }
 
 #gridContainer{
@@ -648,52 +730,72 @@ input[type="number"]::-webkit-inner-spin-button {
 
 #menuBar{
     z-index: 10;
-    display: block;
     position: absolute;
     top: 0;
     left: 0;
-    min-width: 40px;
-    width: auto;
-    height: 100%;
-    background-color: black;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.3), 0 0px 2px 0 rgba(0, 0, 0, 0.2);
-    transition: transform .5s
+    height: 30px;
+    width: 100%;
+    padding-top: 5px;
+    background: white;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
 }
 
-#menuBar-overlay{
+#overlay{
+    z-index: 1;
     position: absolute;
-    top:0;
-    left:0;
-    background-color: transparent;
+    top: 35px;
+    left: 0;
+    height: calc(100vh - 35px);
     width: 100vw;
-    height: 100vh;
 }
 
-#menuBar-topButtonGroup{
-    width: 40px;
-    position: absolute;
-    top: 0;
+#menuBar-currentProject{
+    position: relative;
+    top: -3px;
+    padding: 5px;
+    outline: none;
+    border: none;
+    height: calc(100% - 5px);
+    margin-left: 15px;
+    background-color: white;
+    border-radius: 5px;
 }
 
-#menuBar-botButtonGroup{
-    width: 40px;
-    position: absolute;
-    bottom: 0;
+#menuBar-currentProject:hover{
+    /*background-color: gainsboro;*/
+}
+
+.menuBar-actionButtons{
+    position: relative;
+    float: right;
+    outline: none;
+    border: none;
+    height: 100%;
+    margin-right: 20px;
+    font-size: 30px;
+    background-color: white;
+}
+
+.menuBar-actionButtons:hover{
+    cursor: pointer;
 }
 
 #menuBar-subMenu{
     position:absolute;
-    top:0;
-    left:40px;
-    height: 100%;
-    width: 240px;
+    top:35px;
+    left:0px;
+    height: calc(100vh - 35px);
+    width: 280px;
     background-color: white;
+    z-index: 10;
 }
 
 #subMenu{
     position: relative;
-    width: 100%;
+    width: calc(100% - 25px);
     height: 100%;
+    padding-left: 25px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
 }
 
 .subMenu-title{
@@ -712,17 +814,22 @@ input[type="number"]::-webkit-inner-spin-button {
     padding: 5px;
 }
 
-.botToolGroup-item{
-    position: relative;
-    padding: 10px 20px;
-    right: 0;
-    margin: 5px;
+.subMenu-enter{
+    transform: translate(-100%);
 }
 
-.botToolGroup{
-    position: absolute;
-    right: 0;
-    bottom: 0;
+.subMenu-enter.subMenu-enter-active{
+    transform: translate(0%);
+    transition: transform .5s ease-in-out;
+}
+
+.subMenu-leave {
+    transform: translate(0%);
+}
+
+.subMenu-leave.subMenu-leave-active {
+    transform: translate(-100%);
+    transition: transform .5s ease-in-out;
 }
 
 .widget {
@@ -773,6 +880,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .widgetToolbarButtons:hover{
+    cursor: pointer;
     background-color: #c2cdc4;
 }
 
@@ -884,7 +992,6 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-bottom: 5px;
     background: white;
     line-height: 1.5em;
-    cursor: e-resize;
     z-index: 1;
 }
 
@@ -1069,7 +1176,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .library-display{
-    background-color: #E5E5E4;
+    background-color: white;
     height: 100px;
 }
 
@@ -1091,7 +1198,6 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .library-display-button{
     color: white;
-    background: #2B2B2B;
     padding: 2px 10px;
     margin-left: 15px;
 }
@@ -1119,13 +1225,13 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .library-toolbar-selectButton {
-    background-color: #E5E5E4;
+    background-color: white;
     color: #454545;
     border-bottom: transparent solid 3px;
 }
 
 .library-toolbar-selectButton-selected {
-    background-color: #E5E5E4;
+    background-color: white;
     color: #0078D7;
     border-bottom: #0078D7 solid 3px;
 }
@@ -1151,10 +1257,8 @@ input[type="number"]::-webkit-inner-spin-button {
 .library-item-selected {
     position: relative;
     width: calc(100% - 10px);
-    height: 75px;
-    line-height: 75px;
+    margin-top: 10px;
     margin-bottom: 2px;
-    border-bottom: solid 2px #E5E5E4;
     margin-left: 5px;
 }
 
@@ -1170,7 +1274,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .library-item-showOption,
 .library-item-hideOption{
-    height: calc(100% - 4px);
+    height: 25px;
     background-color: transparent;
     outline: none;
     border: none;
@@ -1217,7 +1321,7 @@ input[type="number"]::-webkit-inner-spin-button {
     color: white;
     position: fixed;
     bottom: 10px;
-    right: 10px;
+    left: 220px;
     border-radius: 50px;
     background-color:  #EA005E;
 }

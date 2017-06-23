@@ -1,51 +1,71 @@
 #menuBar{
     z-index: 10;
-    display: block;
     position: absolute;
     top: 0;
     left: 0;
-    min-width: 40px;
-    width: auto;
-    height: 100%;
-    background-color: black;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.3), 0 0px 2px 0 rgba(0, 0, 0, 0.2);
-    transition: transform .5s
+    height: 30px;
+    width: 100%;
+    padding-top: 5px;
+    background: white;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
 }
 
-#menuBar-overlay{
+#overlay{
+    z-index: 1;
     position: absolute;
-    top:0;
-    left:0;
-    background-color: transparent;
+    top: 35px;
+    left: 0;
+    height: calc(100vh - 35px);
     width: 100vw;
-    height: 100vh;
 }
 
-#menuBar-topButtonGroup{
-    width: 40px;
-    position: absolute;
-    top: 0;
+#menuBar-currentProject{
+    position: relative;
+    top: -3px;
+    padding: 5px;
+    outline: none;
+    border: none;
+    height: calc(100% - 5px);
+    margin-left: 15px;
+    background-color: white;
+    border-radius: 5px;
 }
 
-#menuBar-botButtonGroup{
-    width: 40px;
-    position: absolute;
-    bottom: 0;
+#menuBar-currentProject:hover{
+    /*background-color: gainsboro;*/
+}
+
+.menuBar-actionButtons{
+    position: relative;
+    float: right;
+    outline: none;
+    border: none;
+    height: 100%;
+    margin-right: 20px;
+    font-size: 30px;
+    background-color: white;
+}
+
+.menuBar-actionButtons:hover{
+    cursor: pointer;
 }
 
 #menuBar-subMenu{
     position:absolute;
-    top:0;
-    left:40px;
-    height: 100%;
-    width: 240px;
+    top:35px;
+    left:0px;
+    height: calc(100vh - 35px);
+    width: 280px;
     background-color: white;
+    z-index: 10;
 }
 
 #subMenu{
     position: relative;
-    width: 100%;
+    width: calc(100% - 25px);
     height: 100%;
+    padding-left: 25px;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16), 0 0px 2px 0 rgba(0, 0, 0, 0.12);
 }
 
 .subMenu-title{
@@ -64,15 +84,20 @@
     padding: 5px;
 }
 
-.botToolGroup-item{
-    position: relative;
-    padding: 10px 20px;
-    right: 0;
-    margin: 5px;
+.subMenu-enter{
+    transform: translate(-100%);
 }
 
-.botToolGroup{
-    position: absolute;
-    right: 0;
-    bottom: 0;
+.subMenu-enter.subMenu-enter-active{
+    transform: translate(0%);
+    transition: transform .5s ease-in-out;
+}
+
+.subMenu-leave {
+    transform: translate(0%);
+}
+
+.subMenu-leave.subMenu-leave-active {
+    transform: translate(-100%);
+    transition: transform .5s ease-in-out;
 }

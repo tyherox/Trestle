@@ -46,6 +46,7 @@
 }
 
 .widgetToolbarButtons:hover{
+    cursor: pointer;
     background-color: #c2cdc4;
 }
 

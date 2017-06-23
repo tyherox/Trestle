@@ -23,9 +23,7 @@ class Widget extends React.PureComponent{
         var sw = this.props.reduxSettings.get("screenWidth"),
             sh = this.props.reduxSettings.get("screenHeight"),
             gc = this.props.reduxSettings.get("gridCols"),
-            gr = this.props.reduxSettings.get("gridRows"),
-            gridWidth = (sw) / gc,
-            gridHeight = sh / gr;
+            gr = this.props.reduxSettings.get("gridRows");
 
         this.state = {
             mounted: true,
@@ -42,6 +40,27 @@ class Widget extends React.PureComponent{
 
         var self = this,
             widget = self.refs.widgetRef;
+
+        widget.addEventListener("mousemove", function(e){
+            var x = e.pageX,
+                y = e.pageY,
+                ew = false,
+                ns = false;
+
+            if(x > widget.getBoundingClientRect().right - 10){
+                ew = true;
+            }
+            if(y > widget.getBoundingClientRect().bottom - 10){
+                ns = true;
+            }
+
+            if(ew && ns) {
+                console.log("AOKOKFOES");
+                widget.style.cursor = "nwse-resize";
+            }
+            else if(ew)  widget.style.cursor = "ew-resize";
+            else if(ns) widget.style.cursor = "ns-resize";
+        });
 
         //Initialize Drag Module for Widget
         Interact(widget)
@@ -102,7 +121,6 @@ class Widget extends React.PureComponent{
 
             })
             .actionChecker(function (pointer, event, action) {
-                console.log("CHECKING...");
                 if(action.name=='drag'){
                     //Invalidate actions for widget content drag (users can only drag by using the toolbar)
                     if((event.target.className.includes("widgetToolbar") || event.target.className.includes("sheet-title"))){
@@ -180,7 +198,9 @@ class Widget extends React.PureComponent{
                 tmpHeight: 0,
                 transition: 'transform .5s, width .5s, height .5s, z-index .5s .5s,  opacity .5s',
                 dragging: false,
-            })
+            });
+
+            console.log("new widget in project");
 
             if(self.props.reduxSettings.get("project")!=""){
                 console.log("MODIFYING PROJECT:", self.props.reduxSettings.get("project"));
@@ -190,6 +210,15 @@ class Widget extends React.PureComponent{
                 console.log("layout:", layout);
                 self.props.reduxActions.addStoredLayout(self.props.reduxSettings.get("project").toString(), layout);
             }
+        }
+
+        if(self.props.reduxSettings.get("project")!=""){
+            console.log("MODIFYING PROJECT:", self.props.reduxSettings.get("project"));
+            var layout = self.props.layout.map(function(elem){
+                return elem;
+            });
+            console.log("layout:", layout);
+            self.props.reduxActions.addStoredLayout(self.props.reduxSettings.get("project").toString(), layout);
         }
     }
 
@@ -230,6 +259,8 @@ class Widget extends React.PureComponent{
         var widget = this.refs.widgetRef,
             width = this.props.reduxLayout.get("refWidth") * this.state.gridWidth - this.props.reduxSettings.get("cellOffset") * 2,
             height = this.props.reduxLayout.get("refHeight") * this.state.gridHeight - this.props.reduxSettings.get("cellOffset") * 2;
+
+        console.log("height testing...:", height);
 
         if(this.state.tmpWidth != 0 || this.state.tmpHeight != 0){
             width = this.state.tmpWidth;
