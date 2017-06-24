@@ -27,27 +27,34 @@ class Toolbar extends React.Component {
     }
 
     componentWillReceiveProps(nextProps){
+        var self = this;
+
         if(nextProps.reduxTitle != this.state.title){
-            console.log("UNEQUAL:", nextProps.reduxTitle, this.state.title);
-            this.setState({title: nextProps.reduxTitle});
+            this.setState({title: nextProps.reduxTitle}, function(){
+
+                if(self.props.currentProject!=""){
+                    var layout = self.props.reduxLayout.map(function(elem){
+                        return elem;
+                    });
+                    self.props.reduxActions.addStoredLayout(self.props.currentProject.toString(), layout);
+                }
+            });
         }
     }
 
     saveTitle(event){
         if(this.state.title!=this.state.prevTitle) {
-            console.log("DIFFERENCE IN TITLES");
             if(storage.exists(this.state.prevTitle)) {
-                console.log("RENAMING TITLE");
                 storage.rename(this.state.prevTitle, event.target.value);
             }
             this.props.reduxActions.modifyAtLayout(this.props.id,{content:{title: event.target.value}});
+
             this.setState({title: event.target.value, edited: false});
         }
     }
 
     setTitle(event){
         if(!this.state.edited){
-            console.log("SAVING PREV:", this.state.title);
             this.setState({prevTitle: this.state.title, edited: true});
         }
         this.setState({title: event.target.value});
@@ -80,6 +87,7 @@ function toolbarSelector(dispatch) {
             reduxLayout: nextState.layout,
             reduxTitle: title,
             reduxActions: actions,
+            currentProject: nextState.settings.get('project'),
             ...nextOwnProps
         };
         state = nextState;

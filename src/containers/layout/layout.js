@@ -73,6 +73,18 @@ class Layout extends React.PureComponent{
         return false;
     };
 
+    componentWillReceiveProps(nextProps){
+
+        if(nextProps.rCurrentProject!=""){
+
+            var layout = nextProps.reduxLayout.map(function(elem){
+                return elem;
+            });
+
+            nextProps.reduxActions.addStoredLayout(nextProps.rCurrentProject.toString(), layout);
+        }
+    }
+
     render(){
 
         var self = this;
@@ -118,7 +130,7 @@ class Layout extends React.PureComponent{
             </div>
         );
     }
-};
+}
 
 function layoutSelector(dispatch) {
     let state = {};
@@ -128,6 +140,7 @@ function layoutSelector(dispatch) {
     return (nextState, nextOwnProps) => {
         const nextResult = {
             reduxLayout: nextState.layout,
+            rCurrentProject: nextState.settings.get("project"),
             reduxScreenWidth: nextState.settings.get("screenWidth"),
             reduxScreenHeight: nextState.settings.get("screenHeight"),
             reduxActions: actions,

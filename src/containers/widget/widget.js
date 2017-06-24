@@ -199,34 +199,9 @@ class Widget extends React.PureComponent{
                 transition: 'transform .5s, width .5s, height .5s, z-index .5s .5s,  opacity .5s',
                 dragging: false,
             });
-
-            console.log("new widget in project");
-
-            if(self.props.reduxSettings.get("project")!=""){
-                console.log("MODIFYING PROJECT:", self.props.reduxSettings.get("project"));
-                var layout = self.props.layout.map(function(elem){
-                    return elem;
-                });
-                console.log("layout:", layout);
-                self.props.reduxActions.addStoredLayout(self.props.reduxSettings.get("project").toString(), layout);
-            }
-        }
-
-        if(self.props.reduxSettings.get("project")!=""){
-            console.log("MODIFYING PROJECT:", self.props.reduxSettings.get("project"));
-            var layout = self.props.layout.map(function(elem){
-                return elem;
-            });
-            console.log("layout:", layout);
-            self.props.reduxActions.addStoredLayout(self.props.reduxSettings.get("project").toString(), layout);
-        }
+        };
     }
 
-    shouldComponentUpdate(props, state){
-        return true;
-    }
-
-    //Use stateless React props to update Widget. Modularized update system avoids irrelevant updates.
     componentDidUpdate(props, state){
         if(this.state.transition!=state.transition){
             this.setTransition();
@@ -318,8 +293,9 @@ class Widget extends React.PureComponent{
     }
 
     remove(){
+        var self = this;
         this.setState({mounted: false}, function(){
-            this.props.reduxActions.deleteAtLayout(this.props.id);
+            self.props.reduxActions.deleteAtLayout(this.props.id);
         });
     }
 

@@ -237,7 +237,6 @@ class LibraryProject extends Component{
         else if(event.target.value!=this.props.name) {
             this.props.reduxActions.renameStoredLayout(this.props.name, event.target.value);
             var doesProjectExist = this.props.currentProject == this.props.name;
-            console.log(this.props.name, this.props.currentProject);
             if(doesProjectExist){
                 this.props.reduxActions.modifyAtSetting({project: event.target.value});
             }

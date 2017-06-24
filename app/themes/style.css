@@ -1,7 +1,8 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: Helvetica;
+    font-family: Helvetica, sans-serif;
+    cursor: default;
 }
 
 body{
@@ -681,15 +682,15 @@ input[type="number"]::-webkit-inner-spin-button {
     transition: top 0.2s cubic-bezier(0.33333, 0, 0.66667, 0.33333), transform 0.13s 0.22s cubic-bezier(0.215, 0.61, 0.355, 1);
     transform: translate3d(0, 7px, 0) rotate(-45deg); }
 
-.popover-overlay-show{
-    width: 100vh;
-}
-
 .separator{
     border-bottom: solid 1px #b3b3b3;
     width: calc(100% - 20px);
     z-index: 3;
     margin: auto;
+}
+
+.popover-overlay-show{
+    width: 100vh;
 }
 
 .vCenter-outer{
@@ -820,7 +821,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .subMenu-enter.subMenu-enter-active{
     transform: translate(0%);
-    transition: transform .5s ease-in-out;
+    transition: transform .25s ease-in-out;
 }
 
 .subMenu-leave {
@@ -829,7 +830,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .subMenu-leave.subMenu-leave-active {
     transform: translate(-100%);
-    transition: transform .5s ease-in-out;
+    transition: transform .25s ease-in-out;
 }
 
 .widget {
